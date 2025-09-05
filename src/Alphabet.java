@@ -6,10 +6,10 @@ public class Alphabet {
 
     public Alphabet(List<String> possibleInputs) {
         int length = possibleInputs.size();
-        List<Input> inputs = new ArrayList<>(length);
+        List<Input> inputs = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             Input input = new Input(possibleInputs.get(i));
-            inputs.set(i, input);
+            inputs.add(input);
         }
         this.possibleInputs = inputs;
     }

@@ -26,4 +26,8 @@ public class State {
         }
     }
 
+    public HashMap<Input, List<String>> getTransitions() {
+        return transitions;
+    }
+
 }

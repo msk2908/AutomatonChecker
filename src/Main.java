@@ -5,43 +5,62 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.regex.*;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        Nea default1 = new Nea(null);
+        System.out.println("Use default automaton? y/n");
+        String def = br.readLine();
+
+        if (def.equals("n")) {
+            System.out.println("Enter Automaton or RegEx? a/r");
+            def = br.readLine();
+            if (def.equals("a")) {
+                default1 = enterAutomaton(br);
+            } else {
+                default1 = enterRegEx(br);
+            }
+
+        } else {
+            default1 = setUpDefault();
+        }
+    }
+
+
+    public static boolean checkState(String name, List<State> states) {
+        for (State state : states) {
+            if (state.name.equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Nea setUpDefault() {
         Input a = new Input("a");
         Input b = new Input("b");
         HashMap aTransitions = new HashMap();
-        List<String> transA = new ArrayList<>();
-        transA.add("A");
-        transA.add("A");
-        transA.add("B");
-        aTransitions.put(a, transA);
-        transA.remove("A");
-        transA.remove("A");
-        aTransitions.put(b, transA);
-
         HashMap bTransitions = new HashMap();
-        List<String> transB = new ArrayList<>();
-        transB.add("A");
-        transB.add("A");
-        transB.add("B");
-        bTransitions.put(a, transB);
-        transB.remove("A");
-        transB.remove("A");
-        bTransitions.put(b, transB);
 
         State A = new State("A", aTransitions, false, true);
         State B = new State("B", bTransitions, true, false);
+        A.setTransitions(a, "A");
+        A.setTransitions(a, "A");
+        A.setTransitions(a, "B");
+        B.setTransitions(a, "A");
+        B.setTransitions(b, "A");
+
         List<State> s1 = new ArrayList<>();
         s1.add(A);
         s1.add(B);
-        Nea default1 = new Nea(s1);
+        return new Nea(s1);
+    }
+
+    public static Nea enterAutomaton(BufferedReader br) throws IOException {
 
         boolean starting = false;
         String flag = "y";
@@ -62,7 +81,7 @@ public class Main {
             boolean terminal = br.readLine().equals("y");
 
             if (!starting) {
-                //get only one starting state
+                //make sure to have only one starting state
                 System.out.println("Is the state " + state + " a starting state? y/n ");
                 starting = br.readLine().equals("y");
             }
@@ -76,7 +95,7 @@ public class Main {
 
 
         // insert all transitions
-
+        List<State> stateList = new ArrayList<>();
         for (State state : states) {
             // get transitions for every state, put into Hashmap
             // Creates a reader instance which takes
@@ -113,18 +132,83 @@ public class Main {
                     j--;
                 }
             }
-
+            stateList.add(state);
         }
-        System.out.println("debugprint");
+        return new Nea(stateList);
     }
 
-    public static boolean checkState(String name, List<State> states) {
-        for (State state : states) {
-            if (state.name.equals(name)) {
-                return true;
+    public static Nea enterRegEx(BufferedReader br) throws IOException {
+        List<State> states = new ArrayList<>();
+
+        System.out.println("Please input used alphabet, each input separated by ',': ");
+        String alphabetStr = br.readLine();
+
+
+        // convert input string into alphabet
+        String input = "";
+        List<String> buffer = new ArrayList<>();
+        System.out.println(alphabetStr);
+        for (Character letter : alphabetStr.toCharArray()) {
+            if (letter == ',') {
+                buffer.add(input);
+                input = "";
+            } else {
+                if (letter == alphabetStr.toCharArray()[alphabetStr.length() - 1]) {
+                    input += letter;
+                    buffer.add(input);
+                } else {
+                    input += letter;
+                }
             }
         }
-        return false;
+
+        Alphabet alphabet = new Alphabet(buffer);
+
+
+        //TODO convert input string into regex
+
+        System.out.println("Please input RegEx, use e for epsilon: ");
+        String regExStr = br.readLine();
+        Pattern pattern = Pattern.compile(regExStr);
+        Matcher matcher = pattern.matcher("ab");
+        System.out.printf("Input: %-6s => Match: %s\n", regExStr, matcher.matches());
+
+        RegEx regexABD = convertToSyntaxTree(regExStr.toCharArray(), "");
+
+        return new Nea(states);
+    }
+
+    public static RegEx convertToSyntaxTree(char[] regExChar, String read) {
+        char[] rest = regExChar;
+        for (Character character : regExChar) {
+            String buf = "";
+            for (int i = 1; i < rest.length; i++) {
+                buf += rest[i];
+            }
+            rest = buf.toCharArray();
+            System.out.println("rest " + buf);
+            switch (character) {
+                case '(': {
+                    read = "";
+                    break;
+                }
+                case ')': {
+                }
+                case '+': {
+
+                }
+                case '*': {
+                    return new Loop(convertToSyntaxTree(read.toCharArray(), read+character));
+                }
+                default: {
+                    read += character;
+                    return new Concat(new RegEx(character), convertToSyntaxTree(rest, read));
+                }
+            }
+
+            System.out.println(read);
+        }
+        return new RegEx();
     }
 }
 
