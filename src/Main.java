@@ -173,13 +173,17 @@ public class Main {
         Matcher matcher = pattern.matcher("ab");
         System.out.printf("Input: %-6s => Match: %s\n", regExStr, matcher.matches());
 
-        RegEx regexABD = convertToSyntaxTree(regExStr.toCharArray(), "");
+        RegEx regexABD = convertToSyntaxTree(regExStr.toCharArray(), "", "");
+        System.out.println(regexABD);
 
         return new Nea(states);
     }
 
-    public static RegEx convertToSyntaxTree(char[] regExChar, String read) {
+    public static RegEx convertToSyntaxTree(char[] regExChar, String evaluateLeft, String justRead) {
         char[] rest = regExChar;
+        if (regExChar.length == 1) {
+            return new RegEx(regExChar[0]);
+        }
         for (Character character : regExChar) {
             String buf = "";
             for (int i = 1; i < rest.length; i++) {
@@ -188,27 +192,39 @@ public class Main {
             rest = buf.toCharArray();
             System.out.println("rest " + buf);
             switch (character) {
-                case '(': {
-                    read = "";
-                    break;
-                }
-                case ')': {
-                }
                 case '+': {
-
+                    evaluateLeft += justRead;
+                    return new Or(concat(evaluateLeft.toCharArray()), convertToSyntaxTree(rest, "", ""));
                 }
                 case '*': {
-                    return new Loop(convertToSyntaxTree(read.toCharArray(), read+character));
+                    if (evaluateLeft.isEmpty()) {
+                        return new Loop(convertToSyntaxTree(justRead.toCharArray(), "", justRead));
+                    }
+                    return new Concat(concat(evaluateLeft.toCharArray()), new Loop(convertToSyntaxTree(justRead.toCharArray(), "", justRead)));
                 }
+
                 default: {
-                    read += character;
-                    return new Concat(new RegEx(character), convertToSyntaxTree(rest, read));
+                    evaluateLeft += justRead;
+                    justRead = character.toString();
+                    convertToSyntaxTree(rest, evaluateLeft, justRead);
                 }
             }
-
-            System.out.println(read);
         }
-        return new RegEx();
+        return concat(evaluateLeft.toCharArray());
+    }
+
+    public static RegEx concat(char[] regex) {
+        char[] rest = regex;
+        String buf = "";
+        for (int i = 1; i < rest.length; i++) {
+            buf += rest[i];
+        }
+        rest = buf.toCharArray();
+
+        if (rest.length > 0) {
+            return new Concat(new RegEx(regex[0]), concat(rest));
+        }
+        return new RegEx(regex[0]);
     }
 }
 
