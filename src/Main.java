@@ -165,16 +165,12 @@ public class Main {
         Alphabet alphabet = new Alphabet(buffer);
 
 
-        //TODO convert input string into regex
 
         System.out.println("Please input RegEx, use e for epsilon: ");
         String regExStr = br.readLine();
-        Pattern pattern = Pattern.compile(regExStr);
-        Matcher matcher = pattern.matcher("ab");
-        System.out.printf("Input: %-6s => Match: %s\n", regExStr, matcher.matches());
 
         RegEx regexABD = convertToSyntaxTree(regExStr.toCharArray(), "", "");
-        System.out.println(regexABD);
+        System.out.println(regexABD.rToString());
 
         return new Nea(states);
     }
@@ -185,20 +181,56 @@ public class Main {
             return new RegEx(regExChar[0]);
         }
         for (Character character : regExChar) {
+            // do I really need this for-loop if only ever considering the first entry?
             String buf = "";
             for (int i = 1; i < rest.length; i++) {
                 buf += rest[i];
             }
             rest = buf.toCharArray();
-            System.out.println("rest " + buf);
+
             switch (character) {
+                case '(': {
+                    /* if parenthesis open: loop until the same parenthesis does close again,
+                     evaluate the expression in it (parenthesisEvaluated), then check if there is more expression (checkHowToGoOn)*/
+                    String par = "";
+                    int i = 0;
+                    int counter = 0;
+                    while (i < rest.length) {
+                        // get everything inside the parenthesis
+                        if (rest[i] == '(') {
+                            counter += 1;
+                        } else {
+                            if (rest[i] == ')') {
+                                if (counter == 0) {
+                                    break;
+                                } else {
+                                    counter -= 1;
+                                }
+                            }
+                        }
+                        par += rest[i];
+                        i++;
+                    }
+
+                    RegEx parenthesisEvaluated = convertToSyntaxTree(par.toCharArray(), "", "");
+                    buf = "";
+                    i += 1;
+                    while (i < rest.length) {
+                        buf += rest[i];
+                        i++;
+                    }
+                    rest = buf.toCharArray();
+
+                    return checkHowToGoOn(parenthesisEvaluated, rest);
+
+                }
                 case '+': {
                     evaluateLeft += justRead;
                     return new Or(concat(evaluateLeft.toCharArray()), convertToSyntaxTree(rest, "", ""));
                 }
                 case '*': {
                     if (evaluateLeft.isEmpty()) {
-                        return new Loop(convertToSyntaxTree(justRead.toCharArray(), "", justRead));
+                        return new Concat(new Loop(new RegEx(justRead.toCharArray()[0])), convertToSyntaxTree(rest, "", ""));
                     }
                     return new Concat(concat(evaluateLeft.toCharArray()), new Loop(convertToSyntaxTree(justRead.toCharArray(), "", justRead)));
                 }
@@ -225,6 +257,33 @@ public class Main {
             return new Concat(new RegEx(regex[0]), concat(rest));
         }
         return new RegEx(regex[0]);
+    }
+
+
+    public static RegEx checkHowToGoOn(RegEx parenthesisEvaluated, char[] rest) {
+        // checks what comes after the parenthesis to evaluate the whole expression
+        if (rest.length == 0) {
+            return parenthesisEvaluated;
+        } else {
+            char check = rest[0];
+            String buf = "";
+            for (int i = 1; i < rest.length; i++) {
+                buf += rest[i];
+            }
+            rest = buf.toCharArray();
+            switch (check) {
+                case '*': {
+                    //loops the whole parenthesis
+                    return checkHowToGoOn(new Loop(parenthesisEvaluated), rest);
+                }
+                case '+': {
+                    return new Or(parenthesisEvaluated, convertToSyntaxTree(rest, "", ""));
+                }
+                default: {
+                    return new Concat(parenthesisEvaluated, convertToSyntaxTree(rest, "", ""));
+                }
+            }
+        }
     }
 }
 
