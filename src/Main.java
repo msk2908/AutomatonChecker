@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.*;
 
 
 public class Main {
@@ -28,6 +27,7 @@ public class Main {
         } else {
             default1 = setUpDefault();
         }
+        System.out.println("debugprint");
     }
 
 
@@ -65,6 +65,7 @@ public class Main {
         boolean starting = false;
         String flag = "y";
         List<State> states = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
 
         while (flag.equals("y")) {
 
@@ -93,48 +94,46 @@ public class Main {
             flag = br.readLine();
         }
 
+        // get input alphabet of automaton
+        System.out.println("Please input Alphabet of automaton, inputs separated by space ");
+        String alphabetStr = scanner.nextLine();
+        List<String> alphabetList = getInputFromList(alphabetStr);
 
-        // insert all transitions
-        List<State> stateList = new ArrayList<>();
+        Alphabet alphabet = new Alphabet(alphabetList);
+        System.out.println(alphabetList + "," + alphabet.aToString());
+
+        // create all transitions
         for (State state : states) {
-            // get transitions for every state, put into Hashmap
-            // Creates a reader instance which takes
-            // input from standard input - keyboard
-
-            Scanner reader = new Scanner(System.in);
-
-            // nextInt() reads the next integer from the keyboard
-            int number = -1;
-            while (number < 0) {
-                number = -1;
-                System.out.println("How many transitions does " + state.name + " have? ");
-                try {
-                    String num = reader.nextLine();
-                    number = Integer.parseInt(num);
-                    break;
-                } catch (Exception e) {
-                    System.out.println("not a valid number!");
+            for (Input input : alphabet.possibleInputs) {
+                System.out.println("Where can state " + state.name + "go with transition " +
+                        input.input + "? (input all possible transitions seperated by blank space)");
+                List<String> statesToGo = getInputFromList(scanner.nextLine());
+                for (String nextState : statesToGo) {
+                    state.setTransitions(input, nextState);
                 }
             }
-
-
-            for (int j = 0; j < number; j++) {
-                System.out.println("Please give one possible transition for state " + state.name);
-                String in = br.readLine();
-                Input input = new Input(in);
-                System.out.println("Where can state " + state.name + "go with transition " + in);
-                String next = br.readLine();
-
-                if (checkState(next, states)) {
-                    state.setTransitions(input, next);
-                } else {
-                    System.out.println("State not found");
-                    j--;
-                }
-            }
-            stateList.add(state);
         }
-        return new Nea(stateList);
+
+        return new Nea(states);
+    }
+
+    public static List<String> getInputFromList(String input) {
+        // returns a list of inputs separated by spaces
+        List<String> output = new ArrayList<>();
+        String word = "";
+        for (char character : input.toCharArray()) {
+            if (character == ' ') {
+                output.add(word);
+                word = "";
+            } else {
+                word += character;
+            }
+        }
+        if (!word.isEmpty()) {
+            output.add(word);
+        }
+
+        return output;
     }
 
     public static Nea enterRegEx(BufferedReader br) throws IOException {
@@ -163,7 +162,6 @@ public class Main {
         }
 
         Alphabet alphabet = new Alphabet(buffer);
-
 
 
         System.out.println("Please input RegEx, use e for epsilon: ");

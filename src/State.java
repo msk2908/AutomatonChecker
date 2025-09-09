@@ -16,6 +16,7 @@ public class State {
     }
 
     public void setTransitions(Input input, String state) {
+        // creates a transition for the automaton with the given input from alphabet to the given state
         //TODO evtl. bool to check if input is possible?
         if (transitions.containsKey(input)) {
             transitions.get(input).add(state);

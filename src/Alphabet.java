@@ -17,4 +17,12 @@ public class Alphabet {
     public boolean contains(Input input) {
         return this.possibleInputs.contains(input);
     }
+    public List<String> aToString() {
+        List<String> inputList = new ArrayList<>();
+        for (Input input : possibleInputs) {
+            inputList.add(input.input);
+        }
+
+        return inputList;
+    }
 }
