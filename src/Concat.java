@@ -1,14 +1,22 @@
 public class Concat extends RegEx {
-    RegEx regex;
-    RegEx regex2;
+    RegEx regExLeft;
+    RegEx regExRight;
     String type;
-    public Concat(RegEx regex, RegEx regEx2) {
-        this.regex = regex;
-        this.regex2 = regEx2;
+    public Concat(RegEx regExLeft, RegEx regExRight) {
+        this.regExLeft = regExLeft;
+        this.regExRight = regExRight;
         this.type = "concat";
     }
 
     public String rToString() {
-        return "Concat["+ regex.rToString()+ "," + regex2.rToString() + "]";
+        return "Concat["+ regExLeft.rToString()+ "," + regExRight.rToString() + "]";
+    }
+
+    public RegEx getLeft() {
+        return regExLeft;
+    }
+
+    public RegEx getRight() {
+        return regExRight;
     }
 }

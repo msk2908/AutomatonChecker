@@ -1,14 +1,23 @@
 public class Or extends RegEx {
-    RegEx regEx;
-    RegEx regEx2;
+    RegEx regExLeft;
+    RegEx regExRight;
     String type;
-    public Or(RegEx regex, RegEx regEx2) {
-        this.regEx = regex;
-        this.regEx2 = regEx2;
+
+    public Or(RegEx regExLeft, RegEx regExRight) {
+        this.regExLeft = regExLeft;
+        this.regExRight = regExRight;
         this.type = "or";
     }
 
     public String rToString() {
-        return "Or["+ regEx.rToString() + "," + regEx2.rToString() + "]";
+        return "Or[" + regExLeft.rToString() + "," + regExRight.rToString() + "]";
+    }
+
+    public RegEx getLeft() {
+        return regExLeft;
+    }
+
+    public RegEx getRight() {
+        return regExRight;
     }
 }

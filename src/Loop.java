@@ -10,4 +10,8 @@ public class Loop extends RegEx{
     public String rToString() {
         return "Loop[" + regEx.rToString() + "]" ;
     }
+
+    public RegEx getRegEx() {
+        return regEx;
+    }
 }

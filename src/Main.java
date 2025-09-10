@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        Nea default1 = new Nea(null);
+        Nea givenAutomaton = new Nea(null);
         System.out.println("Use default automaton? y/n");
         String def = br.readLine();
 
@@ -19,24 +19,32 @@ public class Main {
             System.out.println("Enter Automaton or RegEx? a/r");
             def = br.readLine();
             if (def.equals("a")) {
-                default1 = enterAutomaton(br);
+                givenAutomaton = enterAutomaton(br);
             } else {
-                default1 = enterRegEx(br);
+                givenAutomaton = enterRegEx(br);
             }
 
         } else {
-            default1 = setUpDefault();
+            givenAutomaton = setUpDefault();
         }
         System.out.println("debugprint");
     }
 
 
-    public static boolean checkState(String name, List<State> states) {
+
+
+
+
+
+    // helper functions
+
+    public static boolean checkIfStateExists(String name, List<State> states) {
         for (State state : states) {
             if (state.name.equals(name)) {
                 return true;
             }
         }
+        System.out.println("state "+ name + " does not exist");
         return false;
     }
 
@@ -95,7 +103,8 @@ public class Main {
         }
 
         // get input alphabet of automaton
-        System.out.println("Please input Alphabet of automaton, inputs separated by space ");
+        // TODO: fix input (e for epsilon, 'e' for e, ' ' for space)
+        System.out.println("Please input Alphabet of automaton, inputs separated by space, e for epsilon, 'e' for e, ' ' for space ");
         String alphabetStr = scanner.nextLine();
         List<String> alphabetList = getInputFromList(alphabetStr);
 
@@ -105,11 +114,13 @@ public class Main {
         // create all transitions
         for (State state : states) {
             for (Input input : alphabet.possibleInputs) {
-                System.out.println("Where can state " + state.name + "go with transition " +
-                        input.input + "? (input all possible transitions seperated by blank space)");
+                System.out.println("Where can state " + state.name + " go with transition " +
+                        input.input + "? (input all possible next states separated by blank space)");
                 List<String> statesToGo = getInputFromList(scanner.nextLine());
                 for (String nextState : statesToGo) {
-                    state.setTransitions(input, nextState);
+                    if (checkIfStateExists(nextState, states)) {
+                        state.setTransitions(input, nextState);
+                    }
                 }
             }
         }
@@ -122,11 +133,18 @@ public class Main {
         List<String> output = new ArrayList<>();
         String word = "";
         for (char character : input.toCharArray()) {
-            if (character == ' ') {
-                output.add(word);
-                word = "";
-            } else {
-                word += character;
+            switch (character) {
+                case ' ' : {
+                    output.add(word);
+                    word = "";
+                }
+                case 'e': {
+                    output.add("epsilon");
+                }
+
+                default: {
+                    word += character;
+                }
             }
         }
         if (!word.isEmpty()) {
@@ -256,7 +274,6 @@ public class Main {
         }
         return new RegEx(regex[0]);
     }
-
 
     public static RegEx checkHowToGoOn(RegEx parenthesisEvaluated, char[] rest) {
         // checks what comes after the parenthesis to evaluate the whole expression
