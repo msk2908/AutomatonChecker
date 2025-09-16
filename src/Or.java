@@ -1,16 +1,25 @@
 public class Or extends RegEx {
     RegEx regExLeft;
     RegEx regExRight;
-    String type;
+    RegExType type;
 
     public Or(RegEx regExLeft, RegEx regExRight) {
+        super(RegExType.OR);
         this.regExLeft = regExLeft;
         this.regExRight = regExRight;
-        this.type = "or";
     }
 
     public String rToString() {
-        return "Or[" + regExLeft.rToString() + "," + regExRight.rToString() + "]";
+        String left = "";
+        String right = "";
+        if (!regExLeft.type.equals(RegExType.NONE)) {
+            left = regExLeft.rToString();
+        }
+        if (!regExRight.type.equals(RegExType.NONE)) {
+            right = regExRight.rToString();
+        }
+
+        return "Or[" + left + "," + right + "]";
     }
 
     public RegEx getLeft() {

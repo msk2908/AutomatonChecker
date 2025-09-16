@@ -1,10 +1,9 @@
 public class Loop extends RegEx{
     RegEx regEx;
-    String type;
+    RegExType type;
     public Loop(RegEx regEx) {
-        super();
+        super(RegExType.LOOP);
         this.regEx = regEx;
-        this.type = "loop";
     }
 
     public String rToString() {

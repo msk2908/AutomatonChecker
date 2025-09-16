@@ -5,13 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.*;
 
 
 public class Main {
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        Nea givenAutomaton = new Nea(null);
+        Nea default1 = new Nea(null);
         System.out.println("Use default automaton? y/n");
         String def = br.readLine();
 
@@ -19,38 +21,29 @@ public class Main {
             System.out.println("Enter Automaton or RegEx? a/r");
             def = br.readLine();
             if (def.equals("a")) {
-                givenAutomaton = enterAutomaton(br);
+                default1 = enterAutomaton(br);
             } else {
-                givenAutomaton = enterRegEx(br);
+                default1 = enterRegEx(br);
             }
 
         } else {
-            givenAutomaton = setUpDefault();
+            default1 = setUpDefault();
         }
-        System.out.println("debugprint");
     }
 
 
-
-
-
-
-
-    // helper functions
-
-    public static boolean checkIfStateExists(String name, List<State> states) {
+    public static boolean checkState(String name, List<State> states) {
         for (State state : states) {
             if (state.name.equals(name)) {
                 return true;
             }
         }
-        System.out.println("state "+ name + " does not exist");
         return false;
     }
 
     public static Nea setUpDefault() {
-        Input a = new Input("a");
-        Input b = new Input("b");
+        Input a = new Input("a", TransitionType.LITERAL);
+        Input b = new Input("b", TransitionType.LITERAL);
         HashMap aTransitions = new HashMap();
         HashMap bTransitions = new HashMap();
 
@@ -73,7 +66,6 @@ public class Main {
         boolean starting = false;
         String flag = "y";
         List<State> states = new ArrayList<>();
-        Scanner scanner = new Scanner(System.in);
 
         while (flag.equals("y")) {
 
@@ -102,58 +94,53 @@ public class Main {
             flag = br.readLine();
         }
 
-        // get input alphabet of automaton
-        // TODO: fix input (e for epsilon, 'e' for e, ' ' for space)
-        System.out.println("Please input Alphabet of automaton, inputs separated by space, e for epsilon, 'e' for e, ' ' for space ");
-        String alphabetStr = scanner.nextLine();
-        List<String> alphabetList = getInputFromList(alphabetStr);
 
-        Alphabet alphabet = new Alphabet(alphabetList);
-        System.out.println(alphabetList + "," + alphabet.aToString());
-
-        // create all transitions
+        // insert all transitions
+        List<State> stateList = new ArrayList<>();
         for (State state : states) {
-            for (Input input : alphabet.possibleInputs) {
-                System.out.println("Where can state " + state.name + " go with transition " +
-                        input.input + "? (input all possible next states separated by blank space)");
-                List<String> statesToGo = getInputFromList(scanner.nextLine());
-                for (String nextState : statesToGo) {
-                    if (checkIfStateExists(nextState, states)) {
-                        state.setTransitions(input, nextState);
-                    }
+            // get transitions for every state, put into Hashmap
+            // Creates a reader instance which takes
+            // input from standard input - keyboard
+
+            Scanner reader = new Scanner(System.in);
+
+            // nextInt() reads the next integer from the keyboard
+            int number = -1;
+            while (number < 0) {
+                number = -1;
+                System.out.println("How many transitions does " + state.name + " have? ");
+                try {
+                    String num = reader.nextLine();
+                    number = Integer.parseInt(num);
+                    break;
+                } catch (Exception e) {
+                    System.out.println("not a valid number!");
                 }
             }
-        }
 
-        return new Nea(states);
-    }
 
-    public static List<String> getInputFromList(String input) {
-        // returns a list of inputs separated by spaces
-        List<String> output = new ArrayList<>();
-        String word = "";
-        for (char character : input.toCharArray()) {
-            switch (character) {
-                case ' ' : {
-                    output.add(word);
-                    word = "";
-                }
-                case 'e': {
-                    output.add("epsilon");
-                }
+            for (int j = 0; j < number; j++) {
+                System.out.println("Please give one possible transition for state " + state.name);
+                String in = br.readLine();
+                Input input = new Input(in, checkTransitionType(in));
+                System.out.println("Where can state " + state.name + "go with transition " + in);
+                String next = br.readLine();
 
-                default: {
-                    word += character;
+                if (checkState(next, states)) {
+                    state.setTransitions(input, next);
+                } else {
+                    System.out.println("State not found");
+                    j--;
                 }
             }
+            stateList.add(state);
         }
-        if (!word.isEmpty()) {
-            output.add(word);
-        }
-
-        return output;
+        return new Nea(stateList);
     }
 
+
+    // RegEx functions
+    // TODO check for correct syntax when interpreting switch e for epsilon etc ε
     public static Nea enterRegEx(BufferedReader br) throws IOException {
         List<State> states = new ArrayList<>();
 
@@ -169,14 +156,14 @@ public class Main {
             if (letter == ',') {
                 buffer.add(input);
                 input = "";
-            } else {
-                if (letter == alphabetStr.toCharArray()[alphabetStr.length() - 1]) {
-                    input += letter;
-                    buffer.add(input);
-                } else {
-                    input += letter;
-                }
             }
+            if (letter == alphabetStr.toCharArray()[alphabetStr.length() - 1]) {
+                input += letter;
+                buffer.add(input);
+            } else {
+                input += letter;
+            }
+
         }
 
         Alphabet alphabet = new Alphabet(buffer);
@@ -188,11 +175,17 @@ public class Main {
         RegEx regexABD = convertToSyntaxTree(regExStr.toCharArray(), "", "");
         System.out.println(regexABD.rToString());
 
-        return new Nea(states);
+        Nea nea = convertToNea(null, regexABD, new ArrayList<>());
+
+        return nea;
+
     }
 
     public static RegEx convertToSyntaxTree(char[] regExChar, String evaluateLeft, String justRead) {
         char[] rest = regExChar;
+        if (regExChar.length == 0 && evaluateLeft.isEmpty()) {
+            return new RegEx(justRead.toCharArray()[0]);
+        }
         if (regExChar.length == 1) {
             return new RegEx(regExChar[0]);
         }
@@ -245,8 +238,11 @@ public class Main {
                     return new Or(concat(evaluateLeft.toCharArray()), convertToSyntaxTree(rest, "", ""));
                 }
                 case '*': {
-                    if (evaluateLeft.isEmpty()) {
+                    if (evaluateLeft.isEmpty() && rest.length > 0) {
                         return new Concat(new Loop(new RegEx(justRead.toCharArray()[0])), convertToSyntaxTree(rest, "", ""));
+                    }
+                    if (evaluateLeft.isEmpty()) {
+                        return new Loop(new RegEx(justRead.toCharArray()[0]));
                     }
                     return new Concat(concat(evaluateLeft.toCharArray()), new Loop(convertToSyntaxTree(justRead.toCharArray(), "", justRead)));
                 }
@@ -258,7 +254,10 @@ public class Main {
                 }
             }
         }
-        return concat(evaluateLeft.toCharArray());
+        if (justRead.equals(")")) {
+            return concat(evaluateLeft.toCharArray());
+        }
+        return concat(evaluateLeft.concat(justRead).toCharArray());
     }
 
     public static RegEx concat(char[] regex) {
@@ -300,6 +299,91 @@ public class Main {
             }
         }
     }
+
+    public static Nea convertToNea(State actualState, RegEx regEx, List<State> states) {
+        if (actualState == null) {
+            //create starting state
+            actualState = new State(regEx.rToString(), new HashMap<>(), false, true);
+        }
+        states.add(actualState);
+
+        switch (regEx.type) {
+            case RegExType.OR : {
+                State left;
+                State right;
+                // create following states
+                if (regEx.getLeft().equals(new RegEx(RegExType.NONE)) || regEx.getRight().equals(new RegEx(RegExType.NONE))) {
+                    // mark state as final when there is no left or right
+                    left = new State(regEx.getLeft().rToString(), new HashMap(), false, false);
+                    right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
+                } else {
+                    left = new State(regEx.getLeft().rToString(), new HashMap(), false, false);
+                    right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
+                }
+                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), left.name);
+                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), right.name);
+
+
+                System.out.println(regEx.getLeft().rToString());
+                System.out.println(regEx.getRight().rToString());
+                convertToNea(left, regEx.getLeft(), states);
+                convertToNea(right, regEx.getRight(), states);
+                break;
+
+            }
+            case RegExType.CONCAT:
+                State left;
+                State right;
+                // create following states
+                if (regEx.getLeft().equals(new RegEx(RegExType.NONE)) || regEx.getRight().equals(new RegEx(RegExType.NONE))) {
+                    // mark state as final when there is no left or right
+                    //TODO something is wrong here
+                    left = new State(regEx.getLeft().rToString(), new HashMap(), false, false);
+                    right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
+                } else {
+                    left = new State(regEx.getLeft().rToString(), new HashMap(), false, false);
+                    right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
+                }
+                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), left.name);
+                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), right.name);
+
+                states.add(left);
+                states.add(right);
+                System.out.println(regEx.getLeft().rToString());
+                System.out.println(regEx.getRight().rToString());
+                convertToNea(left, regEx.getLeft(), states);
+                convertToNea(right, regEx.getRight(), states);
+                break;
+
+            case RegExType.LITERAL: {
+                //TODO might also be starting, check if actualState already has transitions
+                State last = new State(regEx.rToString() + " final destination", new HashMap<>(), true, false);
+                actualState.setTransitions(new Input (regEx.rToString(), TransitionType.LITERAL), last.name);
+                states.add(last);
+                break;
+            }
+
+            default: {
+                /*State last = new State(regEx.rToString(), new HashMap<>(), true, false);
+                actualState.setTransitions(new Input (regEx.rToString(), TransitionType.LITERAL), last.name +" sfinal destination");
+                states.add(last);*/
+                break;
+
+            }
+        }
+
+        return new Nea(states);
+    }
+
+    public static TransitionType checkTransitionType(String in) {
+        if (in.equals("e")) {
+            return TransitionType.EPSILON;
+        } else {
+            return TransitionType.LITERAL;
+        }
+    }
 }
+
+
 
 

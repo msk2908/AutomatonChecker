@@ -18,6 +18,7 @@ public class State {
     public void setTransitions(Input input, String state) {
         // creates a transition for the automaton with the given input from alphabet to the given state
         //TODO evtl. bool to check if input is possible? -> not really needed?
+        //TODO SWITCH FROM STRING TO STATE THIS DOES NOT MAKE ANY SENSE YOU STUPID IDIOT
         if (transitions.containsKey(input)) {
             transitions.get(input).add(state);
         } else {

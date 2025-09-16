@@ -1,18 +1,22 @@
 public class RegEx {
     Character a;
-    String type;
-    public RegEx() {
-        this.type = "";
+    RegExType type;
+    public RegEx(RegExType type) {
+        this.type = type;
     }
 
     public RegEx(Character a) {
         this.a = a;
-        this.type = "literal";
+        this.type = RegExType.LITERAL;
     }
 
     public String rToString() {
-       return a.toString();
+        if (this.type.equals(RegExType.NONE)) {
+            a =' ';
+        }
+        return a.toString();
     }
-
+    public RegEx getLeft() { return this;}
+    public RegEx getRight() { return this;}
 
 }

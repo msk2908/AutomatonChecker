@@ -1,11 +1,11 @@
 public class Concat extends RegEx {
     RegEx regExLeft;
     RegEx regExRight;
-    String type;
+    RegExType type;
     public Concat(RegEx regExLeft, RegEx regExRight) {
+        super(RegExType.CONCAT);
         this.regExLeft = regExLeft;
         this.regExRight = regExRight;
-        this.type = "concat";
     }
 
     public String rToString() {
