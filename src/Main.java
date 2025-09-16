@@ -367,9 +367,9 @@ public class Main {
             }
 
             default: {
-                /*State last = new State(regEx.rToString(), new HashMap<>(), true, false);
-                actualState.setTransitions(new Input (regEx.rToString(), TransitionType.LITERAL), last.name +" sfinal destination");
-                states.add(last);*/
+                State last = new State(regEx.rToString(), new HashMap<>(), true, false);
+                actualState.setTransitions(new Input (regEx.rToString(), TransitionType.LITERAL), last.name +" final destination");
+                states.add(last);
                 break;
 
             }

@@ -36,4 +36,9 @@ public class State {
         return transitions.get(input);
     }
 
+    public void transitionsToString() {
+        for (Input input : transitions.keySet()) {
+            System.out.println(input.iToString() + ":" + transitions.get(input));
+        }
+    }
 }

@@ -5,4 +5,8 @@ public class Input {
         this.input = input;
         this.type = type;
     }
+
+    public String iToString() {
+        return input;
+    }
 }
