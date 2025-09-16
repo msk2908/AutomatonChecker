@@ -91,6 +91,16 @@ public class Tests {
         System.out.println(result.rToString());
         assertEquals(c1.rToString(), result.rToString());
     }
+    @Test
+    public void testConcatenationSeemsToBeBrokenlvl2p5() {
+        char[] regExChar = "b(ab+b*)".toCharArray();
+        RegEx brace = new Or(new Concat(new RegEx('a'), new RegEx('b')), new Loop(new RegEx('b')));
+        RegEx c1 = new Concat(new RegEx('b'), brace);
+        System.out.println(c1);
+        RegEx result = Main.convertToSyntaxTree(regExChar,"", "");
+        System.out.println(result.rToString());
+        assertEquals(c1.rToString(), result.rToString());
+    }
 
     @Test
     public void testConcatenationSeemsToBeBrokenlvl2() {

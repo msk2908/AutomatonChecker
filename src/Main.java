@@ -221,7 +221,10 @@ public class Main {
                         i++;
                     }
 
-                    RegEx parenthesisEvaluated = convertToSyntaxTree(par.toCharArray(), "", "");
+                    RegEx parenthesisEvaluated =  convertToSyntaxTree(par.toCharArray(), "", "");
+                    if (!evaluateLeft.isEmpty() || !justRead.isEmpty()) {
+                        parenthesisEvaluated =  new Concat(concat(evaluateLeft.concat(justRead).toCharArray()), convertToSyntaxTree(par.toCharArray(), "", ""));
+                    }
                     buf = "";
                     i += 1;
                     while (i < rest.length) {
