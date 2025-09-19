@@ -5,7 +5,7 @@ import java.util.List;
 public class State {
     final String name;
     HashMap<Input, List<State>> transitions = new HashMap<>();
-    final boolean terminal;
+    boolean terminal;
     final boolean starting;
 
     public State(String name, HashMap<Input, List<State>> transitions, boolean terminal, boolean starting) {
@@ -25,6 +25,10 @@ public class State {
             states.add(state);
             transitions.put(input, states);
         }
+    }
+
+    public void setTerminal(boolean b) {
+        this.terminal = b;
     }
 
     public HashMap<Input, List<State>> getTransitions() {

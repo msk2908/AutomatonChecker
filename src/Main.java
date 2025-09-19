@@ -243,7 +243,6 @@ public class Main {
 
                 }
                 case '+': {
-                    // TODO check if  there is something in both sides of the Or
                     evaluateLeft += justRead;
                     try {
                         RegEx rightSide = convertToSyntaxTree(rest, "", "");
@@ -362,28 +361,28 @@ public class Main {
 
             }
             case RegExType.CONCAT:
-                State left;
-                State right;
-                // create following states
-                if (regEx.getLeft().equals(new RegEx(RegExType.NONE)) || regEx.getRight().equals(new RegEx(RegExType.NONE))) {
-                    // mark state as final when there is no left or right
-                    //TODO something is wrong here
-                    left = new State(regEx.getLeft().rToString(), new HashMap(), false, false);
-                    right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
-                } else {
-                    left = new State(regEx.getLeft().rToString(), new HashMap(), false, false);
-                    right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
-                }
-                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), left);
-                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), right);
+                // TODO fix this
+                RegEx left = regEx.getLeft();
+                RegEx right = regEx.getRight();
 
-                states.add(left);
-                states.add(right);
-                System.out.println(regEx.getLeft().rToString());
-                System.out.println(regEx.getRight().rToString());
-                convertToNea(left, regEx.getLeft(), states);
-                convertToNea(right, regEx.getRight(), states);
-                break;
+                Nea evaluateLeft = convertToNea(actualState, left, states);
+
+                //get last states of the left side of concatenation to go on here
+                List<State> followUpStates = new ArrayList<>();
+                for (State state: evaluateLeft.states) {
+                    if (state.terminal) {
+                        state.setTerminal(false);
+                        followUpStates.add(state);
+                    }
+                }
+
+
+                for (State state : followUpStates) {
+                    convertToNea(state, right, states);
+                }
+
+
+
 
             case RegExType.LITERAL: {
                 //TODO might also be starting, check if actualState already has transitions
@@ -402,7 +401,9 @@ public class Main {
             }
         }
 
-        return new Nea(states);
+        return new
+
+                Nea(states);
     }
 
     public static TransitionType checkTransitionType(String in) {
