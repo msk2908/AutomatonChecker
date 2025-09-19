@@ -20,11 +20,11 @@ public class Nea {
         return new Dea(new ArrayList<>(), false);
     }
 
-    public String aToString() {
+    /*public String aToString() {
         for (State state: states) {
 
         }
-    }
+    }*/
 
 
 

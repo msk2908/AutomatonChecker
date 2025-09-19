@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.*;
 
 
 public class Main {
@@ -32,13 +31,13 @@ public class Main {
     }
 
 
-    public static boolean checkState(String name, List<State> states) {
+    public static State getStateByName(String name, List<State> states) {
         for (State state : states) {
             if (state.name.equals(name)) {
-                return true;
+                return state;
             }
         }
-        return false;
+        return null;
     }
 
     public static Nea setUpDefault() {
@@ -49,11 +48,11 @@ public class Main {
 
         State A = new State("A", aTransitions, false, true);
         State B = new State("B", bTransitions, true, false);
-        A.setTransitions(a, "A");
-        A.setTransitions(a, "A");
-        A.setTransitions(a, "B");
-        B.setTransitions(a, "A");
-        B.setTransitions(b, "A");
+        A.setTransitions(a, A);
+        A.setTransitions(a, A);
+        A.setTransitions(a, B);
+        B.setTransitions(a, A);
+        B.setTransitions(b, A);
 
         List<State> s1 = new ArrayList<>();
         s1.add(A);
@@ -126,8 +125,9 @@ public class Main {
                 System.out.println("Where can state " + state.name + "go with transition " + in);
                 String next = br.readLine();
 
-                if (checkState(next, states)) {
-                    state.setTransitions(input, next);
+                State nextState = getStateByName(next, states);
+                if (nextState != null) {
+                    state.setTransitions(input, nextState);
                 } else {
                     System.out.println("State not found");
                     j--;
@@ -184,7 +184,13 @@ public class Main {
     public static RegEx convertToSyntaxTree(char[] regExChar, String evaluateLeft, String justRead) {
         char[] rest = regExChar;
         if (regExChar.length == 0 && evaluateLeft.isEmpty()) {
-            return new RegEx(justRead.toCharArray()[0]);
+            try {
+                return new RegEx(justRead.toCharArray()[0]);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                // catches case "a+" (missing argument on right side of Or)
+                System.out.println("not enough arguments");
+            }
+
         }
         if (regExChar.length == 1) {
             return new RegEx(regExChar[0]);
@@ -203,7 +209,7 @@ public class Main {
                      evaluate the expression in it (parenthesisEvaluated), then check if there is more expression (checkHowToGoOn)*/
                     String par = "";
                     int i = 0;
-                    int counter = 0;
+                    int counter = 0; //counts the amount of opened parenthesis to not close the first one too early
                     while (i < rest.length) {
                         // get everything inside the parenthesis
                         if (rest[i] == '(') {
@@ -221,9 +227,9 @@ public class Main {
                         i++;
                     }
 
-                    RegEx parenthesisEvaluated =  convertToSyntaxTree(par.toCharArray(), "", "");
+                    RegEx parenthesisEvaluated = convertToSyntaxTree(par.toCharArray(), "", "");
                     if (!evaluateLeft.isEmpty() || !justRead.isEmpty()) {
-                        parenthesisEvaluated =  new Concat(concat(evaluateLeft.concat(justRead).toCharArray()), convertToSyntaxTree(par.toCharArray(), "", ""));
+                        parenthesisEvaluated = new Concat(concat(evaluateLeft.concat(justRead).toCharArray()), convertToSyntaxTree(par.toCharArray(), "", ""));
                     }
                     buf = "";
                     i += 1;
@@ -237,8 +243,15 @@ public class Main {
 
                 }
                 case '+': {
+                    // TODO check if  there is something in both sides of the Or
                     evaluateLeft += justRead;
-                    return new Or(concat(evaluateLeft.toCharArray()), convertToSyntaxTree(rest, "", ""));
+                    try {
+                        RegEx rightSide = convertToSyntaxTree(rest, "", "");
+                        return new Or(concat(evaluateLeft.toCharArray()), rightSide);
+                    } catch (IllegalArgumentException e) {
+                        throw new IllegalArgumentException("Or does not have enough arguments");
+                    }
+
                 }
                 case '*': {
                     if (evaluateLeft.isEmpty() && rest.length > 0) {
@@ -263,18 +276,24 @@ public class Main {
         return concat(evaluateLeft.concat(justRead).toCharArray());
     }
 
-    public static RegEx concat(char[] regex) {
+    public static RegEx concat(char[] regex) throws IllegalArgumentException {
         char[] rest = regex;
         String buf = "";
-        for (int i = 1; i < rest.length; i++) {
-            buf += rest[i];
-        }
-        rest = buf.toCharArray();
+        try {
+            for (int i = 1; i < rest.length; i++) {
+                buf += rest[i];
+            }
+            rest = buf.toCharArray();
 
-        if (rest.length > 0) {
-            return new Concat(new RegEx(regex[0]), concat(rest));
+            if (rest.length > 0) {
+                return new Concat(new RegEx(regex[0]), concat(rest));
+            }
+            return new RegEx(regex[0]);
+        } catch (Exception e) {
+            // catches case "+b" (missing argument on the left side of Or)
+            throw new IllegalArgumentException("not enough arguments");
         }
-        return new RegEx(regex[0]);
+
     }
 
     public static RegEx checkHowToGoOn(RegEx parenthesisEvaluated, char[] rest) {
@@ -303,6 +322,8 @@ public class Main {
         }
     }
 
+
+    // RegEx to Nea
     public static Nea convertToNea(State actualState, RegEx regEx, List<State> states) {
         if (actualState == null) {
             //create starting state
@@ -311,20 +332,26 @@ public class Main {
         states.add(actualState);
 
         switch (regEx.type) {
-            case RegExType.OR : {
+            case RegExType.OR: {
                 State left;
                 State right;
                 // create following states
-                if (regEx.getLeft().equals(new RegEx(RegExType.NONE)) || regEx.getRight().equals(new RegEx(RegExType.NONE))) {
+
+                if (regEx.getLeft().equals(new RegEx(RegExType.LITERAL))) {
                     // mark state as final when there is no left or right
-                    left = new State(regEx.getLeft().rToString(), new HashMap(), false, false);
-                    right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
+                    left = new State(regEx.getLeft().rToString(), new HashMap(), true, false);
                 } else {
                     left = new State(regEx.getLeft().rToString(), new HashMap(), false, false);
+                }
+                if (regEx.getRight().equals(new RegEx(RegExType.LITERAL))) {
+                    right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
+                } else {
                     right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
                 }
-                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), left.name);
-                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), right.name);
+
+
+                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), left);
+                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), right);
 
 
                 System.out.println(regEx.getLeft().rToString());
@@ -347,8 +374,8 @@ public class Main {
                     left = new State(regEx.getLeft().rToString(), new HashMap(), false, false);
                     right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
                 }
-                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), left.name);
-                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), right.name);
+                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), left);
+                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), right);
 
                 states.add(left);
                 states.add(right);
@@ -361,14 +388,14 @@ public class Main {
             case RegExType.LITERAL: {
                 //TODO might also be starting, check if actualState already has transitions
                 State last = new State(regEx.rToString() + " final destination", new HashMap<>(), true, false);
-                actualState.setTransitions(new Input (regEx.rToString(), TransitionType.LITERAL), last.name);
+                actualState.setTransitions(new Input(regEx.rToString(), TransitionType.LITERAL), last);
                 states.add(last);
                 break;
             }
 
             default: {
                 State last = new State(regEx.rToString(), new HashMap<>(), true, false);
-                actualState.setTransitions(new Input (regEx.rToString(), TransitionType.LITERAL), last.name +" final destination");
+                actualState.setTransitions(new Input(regEx.rToString(), TransitionType.LITERAL), last);
                 states.add(last);
                 break;
 

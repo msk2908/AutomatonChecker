@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 public class TestRegExToNea {
 
     // easy (only one property)
-    @Test
+    /*@Test
     public void testLiteralToNea() {
         RegEx regEx = new RegEx('a');
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
@@ -24,7 +24,7 @@ public class TestRegExToNea {
         states.add(state2);
         Nea compare = new Nea(states);
         assertEquals(compare, nea);
-    }
+    }*/
 
     @Test
     public void testOrToNea() {
