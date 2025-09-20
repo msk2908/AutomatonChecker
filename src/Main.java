@@ -358,18 +358,14 @@ public class Main {
                 State left;
                 State right;
                 // create two follow-up states with an Epsilon-Transition
-                if (regEx.getLeft().equals(new RegEx(RegExType.LITERAL))) {
-                    // mark state as final when there is no left or right
-                    left = new State(setId(states), regEx.getLeft().rToString(), new HashMap(), true, false);
-                } else {
-                    left = new State(setId(states), regEx.getLeft().rToString(), new HashMap(), false, false);
-                }
+                RegExType type = regEx.getRight().type;
+
+                left = new State(setId(states), regEx.getLeft().rToString(), new HashMap(), false, false);
+
                 states.add(left);
-                if (regEx.getRight().equals(new RegEx(RegExType.LITERAL))) {
-                    right = new State(setId(states), regEx.getRight().rToString(), new HashMap(), false, false);
-                } else {
-                    right = new State(setId(states), regEx.getRight().rToString(), new HashMap(), false, false);
-                }
+
+                right = new State(setId(states), regEx.getRight().rToString(), new HashMap(), false, false);
+
                 states.add(right);
 
 
@@ -384,10 +380,11 @@ public class Main {
                 break;
 
             }
+
             case RegExType.CONCAT: {
                 RegEx left = regEx.getLeft();
                 RegEx right = regEx.getRight(); // is never empty or broken (will be checked by concat() when inputting RegEx)
-                Nea evaluateLeft = new Nea(null);
+                Nea evaluateLeft;
                 switch (left.type) {
                     case RegExType.LITERAL: {
                         // create one new state with transition to right
@@ -418,7 +415,7 @@ public class Main {
                 break;
             }
             case RegExType.LITERAL: {
-                //TODO might also be starting, check if actualState already has transitions
+                //TODO might also be starting or non-final, check if actualState already has transitions or there is a follow-up (eg (a+b)*c))
                 State last = new State(setId(states), regEx.rToString() + " final destination", new HashMap<>(), true, false);
                 actualState.setTransitions(new Input(regEx.rToString(), TransitionType.LITERAL), last);
                 states.add(last);
@@ -427,12 +424,17 @@ public class Main {
             case RegExType.LOOP: {
                 // evaluate everything and put an Epsilon-Transition to starting state
                 RegEx inside = regEx.getRegEx();
+                List<State> saveStates = new ArrayList<>();
+                for (State state: states) {
+                    saveStates.add(state);
+                }
                 Nea evaluateLoop = convertToNea(actualState, inside, states);
-                //get last states of the left side of concatenation to go on here
+
+                        //get last states of the left side of concatenation to go on here
                 List<State> followUpStates = new ArrayList<>();
                 for (State state : evaluateLoop.states) {
-                    if (state.terminal) {
-                        state.setTerminal(false);
+                    if (state.terminal && !saveStates.contains(state)) {
+                        //state.setTerminal(false);
                         followUpStates.add(state);
                     }
                 }
