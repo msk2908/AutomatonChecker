@@ -18,5 +18,6 @@ public class RegEx {
     }
     public RegEx getLeft() { return this;}
     public RegEx getRight() { return this;}
+    public RegEx getRegEx() { return this;}
 
 }

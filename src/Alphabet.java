@@ -9,15 +9,13 @@ public class Alphabet {
         int length = possibleInputs.size();
         List<Input> inputs = new ArrayList<>();
         for (int i = 0; i < length; i++) {
-            switch (possibleInputs.get(i)) {
-                case "epsilon" : {
-                    inputs.add(new Input("ε", TransitionType.EPSILON));
-                }
-                default: {
-                    Input input = new Input(possibleInputs.get(i), TransitionType.LITERAL);
-                    inputs.add(input);
-                }
+            if (possibleInputs.get(i).equals("Epsilon")) {//"ε"
+                inputs.add(new Input("Epsilon", TransitionType.EPSILON));
+            } else {
+                Input input = new Input(possibleInputs.get(i), TransitionType.LITERAL);
+                inputs.add(input);
             }
+
         }
         this.possibleInputs = inputs;
     }

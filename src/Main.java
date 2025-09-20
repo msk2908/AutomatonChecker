@@ -46,8 +46,8 @@ public class Main {
         HashMap aTransitions = new HashMap();
         HashMap bTransitions = new HashMap();
 
-        State A = new State("A", aTransitions, false, true);
-        State B = new State("B", bTransitions, true, false);
+        State A = new State(0, "A", aTransitions, false, true);
+        State B = new State(1, "B", bTransitions, true, false);
         A.setTransitions(a, A);
         A.setTransitions(a, A);
         A.setTransitions(a, B);
@@ -65,6 +65,7 @@ public class Main {
         boolean starting = false;
         String flag = "y";
         List<State> states = new ArrayList<>();
+        int stateId = 0;
 
         while (flag.equals("y")) {
 
@@ -86,7 +87,8 @@ public class Main {
                 starting = br.readLine().equals("y");
             }
 
-            State currentState = new State(state, new HashMap<>(), terminal, starting);
+            State currentState = new State(stateId, state, new HashMap<>(), terminal, starting);
+            stateId++;
             states.add(currentState);
 
             System.out.println("Does your automaton contain more states? y/n: ");
@@ -181,6 +183,10 @@ public class Main {
 
     }
 
+
+    /**
+     * converts a given RegEx into a syntax tree
+     **/
     public static RegEx convertToSyntaxTree(char[] regExChar, String evaluateLeft, String justRead) {
         char[] rest = regExChar;
         if (regExChar.length == 0 && evaluateLeft.isEmpty()) {
@@ -228,9 +234,6 @@ public class Main {
                     }
 
                     RegEx parenthesisEvaluated = convertToSyntaxTree(par.toCharArray(), "", "");
-                    if (!evaluateLeft.isEmpty() || !justRead.isEmpty()) {
-                        parenthesisEvaluated = new Concat(concat(evaluateLeft.concat(justRead).toCharArray()), convertToSyntaxTree(par.toCharArray(), "", ""));
-                    }
                     buf = "";
                     i += 1;
                     while (i < rest.length) {
@@ -238,8 +241,15 @@ public class Main {
                         i++;
                     }
                     rest = buf.toCharArray();
+                    if (!evaluateLeft.isEmpty() || !justRead.isEmpty()) {
+                        //RegEx evaluateEverythingInParenthesis = convertToSyntaxTree(par.toCharArray(), "", "");
+                        parenthesisEvaluated = new Concat(concat(evaluateLeft.concat(justRead).toCharArray()), checkHowToGoOn(parenthesisEvaluated, rest));
+                    } else {
+                        parenthesisEvaluated = checkHowToGoOn(parenthesisEvaluated, rest);
+                    }
 
-                    return checkHowToGoOn(parenthesisEvaluated, rest);
+
+                    return parenthesisEvaluated;
 
                 }
                 case '+': {
@@ -266,6 +276,7 @@ public class Main {
                     evaluateLeft += justRead;
                     justRead = character.toString();
                     convertToSyntaxTree(rest, evaluateLeft, justRead);
+                    break;
                 }
             }
         }
@@ -275,6 +286,10 @@ public class Main {
         return concat(evaluateLeft.concat(justRead).toCharArray());
     }
 
+
+    /**
+     * helper function for convertToSyntaxTree, puts two parts of a RegEx together
+     **/
     public static RegEx concat(char[] regex) throws IllegalArgumentException {
         char[] rest = regex;
         String buf = "";
@@ -295,6 +310,9 @@ public class Main {
 
     }
 
+    /**
+     * helper function of convertToSyntaxTree, checks if there is something to do after evaluating a parenthesis
+     **/
     public static RegEx checkHowToGoOn(RegEx parenthesisEvaluated, char[] rest) {
         // checks what comes after the parenthesis to evaluate the whole expression
         if (rest.length == 0) {
@@ -322,31 +340,37 @@ public class Main {
     }
 
 
-    // RegEx to Nea
+    /**
+     * converts a given RegEx to a Nea
+     **/
     public static Nea convertToNea(State actualState, RegEx regEx, List<State> states) {
         if (actualState == null) {
             //create starting state
-            actualState = new State(regEx.rToString(), new HashMap<>(), false, true);
+            actualState = new State(setId(states), regEx.rToString(), new HashMap<>(), false, true);
         }
-        states.add(actualState);
+        if (!states.contains(actualState)) {
+            states.add(actualState);
+        }
+
 
         switch (regEx.type) {
             case RegExType.OR: {
                 State left;
                 State right;
-                // create following states
-
+                // create two follow-up states with an Epsilon-Transition
                 if (regEx.getLeft().equals(new RegEx(RegExType.LITERAL))) {
                     // mark state as final when there is no left or right
-                    left = new State(regEx.getLeft().rToString(), new HashMap(), true, false);
+                    left = new State(setId(states), regEx.getLeft().rToString(), new HashMap(), true, false);
                 } else {
-                    left = new State(regEx.getLeft().rToString(), new HashMap(), false, false);
+                    left = new State(setId(states), regEx.getLeft().rToString(), new HashMap(), false, false);
                 }
+                states.add(left);
                 if (regEx.getRight().equals(new RegEx(RegExType.LITERAL))) {
-                    right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
+                    right = new State(setId(states), regEx.getRight().rToString(), new HashMap(), false, false);
                 } else {
-                    right = new State(regEx.getRight().rToString(), new HashMap(), false, false);
+                    right = new State(setId(states), regEx.getRight().rToString(), new HashMap(), false, false);
                 }
+                states.add(right);
 
 
                 actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), left);
@@ -360,50 +384,69 @@ public class Main {
                 break;
 
             }
-            case RegExType.CONCAT:
-                // TODO fix this
+            case RegExType.CONCAT: {
                 RegEx left = regEx.getLeft();
-                RegEx right = regEx.getRight();
+                RegEx right = regEx.getRight(); // is never empty or broken (will be checked by concat() when inputting RegEx)
+                Nea evaluateLeft = new Nea(null);
+                switch (left.type) {
+                    case RegExType.LITERAL: {
+                        // create one new state with transition to right
+                        State next = new State(setId(states), right.rToString(), new HashMap<>(), false, false);
+                        actualState.setTransitions(new Input(left.a.toString(), TransitionType.LITERAL), next);
+                        convertToNea(next, right, states);
+                        break;
+                    }
+                    default: {
+                        evaluateLeft = convertToNea(actualState, left, states);
+                        //get last states of the left side of concatenation to go on here
+                        List<State> followUpStates = new ArrayList<>();
+                        for (State state : evaluateLeft.states) {
+                            if (state.terminal) {
+                                state.setTerminal(false);
+                                followUpStates.add(state);
+                            }
+                        }
 
-                Nea evaluateLeft = convertToNea(actualState, left, states);
 
+                        for (State state : followUpStates) {
+                            convertToNea(state, right, states);
+                        }
+                        break;
+                    }
+
+                }
+                break;
+            }
+            case RegExType.LITERAL: {
+                //TODO might also be starting, check if actualState already has transitions
+                State last = new State(setId(states), regEx.rToString() + " final destination", new HashMap<>(), true, false);
+                actualState.setTransitions(new Input(regEx.rToString(), TransitionType.LITERAL), last);
+                states.add(last);
+                break;
+            }
+            case RegExType.LOOP: {
+                // evaluate everything and put an Epsilon-Transition to starting state
+                RegEx inside = regEx.getRegEx();
+                Nea evaluateLoop = convertToNea(actualState, inside, states);
                 //get last states of the left side of concatenation to go on here
                 List<State> followUpStates = new ArrayList<>();
-                for (State state: evaluateLeft.states) {
+                for (State state : evaluateLoop.states) {
                     if (state.terminal) {
                         state.setTerminal(false);
                         followUpStates.add(state);
                     }
                 }
-
-
                 for (State state : followUpStates) {
-                    convertToNea(state, right, states);
+                    state.setTransitions(new Input("Epsilon", TransitionType.EPSILON), actualState);
                 }
-
-
-
-
-            case RegExType.LITERAL: {
-                //TODO might also be starting, check if actualState already has transitions
-                State last = new State(regEx.rToString() + " final destination", new HashMap<>(), true, false);
-                actualState.setTransitions(new Input(regEx.rToString(), TransitionType.LITERAL), last);
-                states.add(last);
-                break;
-            }
-
-            default: {
-                State last = new State(regEx.rToString(), new HashMap<>(), true, false);
-                actualState.setTransitions(new Input(regEx.rToString(), TransitionType.LITERAL), last);
-                states.add(last);
-                break;
-
             }
         }
 
-        return new
+        return new Nea(states);
+    }
 
-                Nea(states);
+    public static int setId(List<State> states) {
+        return states.size();
     }
 
     public static TransitionType checkTransitionType(String in) {

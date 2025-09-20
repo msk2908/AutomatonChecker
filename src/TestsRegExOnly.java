@@ -118,5 +118,16 @@ public class TestsRegExOnly {
         assertEquals(c1.rToString(), result.rToString());
     }
 
+    @Test
+    public void testLoopWithBracesBcIFuckedItUp() {
+        char[] regExChar = "ab(c+d)*".toCharArray();
+        RegEx right = new Loop(new Or(new RegEx('c'), new RegEx('d')));
+        RegEx regEx = new Concat(new Concat(new RegEx('a'), (new RegEx('b'))), right);
+        System.out.println(regEx.rToString());
+        RegEx result = Main.convertToSyntaxTree(regExChar, "", "");
+        System.out.println(result.rToString());
+        assertEquals(regEx.rToString(), result.rToString());
+    }
+
 
 }

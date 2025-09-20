@@ -19,10 +19,10 @@ public class Nea {
         return new Dea(new ArrayList<>(), false);
     }
 
-    public String neaToString() {
+    public String neaToString(Alphabet alphabet) {
         String res = "";
         for (State state: states) {
-            res += "state " + state.name + " has the transitions: \n" + state.transitionsToString() + "\n";
+            res += "state " + state.name + " has the transitions: \n" + state.transitionsToString(alphabet, states.size()) + "\n";
 
         }
         return res;
