@@ -208,6 +208,7 @@ public class TestRegExToNea {
     @Test
     public void testComplicated() {
         //does not actually test something because putting the automaton requires mental working
+        //TODO make this test test something
         List list = new ArrayList<>();
         list.add("a");
         list.add("b");
