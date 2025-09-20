@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Nea {
@@ -20,11 +19,14 @@ public class Nea {
         return new Dea(new ArrayList<>(), false);
     }
 
-    /*public String aToString() {
+    public String neaToString() {
+        String res = "";
         for (State state: states) {
+            res += "state " + state.name + " has the transitions: \n" + state.transitionsToString() + "\n";
 
         }
-    }*/
+        return res;
+    }
 
 
 

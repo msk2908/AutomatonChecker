@@ -39,9 +39,17 @@ public class State {
         return transitions.get(input);
     }
 
-    public void transitionsToString() {
+    public String transitionsToString() {
+        String res = "";
         for (Input input : transitions.keySet()) {
-            System.out.println(input.iToString() + ":" + transitions.get(input));
+            List<State> nextStates = transitions.get(input);
+            List<String> stringStates = new ArrayList<>();
+            for (State state: nextStates) {
+                stringStates.add(state.name);
+            }
+            res += input.iToString() + ":" + stringStates + "\n";
         }
+        return res;
     }
+
 }
