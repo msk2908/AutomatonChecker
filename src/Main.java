@@ -171,7 +171,7 @@ public class Main {
         Alphabet alphabet = new Alphabet(buffer);
 
 
-        System.out.println("Please input RegEx, use e for epsilon: ");
+        System.out.println("Please input RegEx: ");
         String regExStr = br.readLine();
 
         RegEx regexABD = convertToSyntaxTree(regExStr.toCharArray(), "", "");
@@ -203,11 +203,11 @@ public class Main {
         }
         for (Character character : regExChar) {
             // do I really need this for-loop if only ever considering the first entry?
-            String buf = "";
+            StringBuilder buf = new StringBuilder();
             for (int i = 1; i < rest.length; i++) {
-                buf += rest[i];
+                buf.append(rest[i]);
             }
-            rest = buf.toCharArray();
+            rest = buf.toString().toCharArray();
 
             switch (character) {
                 case '(': {
@@ -234,13 +234,13 @@ public class Main {
                     }
 
                     RegEx parenthesisEvaluated = convertToSyntaxTree(par.toCharArray(), "", "");
-                    buf = "";
+                    buf = new StringBuilder();
                     i += 1;
                     while (i < rest.length) {
-                        buf += rest[i];
+                        buf.append(rest[i]);
                         i++;
                     }
-                    rest = buf.toCharArray();
+                    rest = buf.toString().toCharArray();
                     if (!evaluateLeft.isEmpty() || !justRead.isEmpty()) {
                         //RegEx evaluateEverythingInParenthesis = convertToSyntaxTree(par.toCharArray(), "", "");
                         parenthesisEvaluated = new Concat(concat(evaluateLeft.concat(justRead).toCharArray()), checkHowToGoOn(parenthesisEvaluated, rest));
@@ -313,7 +313,7 @@ public class Main {
     }
 
     /**
-     * helper function of convertToSyntaxTree, checks if there is something to do after evaluating a parenthesis
+     * helper function, checks if there is something to do after evaluating a parenthesis or the inside of a Loop
      **/
     public static RegEx checkHowToGoOn(RegEx parenthesisEvaluated, char[] rest) {
         // checks what comes after the parenthesis to evaluate the whole expression
@@ -450,10 +450,16 @@ public class Main {
         return new Nea(states);
     }
 
+    /**
+     * sets the Id of states based on the existing number of states (kinda useless, but fine)
+     */
     public static int setId(List<State> states) {
         return states.size();
     }
 
+    /**
+     * returns the type of the given transition if e would be used as Epsilon
+     */
     public static TransitionType checkTransitionType(String in) {
         if (in.equals("e")) {
             return TransitionType.EPSILON;

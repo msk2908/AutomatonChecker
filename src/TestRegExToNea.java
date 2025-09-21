@@ -7,20 +7,20 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class TestRegExToNea {
-    //TODO do not use Stringcompare, this is the worst shit ever seen, do smth like transition.contains(...)
+    //TODO do not use StringCompare, this is the worst shit ever seen, do smth like transition.contains(...)
 
     // easy (only one property)
     @Test
     public void testLiteralToNea() {
         RegEx regEx = new RegEx('a');
-        List alphabetList = new ArrayList<>();
+        List<String > alphabetList = new ArrayList<>();
         alphabetList.add("a");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
         System.out.println("created: " + nea.neaToString(alphabet));
         List<State> states = new ArrayList<>();
         State state2 = new State(1, "a final destination", new HashMap<>(), true, false);
-        HashMap transitionsInitial = new HashMap();
+        HashMap<Input, State> transitionsInitial = new HashMap<>();
         State initial = new State(0, "a", transitionsInitial, false, true);
         initial.setTransitions(new Input("a", TransitionType.LITERAL), state2);
         states.add(initial);
@@ -32,8 +32,8 @@ public class TestRegExToNea {
 
     @Test
     public void testEasyOrToNea() {
-        //kinda fails sometimes because sometimes a gets put first, sometimes b (HashMap has no order) but this is fine (use alphabet..?)
-        List alphabetList = new ArrayList<>();
+        //kinda fails sometimes because sometimes a gets put first, sometimes b (HashMap has no order) but this is fine (use alphabet...?)
+        List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
         alphabetList.add("Epsilon");
@@ -42,9 +42,9 @@ public class TestRegExToNea {
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
         System.out.println("created: \n" + nea.neaToString(alphabet));
         List<State> states = new ArrayList<>();
-        HashMap transitionsInitial = new HashMap();
-        HashMap transitionsA = new HashMap();
-        HashMap transitionsB = new HashMap();
+        HashMap<Input, State> transitionsInitial = new HashMap<>();
+        HashMap<Input, State> transitionsA = new HashMap<>();
+        HashMap<Input, State> transitionsB = new HashMap<>();
 
         State a = new State(1,"a", transitionsA, false, false);
         State b = new State(2,"b", transitionsB, false, false);
@@ -75,7 +75,7 @@ public class TestRegExToNea {
 
     @Test
     public void testEasyConcatToNea() {
-        List alphabetList = new ArrayList<>();
+        List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
         Alphabet alphabet = new Alphabet(alphabetList);
@@ -97,7 +97,7 @@ public class TestRegExToNea {
 
     @Test
     public void testEasyLoopToNea() {
-        List alphabetList = new ArrayList<>();
+        List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
         alphabetList.add("Epsilon");
@@ -123,7 +123,7 @@ public class TestRegExToNea {
     @Test
     public void testConcatAndOrLeft() {
         // ab+c
-        List alphabetList = new ArrayList<>();
+        List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
         alphabetList.add("c");
@@ -166,7 +166,7 @@ public class TestRegExToNea {
     @Test
     public void testConcatAndOrRight() {
         // a+bc
-        List alphabetList = new ArrayList<>();
+        List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
         alphabetList.add("c");
@@ -209,7 +209,7 @@ public class TestRegExToNea {
     public void testComplicated() {
         //does not actually test something because putting the automaton requires mental working
         //TODO make this test test something
-        List list = new ArrayList<>();
+        List<String> list = new ArrayList<>();
         list.add("a");
         list.add("b");
         list.add("c");
