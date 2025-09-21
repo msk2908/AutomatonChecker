@@ -180,4 +180,17 @@ public class TestsRegExOnly {
         assertEquals(regEx.rToString(), result.rToString());
     }
 
+    @Test
+    public void testFinal() {
+        char[] regExChar = "a+b+ab+b*+(ab*+b*)*".toCharArray();
+        RegEx braces = new Loop(new Or(new Concat(new RegEx('a'), new Loop(new RegEx('b'))), new Loop(new RegEx('b'))));
+        RegEx loopB = new Loop(new RegEx('b'));
+        RegEx concat = new Concat(new RegEx('a'), new RegEx('b'));
+        RegEx all = new Or(new RegEx('a'), new Or(new RegEx('b'), new Or(concat, new Or(loopB, braces))));
+        System.out.println(all.rToString());
+        RegEx result = Main.convertToSyntaxTree(regExChar, "", "");
+        System.out.println(result.rToString());
+        assertEquals(all.rToString(), result.rToString());
+    }
+
 }

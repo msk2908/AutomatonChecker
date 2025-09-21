@@ -267,7 +267,9 @@ public class Main {
                     if (evaluateLeft.isEmpty()) {
                         return new Loop(new RegEx(justRead.toCharArray()[0]));
                     }
-                    return new Concat(concat(evaluateLeft.toCharArray()), new Loop(convertToSyntaxTree(justRead.toCharArray(), "", justRead)));
+                    //TODO chanehed c(j,"", j)
+                    RegEx loop = new Concat(concat(evaluateLeft.toCharArray()), new Loop(convertToSyntaxTree(justRead.toCharArray(), "", justRead)));
+                    return checkHowToGoOn(loop, rest);
                 }
 
                 default: {
