@@ -78,6 +78,46 @@ public class TestsRegExOnly {
     }
 
     @Test
+    public void testLoopWithConcat() {
+        char[] regExChar = "(abc)*".toCharArray();
+        RegEx regEx = new Loop(new Concat(new RegEx('a'), new Concat( new RegEx('b'), new RegEx('c'))));
+        System.out.println(regEx.rToString());
+        RegEx result = Main.convertToSyntaxTree(regExChar, "", "");
+        System.out.println(result.rToString());
+        assertEquals(regEx.rToString(), result.rToString());
+    }
+
+    @Test
+    public void testLoopWithOr() {
+        char[] regExChar = "(ab+c)*".toCharArray();
+        RegEx regEx = new Loop(new Or(new Concat(new RegEx('a'),  new RegEx('b')), new RegEx('c')));
+        System.out.println(regEx.rToString());
+        RegEx result = Main.convertToSyntaxTree(regExChar, "", "");
+        System.out.println(result.rToString());
+        assertEquals(regEx.rToString(), result.rToString());
+    }
+
+    @Test
+    public void testLoopWithLoop() {
+        char[] regExChar = "(b*+c)*".toCharArray();
+        RegEx regEx = new Loop(new Or(new Loop(new RegEx('b')), new RegEx('c')));
+        System.out.println(regEx.rToString());
+        RegEx result = Main.convertToSyntaxTree(regExChar, "", "");
+        System.out.println(result.rToString());
+        assertEquals(regEx.rToString(), result.rToString());
+    }
+
+    @Test
+    public void testLoopWithOr2() {
+        char[] regExChar = "(b*+c)".toCharArray();
+        RegEx regEx = new Or(new Loop(new RegEx('b')), new RegEx('c'));
+        System.out.println(regEx.rToString());
+        RegEx result = Main.convertToSyntaxTree(regExChar, "", "");
+        System.out.println(result.rToString());
+        assertEquals(regEx.rToString(), result.rToString());
+    }
+
+    @Test
     public void testConcatenationSeemsToBeBrokenlvl3() {
         char[] regExChar = "ab(ab+b*)".toCharArray();
         RegEx brace = new Or(new Concat(new RegEx('a'), new RegEx('b')), new Loop(new RegEx('b')));
@@ -109,7 +149,7 @@ public class TestsRegExOnly {
     }
 
     @Test
-    public void testConcatenationSeemsToBeBrokenlvl1() {
+    public void testConcatenationSeemsToBeBrokenLvl1() {
         char[] regExChar = "abc".toCharArray();
         RegEx c1 = new Concat(new RegEx('a'), new Concat(new RegEx('b'), new RegEx('c')));
         System.out.println(c1);
@@ -129,5 +169,15 @@ public class TestsRegExOnly {
         assertEquals(regEx.rToString(), result.rToString());
     }
 
+    @Test
+    public void testConcatenationSeemsToBeBrokenLvl2() {
+        char[] regExChar = "a+(b*+ab)*".toCharArray();
+        RegEx braces = new Or(new Loop(new RegEx('b')), new Concat(new RegEx('a'), new RegEx('b')));
+        RegEx regEx = new Or(new RegEx('a'), new Loop(braces));
+        System.out.println(regEx.rToString());
+        RegEx result = Main.convertToSyntaxTree(regExChar, "", "");
+        System.out.println(result.rToString());
+        assertEquals(regEx.rToString(), result.rToString());
+    }
 
 }

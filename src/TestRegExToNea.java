@@ -220,4 +220,17 @@ public class TestRegExToNea {
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
         System.out.println("solution: \n" + nea.neaToString(alphabet));
     }
+
+    @Test
+    public void testComplicated2() {
+        List<String> strings = new ArrayList<>();
+        strings.add("a");
+        strings.add("b");
+        strings.add("Epsilon");
+        Alphabet alphabet = new Alphabet(strings);
+        RegEx regEx = Main.convertToSyntaxTree("a+(b*+ab)*".toCharArray(), "", "");
+        System.out.println(regEx.rToString());
+        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
+        System.out.println(nea.neaToString(alphabet));
+    }
 }

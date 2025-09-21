@@ -264,7 +264,9 @@ public class Main {
                 }
                 case '*': {
                     if (evaluateLeft.isEmpty() && rest.length > 0) {
-                        return new Concat(new Loop(new RegEx(justRead.toCharArray()[0])), convertToSyntaxTree(rest, "", ""));
+                        RegEx loop = new Loop(new RegEx(justRead.toCharArray()[0]));
+                        return checkHowToGoOn(loop, rest);
+                        //return new Concat(new , convertToSyntaxTree(rest, "", ""));
                     }
                     if (evaluateLeft.isEmpty()) {
                         return new Loop(new RegEx(justRead.toCharArray()[0]));
@@ -333,7 +335,8 @@ public class Main {
                     return new Or(parenthesisEvaluated, convertToSyntaxTree(rest, "", ""));
                 }
                 default: {
-                    return new Concat(parenthesisEvaluated, convertToSyntaxTree(rest, "", ""));
+                    String all = check + buf;
+                    return new Concat(parenthesisEvaluated, convertToSyntaxTree(all.toCharArray(), "", ""));
                 }
             }
         }
