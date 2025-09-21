@@ -1,10 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class Main {
@@ -43,8 +40,8 @@ public class Main {
     public static Nea setUpDefault() {
         Input a = new Input("a", TransitionType.LITERAL);
         Input b = new Input("b", TransitionType.LITERAL);
-        HashMap aTransitions = new HashMap();
-        HashMap bTransitions = new HashMap();
+        HashMap<Input, State> aTransitions = new HashMap<>();
+        HashMap<Input, State> bTransitions = new HashMap<>();
 
         State A = new State(0, "A", aTransitions, false, true);
         State B = new State(1, "B", bTransitions, true, false);
@@ -70,7 +67,7 @@ public class Main {
         while (flag.equals("y")) {
 
             //get states one by one
-            List<String> StateNamelist = new ArrayList<String>();
+            List<String> StateNamelist = new ArrayList<>();
             System.out.print("Please input one state: ");
             String state;
             state = br.readLine();
@@ -107,8 +104,7 @@ public class Main {
 
             // nextInt() reads the next integer from the keyboard
             int number = -1;
-            while (number < 0) {
-                number = -1;
+            while (true) {
                 System.out.println("How many transitions does " + state.name + " have? ");
                 try {
                     String num = reader.nextLine();
@@ -213,7 +209,7 @@ public class Main {
                 case '(': {
                     /* if parenthesis open: loop until the same parenthesis does close again,
                      evaluate the expression in it (parenthesisEvaluated), then check if there is more expression (checkHowToGoOn)*/
-                    String par = "";
+                    StringBuilder par = new StringBuilder();
                     int i = 0;
                     int counter = 0; //counts the amount of opened parenthesis to not close the first one too early
                     while (i < rest.length) {
@@ -229,11 +225,11 @@ public class Main {
                                 }
                             }
                         }
-                        par += rest[i];
+                        par.append(rest[i]);
                         i++;
                     }
 
-                    RegEx parenthesisEvaluated = convertToSyntaxTree(par.toCharArray(), "", "");
+                    RegEx parenthesisEvaluated = convertToSyntaxTree(par.toString().toCharArray(), "", "");
                     buf = new StringBuilder();
                     i += 1;
                     while (i < rest.length) {
@@ -294,12 +290,12 @@ public class Main {
      **/
     public static RegEx concat(char[] regex) throws IllegalArgumentException {
         char[] rest = regex;
-        String buf = "";
+        StringBuilder buf = new StringBuilder();
         try {
             for (int i = 1; i < rest.length; i++) {
-                buf += rest[i];
+                buf.append(rest[i]);
             }
-            rest = buf.toCharArray();
+            rest = buf.toString().toCharArray();
 
             if (rest.length > 0) {
                 return new Concat(new RegEx(regex[0]), concat(rest));
@@ -321,11 +317,11 @@ public class Main {
             return parenthesisEvaluated;
         } else {
             char check = rest[0];
-            String buf = "";
+            StringBuilder buf = new StringBuilder();
             for (int i = 1; i < rest.length; i++) {
-                buf += rest[i];
+                buf.append(rest[i]);
             }
-            rest = buf.toCharArray();
+            rest = buf.toString().toCharArray();
             switch (check) {
                 case '*': {
                     //loops the whole parenthesis
@@ -335,7 +331,7 @@ public class Main {
                     return new Or(parenthesisEvaluated, convertToSyntaxTree(rest, "", ""));
                 }
                 default: {
-                    String all = check + buf;
+                    String all = check + buf.toString();
                     return new Concat(parenthesisEvaluated, convertToSyntaxTree(all.toCharArray(), "", ""));
                 }
             }
@@ -363,11 +359,11 @@ public class Main {
                 // create two follow-up states with an Epsilon-Transition
                 RegExType type = regEx.getRight().type;
 
-                left = new State(setId(states), regEx.getLeft().rToString(), new HashMap(), false, false);
+                left = new State(setId(states), regEx.getLeft().rToString(), new HashMap<>(), false, false);
 
                 states.add(left);
 
-                right = new State(setId(states), regEx.getRight().rToString(), new HashMap(), false, false);
+                right = new State(setId(states), regEx.getRight().rToString(), new HashMap<>(), false, false);
 
                 states.add(right);
 
@@ -388,32 +384,25 @@ public class Main {
                 RegEx left = regEx.getLeft();
                 RegEx right = regEx.getRight(); // is never empty or broken (will be checked by concat() when inputting RegEx)
                 Nea evaluateLeft;
-                switch (left.type) {
-                    case RegExType.LITERAL: {
-                        // create one new state with transition to right
-                        State next = new State(setId(states), right.rToString(), new HashMap<>(), false, false);
-                        actualState.setTransitions(new Input(left.a.toString(), TransitionType.LITERAL), next);
-                        convertToNea(next, right, states);
-                        break;
-                    }
-                    default: {
-                        evaluateLeft = convertToNea(actualState, left, states);
-                        //get last states of the left side of concatenation to go on here
-                        List<State> followUpStates = new ArrayList<>();
-                        for (State state : evaluateLeft.states) {
-                            if (state.terminal) {
-                                state.setTerminal(false);
-                                followUpStates.add(state);
-                            }
+                if (Objects.requireNonNull(left.type) == RegExType.LITERAL) {// create one new state with transition to right
+                    State next = new State(setId(states), right.rToString(), new HashMap<>(), false, false);
+                    actualState.setTransitions(new Input(left.a.toString(), TransitionType.LITERAL), next);
+                    convertToNea(next, right, states);
+                } else {
+                    evaluateLeft = convertToNea(actualState, left, states);
+                    //get last states of the left side of concatenation to go on here
+                    List<State> followUpStates = new ArrayList<>();
+                    for (State state : evaluateLeft.states) {
+                        if (state.terminal) {
+                            state.setTerminal(false);
+                            followUpStates.add(state);
                         }
-
-
-                        for (State state : followUpStates) {
-                            convertToNea(state, right, states);
-                        }
-                        break;
                     }
 
+
+                    for (State state : followUpStates) {
+                        convertToNea(state, right, states);
+                    }
                 }
                 break;
             }
