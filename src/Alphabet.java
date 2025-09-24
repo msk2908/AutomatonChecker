@@ -31,4 +31,13 @@ public class Alphabet {
 
         return inputList;
     }
+
+    public Input get(String input) throws IllegalArgumentException {
+        for (Input in: possibleInputs) {
+            if (in.iToString().equals(input)) {
+                return in;
+            }
+        }
+        throw new IllegalArgumentException("not a possible input");
+    }
 }

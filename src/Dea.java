@@ -5,10 +5,12 @@ import java.util.List;
 public class Dea {
     List<State> states;
     boolean minimized;
+    Alphabet alphabet;
 
-    public Dea(List<State> states, boolean minimized) {
-        states = states;
+    public Dea(List<State> states, boolean minimized, Alphabet alphabet) {
+        this.states = states;
         this.minimized = minimized;
+        this.alphabet = alphabet;
     }
 
     public void minimization() {
@@ -20,9 +22,14 @@ public class Dea {
 
 
 
-    public static Dea minimize() {
+    public Dea minimize() {
         //TODO
-        return new Dea(new ArrayList<>(), true);
+        /**
+        //1. write down a table of all pairs {p,q} initially
+        //2. mark {p,q} if i $\in$ F and q $\notin$ F or vice versa
+        //3. repeat the following until no more changes occur: if there exists an unmarked pair {p,q} st {$\delta$(p), $\delta$(q)} is unmarked for some a ?in $\Sigma$, then mark {p,q}
+        //4. when done, q $\approx$ q iff {p,q} is**/
+        return new Dea(new ArrayList<>(), true, this.alphabet);
     }
 
 }

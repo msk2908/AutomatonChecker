@@ -9,7 +9,8 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        Nea default1 = new Nea(null);
+        //TODO alphabet is wrong
+        Nea default1 = new Nea(null, new Alphabet(new ArrayList<>()));
         System.out.println("Use default automaton? y/n");
         String def = br.readLine();
 
@@ -38,6 +39,10 @@ public class Main {
     }
 
     public static Nea setUpDefault() {
+        List<String> alphabetList = new ArrayList<>();
+        alphabetList.add("a");
+        alphabetList.add("b");
+        Alphabet alphabet = new Alphabet(alphabetList);
         Input a = new Input("a", TransitionType.LITERAL);
         Input b = new Input("b", TransitionType.LITERAL);
         HashMap<Input, State> aTransitions = new HashMap<>();
@@ -54,7 +59,7 @@ public class Main {
         List<State> s1 = new ArrayList<>();
         s1.add(A);
         s1.add(B);
-        return new Nea(s1);
+        return new Nea(s1, alphabet);
     }
 
     public static Nea enterAutomaton(BufferedReader br) throws IOException {
@@ -133,12 +138,14 @@ public class Main {
             }
             stateList.add(state);
         }
-        return new Nea(stateList);
+        //TODO insert useful alphabet, get from loop
+        return new Nea(stateList, new Alphabet(new ArrayList<>()));
     }
 
 
+
     // RegEx functions
-    // TODO check for correct syntax when interpreting switch e for epsilon etc ε
+    // TODO check for correct syntax when interpreting switch e for ε epsilon etc
     public static Nea enterRegEx(BufferedReader br) throws IOException {
         List<State> states = new ArrayList<>();
 
@@ -173,12 +180,11 @@ public class Main {
         RegEx regexABD = convertToSyntaxTree(regExStr.toCharArray(), "", "");
         System.out.println(regexABD.rToString());
 
-        Nea nea = convertToNea(null, regexABD, new ArrayList<>());
+        Nea nea = convertToNea(null, regexABD, new ArrayList<>(), alphabet);
 
         return nea;
 
     }
-
 
     /**
      * converts a given RegEx into a syntax tree
@@ -267,7 +273,6 @@ public class Main {
                     if (evaluateLeft.isEmpty()) {
                         return new Loop(new RegEx(justRead.toCharArray()[0]));
                     }
-                    //TODO chanehed c(j,"", j)
                     RegEx loop = new Concat(concat(evaluateLeft.toCharArray()), new Loop(convertToSyntaxTree(justRead.toCharArray(), "", justRead)));
                     return checkHowToGoOn(loop, rest);
                 }
@@ -344,7 +349,7 @@ public class Main {
     /**
      * converts a given RegEx to a Nea
      **/
-    public static Nea convertToNea(State actualState, RegEx regEx, List<State> states) {
+    public static Nea convertToNea(State actualState, RegEx regEx, List<State> states, Alphabet alphabet) {
         if (actualState == null) {
             //create starting state
             actualState = new State(setId(states), regEx.rToString(), new HashMap<>(), false, true);
@@ -370,14 +375,14 @@ public class Main {
                 states.add(right);
 
 
-                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), left);
-                actualState.setTransitions(new Input("Epsilon", TransitionType.EPSILON), right);
+                actualState.setTransitions(alphabet.get("Epsilon"), left);
+                actualState.setTransitions(alphabet.get("Epsilon"), right);
 
 
                 System.out.println(regEx.getLeft().rToString());
                 System.out.println(regEx.getRight().rToString());
-                convertToNea(left, regEx.getLeft(), states);
-                convertToNea(right, regEx.getRight(), states);
+                convertToNea(left, regEx.getLeft(), states, alphabet);
+                convertToNea(right, regEx.getRight(), states, alphabet);
                 break;
 
             }
@@ -388,10 +393,10 @@ public class Main {
                 Nea evaluateLeft;
                 if (Objects.requireNonNull(left.type) == RegExType.LITERAL) {// create one new state with transition to right
                     State next = new State(setId(states), right.rToString(), new HashMap<>(), false, false);
-                    actualState.setTransitions(new Input(left.a.toString(), TransitionType.LITERAL), next);
-                    convertToNea(next, right, states);
+                    actualState.setTransitions(alphabet.get(left.a.toString()), next);
+                    convertToNea(next, right, states, alphabet);
                 } else {
-                    evaluateLeft = convertToNea(actualState, left, states);
+                    evaluateLeft = convertToNea(actualState, left, states, alphabet);
                     //get last states of the left side of concatenation to go on here
                     List<State> followUpStates = new ArrayList<>();
                     for (State state : evaluateLeft.states) {
@@ -403,7 +408,7 @@ public class Main {
 
 
                     for (State state : followUpStates) {
-                        convertToNea(state, right, states);
+                        convertToNea(state, right, states, alphabet);
                     }
                 }
                 break;
@@ -411,7 +416,7 @@ public class Main {
             case RegExType.LITERAL: {
                 //TODO might also be starting or non-final, check if actualState already has transitions or there is a follow-up (eg (a+b)*c))
                 State last = new State(setId(states), regEx.rToString() + " final destination", new HashMap<>(), true, false);
-                actualState.setTransitions(new Input(regEx.rToString(), TransitionType.LITERAL), last);
+                actualState.setTransitions(alphabet.get(regEx.rToString()), last);
                 states.add(last);
                 break;
             }
@@ -422,7 +427,7 @@ public class Main {
                 for (State state: states) {
                     saveStates.add(state);
                 }
-                Nea evaluateLoop = convertToNea(actualState, inside, states);
+                Nea evaluateLoop = convertToNea(actualState, inside, states, alphabet);
 
                         //get last states of the left side of concatenation to go on here
                 List<State> followUpStates = new ArrayList<>();
@@ -433,16 +438,17 @@ public class Main {
                     }
                 }
                 for (State state : followUpStates) {
-                    state.setTransitions(new Input("Epsilon", TransitionType.EPSILON), actualState);
+
+                    state.setTransitions(alphabet.get("Epsilon"), actualState);
                 }
             }
         }
 
-        return new Nea(states);
+        return new Nea(states, alphabet);
     }
 
     /**
-     * sets the Id of states based on the existing number of states (kinda useless, but fine)
+     * sets the id of states based on the existing number of states (kinda useless, but fine)
      */
     public static int setId(List<State> states) {
         return states.size();
