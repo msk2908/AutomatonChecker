@@ -1,3 +1,5 @@
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,8 +28,8 @@ public class Nea {
      **/
 
     public Dea convertNeaToDea() {
-        List<List<State>> listOfDifferentiatedStates = new ArrayList<>();
-        List<List<State>> compare = new ArrayList<>();
+        List<HashMap<Input, List<State>>> listOfDifferentiatedStates = new ArrayList<>();
+        List<HashMap<Input, List<State>>> compare = new ArrayList<>();
         State startingState;
         try {
             startingState = getStartingState();
@@ -38,30 +40,43 @@ public class Nea {
         //List<State> reachableStates = deleteUnreachableStatesFromList(this.states);     //get rid of unreachable states -> voll unnötig, fliegen sowieso
         List<State> startList = new ArrayList<>();
         startList.add(startingState);
-        listOfDifferentiatedStates.add(startList);  // first state has to be the starting state
-        boolean flag = true;
+        HashMap<Input, List<State>> startMap = new HashMap<>();
+        startMap.put(null, startList);
+        listOfDifferentiatedStates.add(startMap);  // first state has to be the starting state
 
-        while (compare != listOfDifferentiatedStates) {
-            if (!flag) {
-                listOfDifferentiatedStates.clear();
-                listOfDifferentiatedStates.addAll(compare);
-                compare.clear();
-            } else {
-                flag = false;
-                compare.addAll(listOfDifferentiatedStates);
-            }
-            for (List<State> stateList : listOfDifferentiatedStates) {
-                compare.add(getFollowingStates(stateList));
-            }
-        }
+        split(listOfDifferentiatedStates, startMap);
+
+
+        //TODO put collected states together and put transitions
 
 
         return new Dea(new ArrayList<>(), false, alphabet);
     }
 
+    private List<HashMap<Input, List<State>>> split(List<HashMap<Input, List<State>>> listOfDifferentiatedStates, HashMap<Input, List<State>> startMap) {
+        List<HashMap<Input, List<State>>> compare = new ArrayList<>();
+        while (compare.size() != listOfDifferentiatedStates.size()) {
+            listOfDifferentiatedStates.clear();
+            listOfDifferentiatedStates.addAll(compare);
+            compare.clear();
 
-    private List<State> deleteUnreachableStatesFromList(List<State> allStates) {
-        List<State> following = getFollowingStates(allStates);
+            compare.add(startMap);
+            for (HashMap<Input, List<State>> stateMap : listOfDifferentiatedStates) {
+                for (Input input : stateMap.keySet()) {
+                    HashMap<Input, List<State>> following = getFollowingStates(stateMap.get(input));
+                    if (!compare.contains(following) && !following.isEmpty()) {
+                        compare.add(following);
+                    }
+                }
+            }
+
+        }
+        return listOfDifferentiatedStates;
+    }
+
+
+    /*private List<State> deleteUnreachableStatesFromList(List<State> allStates) {
+        List<List<State>> following = getFollowingStates(allStates);
         List<State> reachable = new ArrayList<>();
         try {
             reachable.add(getStartingState());
@@ -75,22 +90,31 @@ public class Nea {
             }
         }
         return reachable;
-    }
+    }*/
 
     /**
      * gets all the states that are reachable starting from the given list
      */
+    private HashMap<Input, List<State>> getFollowingStates(List<State> statesToCheck) {
 
-    private List<State> getFollowingStates(List<State> statesToCheck) {
-        List<State> statesToGoTo = new ArrayList<>();
+        HashMap<Input, List<State>> mapOfListOfStatesToGoTo = new HashMap<>();
         for (Input input : alphabet.possibleInputs) {
+            List<State> statesToGoTo = new ArrayList<>();
             for (State state : statesToCheck) {
                 if (state.getTransitions().containsKey(input)) {
-                    statesToGoTo.addAll(state.transitions.get(input));
+                    for (State toAdd : state.transitions.get(input)) {
+                        if (!statesToGoTo.contains(toAdd)) {
+                            statesToGoTo.add(toAdd);
+                        }
+                    }
                 }
             }
+            if (!statesToGoTo.isEmpty()) {
+                mapOfListOfStatesToGoTo.put(input, statesToGoTo);
+            }
+
         }
-        return statesToGoTo;
+        return mapOfListOfStatesToGoTo;
     }
 
 
