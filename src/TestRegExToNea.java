@@ -7,7 +7,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class TestRegExToNea {
-    //TODO do not use StringCompare, this is the worst shit ever seen, do smth like transition.contains(...)
 
     // easy (only one property)
     @Test
@@ -16,7 +15,7 @@ public class TestRegExToNea {
         List<String > alphabetList = new ArrayList<>();
         alphabetList.add("a");
         Alphabet alphabet = new Alphabet(alphabetList);
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
+        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(),alphabet);
         System.out.println("created: " + nea.neaToString(alphabet));
         List<State> states = new ArrayList<>();
         State state2 = new State(1, "a final destination", new HashMap<>(), true, false);
@@ -25,7 +24,7 @@ public class TestRegExToNea {
         initial.setTransitions(new Input("a", TransitionType.LITERAL), state2);
         states.add(initial);
         states.add(state2);
-        Nea compare = new Nea(states);
+        Nea compare = new Nea(states, alphabet);
         System.out.println("to compare: " + compare.neaToString(alphabet));
         assertEquals(nea.neaToString(alphabet), compare.neaToString(alphabet));
     }
@@ -39,7 +38,7 @@ public class TestRegExToNea {
         alphabetList.add("Epsilon");
         Alphabet alphabet = new Alphabet(alphabetList);
         RegEx regEx = new Or(new RegEx('a'), new RegEx('b'));
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
+        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println("created: \n" + nea.neaToString(alphabet));
         List<State> states = new ArrayList<>();
         HashMap<Input, State> transitionsInitial = new HashMap<>();
@@ -68,7 +67,7 @@ public class TestRegExToNea {
         states.add(b);
         states.add(aFinal);
         states.add(bFinal);
-        Nea compare = new Nea(states);
+        Nea compare = new Nea(states, alphabet);
         System.out.println("to compare: \n" + compare.neaToString(alphabet));
         assertEquals(nea.neaToString(alphabet), compare.neaToString(alphabet));
     }
@@ -89,9 +88,9 @@ public class TestRegExToNea {
         states.add(concatAB);
         states.add(b);
         states.add(bFinal);
-        Nea compare = new Nea(states);
+        Nea compare = new Nea(states, alphabet);
 
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
+        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         assertEquals(compare.neaToString(alphabet), nea.neaToString(alphabet));
     }
 
@@ -110,8 +109,8 @@ public class TestRegExToNea {
         List<State> states = new ArrayList<>();
         states.add(loopA);
         states.add(a);
-        Nea compare = new Nea(states);
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
+        Nea compare = new Nea(states, alphabet);
+        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println(compare.neaToString(alphabet));
         System.out.println(nea.neaToString(alphabet));
         assertEquals(compare.neaToString(alphabet), nea.neaToString(alphabet));
@@ -152,8 +151,8 @@ public class TestRegExToNea {
         states.add(b);
         states.add(bFinal);
         states.add(cFinal);
-        Nea compare = new Nea(states);
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
+        Nea compare = new Nea(states, alphabet);
+        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         String comp = compare.neaToString(alphabet);
         System.out.println("expected: \n" + comp);
         String got = nea.neaToString(alphabet);
@@ -195,8 +194,8 @@ public class TestRegExToNea {
         states.add(aFinal);
         states.add(c);
         states.add(cFinal);
-        Nea compare = new Nea(states);
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
+        Nea compare = new Nea(states, alphabet);
+        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         String comp = compare.neaToString(alphabet);
         System.out.println("expected: \n" + comp);
         String got = nea.neaToString(alphabet);
@@ -217,7 +216,7 @@ public class TestRegExToNea {
         Alphabet alphabet = new Alphabet(list);
         RegEx regEx = Main.convertToSyntaxTree("ab+(ab+c)*".toCharArray(), "", "");
         System.out.println(regEx);
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
+        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println("solution: \n" + nea.neaToString(alphabet));
     }
 
@@ -230,7 +229,7 @@ public class TestRegExToNea {
         Alphabet alphabet = new Alphabet(strings);
         RegEx regEx = Main.convertToSyntaxTree("a+(b*+ab)*".toCharArray(), "", "");
         System.out.println(regEx.rToString());
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>());
+        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println(nea.neaToString(alphabet));
     }
 }
