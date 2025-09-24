@@ -19,7 +19,7 @@ public class TestRegExToNea {
         System.out.println("created: " + nea.neaToString(alphabet));
         List<State> states = new ArrayList<>();
         State state2 = new State(1, "a final destination", new HashMap<>(), true, false);
-        HashMap<Input, State> transitionsInitial = new HashMap<>();
+        HashMap<Input, List<State>> transitionsInitial = new HashMap<>();
         State initial = new State(0, "a", transitionsInitial, false, true);
         initial.setTransitions(new Input("a", TransitionType.LITERAL), state2);
         states.add(initial);
@@ -41,9 +41,9 @@ public class TestRegExToNea {
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println("created: \n" + nea.neaToString(alphabet));
         List<State> states = new ArrayList<>();
-        HashMap<Input, State> transitionsInitial = new HashMap<>();
-        HashMap<Input, State> transitionsA = new HashMap<>();
-        HashMap<Input, State> transitionsB = new HashMap<>();
+        HashMap<Input, List<State>> transitionsInitial = new HashMap<>();
+        HashMap<Input, List<State>> transitionsA = new HashMap<>();
+        HashMap<Input, List<State>> transitionsB = new HashMap<>();
 
         State a = new State(1,"a", transitionsA, false, false);
         State b = new State(2,"b", transitionsB, false, false);

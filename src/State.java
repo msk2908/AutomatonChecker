@@ -3,11 +3,11 @@ import java.util.*;
 public class State {
     final int id;
     final String name;
-    Map<Input, State> transitions = new LinkedHashMap<>();
+    Map<Input, List<State>> transitions = new LinkedHashMap<>();
     boolean terminal;
     final boolean starting;
 
-    public State(int id, String name, Map<Input, State> transitions, boolean terminal, boolean starting) {
+    public State(int id, String name, Map<Input, List<State>> transitions, boolean terminal, boolean starting) {
         this.id = id;
         this.name = name;
         this.transitions = transitions;
@@ -18,24 +18,29 @@ public class State {
     public void setTransitions(Input input, State state) {
         // creates a transition for the automaton with the given input from alphabet to the given state
         //TODO evtl. bool to check if input is possible? -> not really needed?
-        transitions.put(input, state);
+        List<State> newList = new ArrayList<>();
+        newList.add(state);
+        if (transitions.containsKey(input)) {
+            transitions.get(input).add(state);
+        } else {
+            transitions.put(input, newList);
+        }
     }
 
     public void setTerminal(boolean b) {
         this.terminal = b;
     }
 
-    public Map<Input, State> getTransitions() {
+    public Map<Input, List<State>> getTransitions() {
         return transitions;
     }
 
-    public State getNextStatesForInput(Input input) {
+    public List<State> getNextStatesForInput(Input input) {
         //TODO fix this to hand out ALL follow-up states
         return transitions.get(input);
     }
 
     public String transitionsToString(Alphabet alphabet, int numberOfAllStates) {
-        //TODO fix order for tests or implement useful comparison
         String res = "";
         /*for (Input input : transitions.keySet()) {
             List<State> nextStates = transitions.get(input);
@@ -51,7 +56,7 @@ public class State {
             List<State> nextStates = new ArrayList<>();
             for (Input tInput : transitions.keySet()) {
                 if (input.iToString().equals(tInput.iToString())) {
-                    nextStates.add(transitions.get(tInput));
+                    nextStates.addAll(transitions.get(tInput));
 
                 }
             }

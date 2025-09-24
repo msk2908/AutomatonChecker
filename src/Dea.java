@@ -13,6 +13,15 @@ public class Dea {
         this.alphabet = alphabet;
     }
 
+    public String deaToString(Alphabet alphabet) {
+        String res = "";
+        for (State state : states) {
+            res += "state " + state.name + " has the transitions: \n" + state.transitionsToString(alphabet, states.size()) + "\n";
+
+        }
+        return res;
+    }
+
     public void minimization() {
        /* Minimizes the DFA using state equivalence:
             1. Partition states into accepting and non-accepting.
