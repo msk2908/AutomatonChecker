@@ -27,9 +27,9 @@ public class TestConversionNeaDea {
     public void testEasyLoopNeaToDea() {
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
-        alphabetList.add("Epsilon");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("a*".toCharArray(), "", ""), new ArrayList<>(), alphabet);
+        System.out.println(nea.neaToString(alphabet));
         Dea dea = nea.convertNeaToDea();
 
         System.out.println(dea.deaToString(alphabet));
@@ -39,12 +39,12 @@ public class TestConversionNeaDea {
     public void testEasyConcatNeaToDea() {
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
-        alphabetList.add("Epsilon");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("aa".toCharArray(), "", ""), new ArrayList<>(), alphabet);
+        System.out.println("Nea: \n"+ nea.neaToString(alphabet));
         Dea dea = nea.convertNeaToDea();
 
-        System.out.println(dea.deaToString(alphabet));
+        System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
     @Test
@@ -52,12 +52,12 @@ public class TestConversionNeaDea {
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
-        alphabetList.add("Epsilon");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("a+b".toCharArray(), "", ""), new ArrayList<>(), alphabet);
+        System.out.println("Nea: \n"+ nea.neaToString(alphabet));
         Dea dea = nea.convertNeaToDea();
 
-        System.out.println(dea.deaToString(alphabet));
+        System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
     @Test
@@ -65,7 +65,6 @@ public class TestConversionNeaDea {
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
-        alphabetList.add("Epsilon");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("ab+a".toCharArray(), "", ""), new ArrayList<>(), alphabet);
         Dea dea = nea.convertNeaToDea();
@@ -78,7 +77,6 @@ public class TestConversionNeaDea {
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
-        alphabetList.add("Epsilon");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("(a+b)+a".toCharArray(), "", ""), new ArrayList<>(), alphabet);
         Dea dea = nea.convertNeaToDea();
@@ -91,7 +89,6 @@ public class TestConversionNeaDea {
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
-        alphabetList.add("Epsilon");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("(a+b)*".toCharArray(), "", ""), new ArrayList<>(), alphabet);
         Dea dea = nea.convertNeaToDea();
@@ -109,7 +106,6 @@ public class TestConversionNeaDea {
         list.add("a");
         list.add("b");
         list.add("c");
-        list.add("Epsilon");
         Alphabet alphabet = new Alphabet(list);
         RegEx regEx = Main.convertToSyntaxTree("ab+(ab+c)*".toCharArray(), "", "");
         System.out.println(regEx);

@@ -16,7 +16,7 @@ public class Nea {
     public String neaToString(Alphabet alphabet) {
         String res = "";
         for (State state : states) {
-            res += "state " + state.name + " has the transitions: \n" + state.transitionsToString(alphabet, states.size()) + "\n";
+            res += "state " + state.name + " has the transitions: \n" + state.transitionsToString(alphabet) + "\n";
 
         }
         return res;
@@ -28,8 +28,8 @@ public class Nea {
      **/
 
     public Dea convertNeaToDea() {
+        getRidOfEpsilons();
         List<HashMap<Input, List<State>>> listOfDifferentiatedStates = new ArrayList<>();
-        List<HashMap<Input, List<State>>> compare = new ArrayList<>();
         State startingState;
         try {
             startingState = getStartingState();
@@ -41,19 +41,26 @@ public class Nea {
         List<State> startList = new ArrayList<>();
         startList.add(startingState);
         HashMap<Input, List<State>> startMap = new HashMap<>();
-        startMap.put(null, startList);
+        startMap.put(alphabet.get("Epsilon"), startList);
         listOfDifferentiatedStates.add(startMap);  // first state has to be the starting state
 
         split(listOfDifferentiatedStates, startMap);
 
+        List<State> removeDoubles = new ArrayList<>();
+        for (int i = 0; i < this.states.size(); i++) {
+            for (int j = 0; j < this.states.size(); j++) {
+                if (i != j && this.states.get(i).equals(this.states.get(j))) {
+                    this.states.get(i).addTransitions(this.states.get(j).transitions);
+                    removeDoubles.add(this.states.get(j));
+                }
+            }
+        }
+        this.states.removeAll(removeDoubles);        // necessary bc starting state does things
 
-        //TODO put collected states together and put transitions
-
-
-        return new Dea(new ArrayList<>(), false, alphabet);
+        return new Dea(states, false, alphabet);
     }
 
-    private List<HashMap<Input, List<State>>> split(List<HashMap<Input, List<State>>> listOfDifferentiatedStates, HashMap<Input, List<State>> startMap) {
+    private void split(List<HashMap<Input, List<State>>> listOfDifferentiatedStates, HashMap<Input, List<State>> startMap) {
         List<HashMap<Input, List<State>>> compare = new ArrayList<>();
         while (compare.size() != listOfDifferentiatedStates.size()) {
             listOfDifferentiatedStates.clear();
@@ -71,7 +78,40 @@ public class Nea {
             }
 
         }
-        return listOfDifferentiatedStates;
+    }
+
+    /**
+     * If the only connection between two states is en epsilon-transition, delete the one it points to and give the first one its transitions
+     */
+
+    private void getRidOfEpsilons() {
+        boolean flag = true;
+        // get rid of all states connected by Epsilon
+        while (flag) {
+            for (State state : this.states) {
+                List<State> statesConnectedByE = state.transitions.get(alphabet.get("Epsilon"));
+                if (statesConnectedByE != null) {
+                    List<State> toRemove = new ArrayList<>();
+                    for (State state1: statesConnectedByE) {
+                        if (state1.starting) {
+                            state.setStarting();
+                        }
+                        state.addTransitions(state1.transitions);
+                        toRemove.add(state1);
+                        state.removeTransition(alphabet.get("Epsilon"), state1);
+                        if (statesConnectedByE.isEmpty()) {
+                            break;
+                        }
+                    }
+                    for (int i = 0; i< toRemove.size(); i++) {
+                        this.states.remove(toRemove.getFirst());
+                    }
+                    break;
+                }
+            }
+            flag = false;
+        }
+
     }
 
 

@@ -16,8 +16,7 @@ public class Dea {
     public String deaToString(Alphabet alphabet) {
         String res = "";
         for (State state : states) {
-            res += "state " + state.name + " has the transitions: \n" + state.transitionsToString(alphabet, states.size()) + "\n";
-
+            res += "state " + state.name + " has the transitions: \n" + state.transitionsToString(alphabet) + "\n";
         }
         return res;
     }
