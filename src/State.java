@@ -83,8 +83,6 @@ public class State {
             if (!stringStates.isEmpty()) {
                 res += input.iToString() + ":" + stringStates + "\n";
             }
-
-
         }
 
         return res;

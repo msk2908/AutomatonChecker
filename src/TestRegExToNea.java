@@ -35,7 +35,6 @@ public class TestRegExToNea {
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
-        alphabetList.add("Epsilon");
         Alphabet alphabet = new Alphabet(alphabetList);
         RegEx regEx = new Or(new RegEx('a'), new RegEx('b'));
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
@@ -99,7 +98,6 @@ public class TestRegExToNea {
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
-        alphabetList.add("Epsilon");
         Alphabet alphabet = new Alphabet(alphabetList);
         RegEx regEx = new Loop(new RegEx('a'));
         State loopA = new State(0,"Loop[a]", new HashMap<>(), true, true);
@@ -126,7 +124,6 @@ public class TestRegExToNea {
         alphabetList.add("a");
         alphabetList.add("b");
         alphabetList.add("c");
-        alphabetList.add("Epsilon");
         Alphabet alphabet = new Alphabet(alphabetList);
         RegEx regEx = new Or(new Concat(new RegEx('a'), new RegEx('b')), new RegEx('c'));
 
@@ -138,8 +135,9 @@ public class TestRegExToNea {
         State bFinal = new State(5,"b final destination", new HashMap<>(), true, false);
 
 
-        initial.setTransitions(new Input("Epsilon", TransitionType.EPSILON), c);
+
         initial.setTransitions(new Input("Epsilon", TransitionType.EPSILON), concat);
+        initial.setTransitions(new Input("Epsilon", TransitionType.EPSILON), c);
         concat.setTransitions(new Input("a", TransitionType.LITERAL), b);
         b.setTransitions(new Input("b", TransitionType.LITERAL), bFinal);
         c.setTransitions(new Input("c", TransitionType.LITERAL), cFinal);
@@ -169,7 +167,6 @@ public class TestRegExToNea {
         alphabetList.add("a");
         alphabetList.add("b");
         alphabetList.add("c");
-        alphabetList.add("Epsilon");
         Alphabet alphabet = new Alphabet(alphabetList);
         RegEx regEx = new Or(new RegEx('a'), new Concat(new RegEx('b'), new RegEx('c')));
 
@@ -180,9 +177,8 @@ public class TestRegExToNea {
         State c = new State(4,"c", new HashMap<>(), false, false);
         State cFinal = new State(5,"c final destination", new HashMap<>(), true, false);
 
-
-        initial.setTransitions(new Input("Epsilon", TransitionType.EPSILON), concat);
         initial.setTransitions(new Input("Epsilon", TransitionType.EPSILON), a);
+        initial.setTransitions(new Input("Epsilon", TransitionType.EPSILON), concat);
         concat.setTransitions(new Input("b", TransitionType.LITERAL), c);
         a.setTransitions(new Input("a", TransitionType.LITERAL), aFinal);
         c.setTransitions(new Input("c", TransitionType.LITERAL), cFinal);
@@ -225,7 +221,6 @@ public class TestRegExToNea {
         List<String> strings = new ArrayList<>();
         strings.add("a");
         strings.add("b");
-        strings.add("Epsilon");
         Alphabet alphabet = new Alphabet(strings);
         RegEx regEx = Main.convertToSyntaxTree("a+(b*+ab)*".toCharArray(), "", "");
         System.out.println(regEx.rToString());

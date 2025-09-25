@@ -1,5 +1,3 @@
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +15,6 @@ public class Nea {
         String res = "";
         for (State state : states) {
             res += "state " + state.name + " has the transitions: \n" + state.transitionsToString(alphabet) + "\n";
-
         }
         return res;
     }
@@ -96,15 +93,16 @@ public class Nea {
                         if (state1.starting) {
                             state.setStarting();
                         }
-                        state.addTransitions(state1.transitions);
                         toRemove.add(state1);
-                        state.removeTransition(alphabet.get("Epsilon"), state1);
                         if (statesConnectedByE.isEmpty()) {
                             break;
                         }
                     }
                     for (int i = 0; i< toRemove.size(); i++) {
-                        this.states.remove(toRemove.getFirst());
+                        State state1 = toRemove.getFirst();
+                        state.addTransitions(state1.transitions);
+                        state.removeTransition(alphabet.get("Epsilon"), state1);
+                        this.states.remove(state1);
                     }
                     break;
                 }
@@ -136,7 +134,7 @@ public class Nea {
      * gets all the states that are reachable starting from the given list
      */
     private HashMap<Input, List<State>> getFollowingStates(List<State> statesToCheck) {
-
+        sortById(statesToCheck);
         HashMap<Input, List<State>> mapOfListOfStatesToGoTo = new HashMap<>();
         for (Input input : alphabet.possibleInputs) {
             List<State> statesToGoTo = new ArrayList<>();
@@ -167,6 +165,29 @@ public class Nea {
         }
 
         throw new Exception("automaton has no starting state");
+    }
+
+    private List<State> sortById(List<State> states) {
+        List<State> result = new ArrayList<>(states);
+        List<Integer> idsSorted= getAllIdsInOrder(states);
+        for (int i : idsSorted) {
+            for (State state : states) {
+                if (state.id == i && !result.contains(state)) {
+                    result.add(state);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<Integer> getAllIdsInOrder(List<State> states) {
+        List<Integer> idList = new ArrayList<>();
+        for (State state: states) {
+            idList.add(state.id);
+        }
+        return idList.stream().sorted().toList();
+
     }
 }
 

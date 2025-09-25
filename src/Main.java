@@ -436,7 +436,6 @@ public class Main {
                     }
                 }
                 for (State state : followUpStates) {
-
                     state.setTransitions(alphabet.get("Epsilon"), actualState);
                 }
             }
