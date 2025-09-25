@@ -1,6 +1,8 @@
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 public class Nea {
     List<State> states;
@@ -17,6 +19,47 @@ public class Nea {
             res += "state " + state.name + " has the transitions: \n" + state.transitionsToString(alphabet) + "\n";
         }
         return res;
+    }
+
+    public void drawNea() {
+        int x = 10;
+        int y = 10;
+        List<Coordinate> coordinates = new ArrayList<>();
+        boolean flag = true;
+        boolean quadrupleFlag = true;
+        for (State state : states) {
+            coordinates.add(new Coordinate(x, y));
+            if (flag) {
+                if (quadrupleFlag) {
+                    x += 150;
+                    quadrupleFlag = false;
+                } else {
+                    y += 150;
+                    quadrupleFlag = true;
+                    flag = false;
+                }
+            } else {
+                if (quadrupleFlag) {
+                    x += 150;
+                    quadrupleFlag = false;
+                } else {
+                    y -= 150;
+                    flag = true;
+                    quadrupleFlag = true;
+                }
+            }
+
+        }
+
+        AutomatonDrawer stateDrawerList = new AutomatonDrawer(states, coordinates);
+        JFrame fenster = stateDrawerList.paintFrame();
+        stateDrawerList.paint(fenster);
+
+        // Konsole offen halten
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("ENTER zum Beenden...");
+        scanner.nextLine();
+        System.exit(0);
     }
 
 
@@ -89,7 +132,7 @@ public class Nea {
                 List<State> statesConnectedByE = state.transitions.get(alphabet.get("Epsilon"));
                 if (statesConnectedByE != null) {
                     List<State> toRemove = new ArrayList<>();
-                    for (State state1: statesConnectedByE) {
+                    for (State state1 : statesConnectedByE) {
                         if (state1.starting) {
                             state.setStarting();
                         }
@@ -98,7 +141,7 @@ public class Nea {
                             break;
                         }
                     }
-                    for (int i = 0; i< toRemove.size(); i++) {
+                    for (int i = 0; i < toRemove.size(); i++) {
                         State state1 = toRemove.getFirst();
                         state.addTransitions(state1.transitions);
                         state.removeTransition(alphabet.get("Epsilon"), state1);
@@ -169,7 +212,7 @@ public class Nea {
 
     private List<State> sortById(List<State> states) {
         List<State> result = new ArrayList<>(states);
-        List<Integer> idsSorted= getAllIdsInOrder(states);
+        List<Integer> idsSorted = getAllIdsInOrder(states);
         for (int i : idsSorted) {
             for (State state : states) {
                 if (state.id == i && !result.contains(state)) {
@@ -183,7 +226,7 @@ public class Nea {
 
     private List<Integer> getAllIdsInOrder(List<State> states) {
         List<Integer> idList = new ArrayList<>();
-        for (State state: states) {
+        for (State state : states) {
             idList.add(state.id);
         }
         return idList.stream().sorted().toList();

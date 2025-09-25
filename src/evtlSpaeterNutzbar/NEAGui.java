@@ -7,15 +7,15 @@ import java.util.*;
 import java.util.List;
 
 public class NEAGui extends JFrame {
-    private DrawingPanel drawingPanel;
+    private DrawingPanelR drawingPanelR;
 
     public NEAGui() {
         setTitle("NEA Zeichner");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        drawingPanel = new DrawingPanel();
-        add(drawingPanel, BorderLayout.CENTER);
+        drawingPanelR = new DrawingPanelR();
+        add(drawingPanelR, BorderLayout.CENTER);
 
         JPanel controlPanel = new JPanel();
         JButton addStateBtn = new JButton("Zustand hinzufügen");
@@ -27,9 +27,9 @@ public class NEAGui extends JFrame {
         controlPanel.add(resetBtn);
         add(controlPanel, BorderLayout.SOUTH);
 
-        addStateBtn.addActionListener(e -> drawingPanel.setMode(DrawingPanel.Mode.ADD_STATE));
-        addTransitionBtn.addActionListener(e -> drawingPanel.setMode(DrawingPanel.Mode.ADD_TRANSITION));
-        resetBtn.addActionListener(e -> drawingPanel.reset());
+        addStateBtn.addActionListener(e -> drawingPanelR.setMode(DrawingPanelR.Mode.ADD_STATE));
+        addTransitionBtn.addActionListener(e -> drawingPanelR.setMode(DrawingPanelR.Mode.ADD_TRANSITION));
+        resetBtn.addActionListener(e -> drawingPanelR.reset());
 
         setVisible(true);
     }
@@ -39,7 +39,7 @@ public class NEAGui extends JFrame {
     }
 }
 
-class DrawingPanel extends JPanel {
+class DrawingPanelR extends JPanel {
     enum Mode { NONE, ADD_STATE, ADD_TRANSITION }
 
     private Mode currentMode = Mode.NONE;
@@ -47,7 +47,7 @@ class DrawingPanel extends JPanel {
     private List<Transition> transitions = new ArrayList<>();
     private StateDraw selectedStateDrawForTransition = null;
 
-    public DrawingPanel() {
+    public DrawingPanelR() {
         setBackground(Color.WHITE);
 
         addMouseListener(new MouseAdapter() {

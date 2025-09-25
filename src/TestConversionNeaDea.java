@@ -1,9 +1,14 @@
+
+import evtlSpaeterNutzbar.NEAGui;
 import org.junit.Test;
 
+import javax.swing.*;
 import javax.swing.text.Style;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
+
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,11 +21,12 @@ public class TestConversionNeaDea {
         alphabetList.add("a");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
-
+        //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-        System.out.println(dea.deaToString(alphabet));
-
+        System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
+
+
 
 
     @Test
@@ -30,9 +36,9 @@ public class TestConversionNeaDea {
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("a*".toCharArray(), "", ""), new ArrayList<>(), alphabet);
         System.out.println(nea.neaToString(alphabet));
+        //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-
-        System.out.println(dea.deaToString(alphabet));
+        System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
     @Test
@@ -41,6 +47,7 @@ public class TestConversionNeaDea {
         alphabetList.add("a");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("aa".toCharArray(), "", ""), new ArrayList<>(), alphabet);
+        //nea.drawNea();
         System.out.println("Nea: \n"+ nea.neaToString(alphabet));
         Dea dea = nea.convertNeaToDea();
 
@@ -55,8 +62,8 @@ public class TestConversionNeaDea {
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("a+b".toCharArray(), "", ""), new ArrayList<>(), alphabet);
         System.out.println("Nea: \n"+ nea.neaToString(alphabet));
+        //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
@@ -67,9 +74,10 @@ public class TestConversionNeaDea {
         alphabetList.add("b");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("ab+a".toCharArray(), "", ""), new ArrayList<>(), alphabet);
+        //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
 
-        System.out.println(dea.deaToString(alphabet));
+        System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
     @Test
@@ -79,9 +87,10 @@ public class TestConversionNeaDea {
         alphabetList.add("b");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("(a+b)+a".toCharArray(), "", ""), new ArrayList<>(), alphabet);
+        //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-
-        System.out.println(dea.deaToString(alphabet));
+        //dea.drawDea();
+        System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
     @Test
@@ -91,9 +100,10 @@ public class TestConversionNeaDea {
         alphabetList.add("b");
         Alphabet alphabet = new Alphabet(alphabetList);
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("(a+b)*".toCharArray(), "", ""), new ArrayList<>(), alphabet);
+        //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-
-        System.out.println(dea.deaToString(alphabet));
+        //dea.drawDea();
+        System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
 
@@ -110,12 +120,12 @@ public class TestConversionNeaDea {
         RegEx regEx = Main.convertToSyntaxTree("ab+(ab+c)*".toCharArray(), "", "");
         System.out.println(regEx);
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
-        System.out.println("solution: \n" + nea.neaToString(alphabet));
+        System.out.println("Nea: \n" + nea.neaToString(alphabet));
 
 
         Dea dea = nea.convertNeaToDea();
 
-        System.out.println(dea.deaToString(alphabet));
+        System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
 
