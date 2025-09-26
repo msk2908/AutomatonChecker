@@ -7,6 +7,7 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) throws IOException {
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         //TODO alphabet is wrong
@@ -45,8 +46,8 @@ public class Main {
         Alphabet alphabet = new Alphabet(alphabetList);
         Input a = new Input("a", TransitionType.LITERAL);
         Input b = new Input("b", TransitionType.LITERAL);
-        HashMap<Input, State> aTransitions = new HashMap<>();
-        HashMap<Input, State> bTransitions = new HashMap<>();
+        HashMap<Input, List<State>> aTransitions = new HashMap<>();
+        HashMap<Input, List<State>> bTransitions = new HashMap<>();
 
         State A = new State(0, "A", aTransitions, false, true);
         State B = new State(1, "B", bTransitions, true, false);
@@ -424,9 +425,7 @@ public class Main {
                 // evaluate everything and put an Epsilon-Transition to starting state
                 RegEx inside = regEx.getRegEx();
                 List<State> saveStates = new ArrayList<>();
-                for (State state: states) {
-                    saveStates.add(state);
-                }
+                saveStates.addAll(states);
                 Nea evaluateLoop = convertToNea(actualState, inside, states, alphabet);
 
                         //get last states of the left side of concatenation to go on here
@@ -438,7 +437,6 @@ public class Main {
                     }
                 }
                 for (State state : followUpStates) {
-
                     state.setTransitions(alphabet.get("Epsilon"), actualState);
                 }
             }
@@ -458,7 +456,7 @@ public class Main {
      * returns the type of the given transition if e would be used as Epsilon
      */
     public static TransitionType checkTransitionType(String in) {
-        if (in.equals("e")) {
+        if (in.equals("e") || in.equals("Epsilon")) {
             return TransitionType.EPSILON;
         } else {
             return TransitionType.LITERAL;

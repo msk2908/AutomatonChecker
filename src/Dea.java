@@ -1,6 +1,7 @@
+import javax.swing.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 public class Dea {
     List<State> states;
@@ -11,6 +12,55 @@ public class Dea {
         this.states = states;
         this.minimized = minimized;
         this.alphabet = alphabet;
+    }
+
+    public String deaToString(Alphabet alphabet) {
+        String res = "";
+        for (State state : states) {
+            res += "state " + state.name + " has the transitions: \n" + state.transitionsToString(alphabet) + "\n";
+        }
+        return res;
+    }
+
+    public void drawDea() {
+        int x = 10;
+        int y = 10;
+        List<Coordinate> coordinates = new ArrayList<>();
+        boolean flag = true;
+        boolean quadrupleFlag = true;
+        for (State state : states) {
+            coordinates.add(new Coordinate(x, y));
+            if (flag) {
+                if (quadrupleFlag) {
+                    x += 150;
+                    quadrupleFlag = false;
+                } else {
+                    y += 150;
+                    quadrupleFlag = true;
+                    flag = false;
+                }
+            } else {
+                if (quadrupleFlag) {
+                    x += 150;
+                    quadrupleFlag = false;
+                } else {
+                    y -= 150;
+                    flag = true;
+                    quadrupleFlag = true;
+                }
+            }
+
+        }
+
+        AutomatonDrawer stateDrawerList = new AutomatonDrawer(states, coordinates);
+        JFrame fenster = stateDrawerList.paintFrame();
+        stateDrawerList.paint(fenster);
+
+        // Konsole offen halten
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("ENTER zum Beenden...");
+        scanner.nextLine();
+        System.exit(0);
     }
 
     public void minimization() {
