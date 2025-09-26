@@ -121,7 +121,6 @@ public class Main {
                 }
             }
 
-
             for (int j = 0; j < number; j++) {
                 System.out.println("Please give one possible transition for state " + state.name);
                 String in = br.readLine();

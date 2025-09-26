@@ -23,6 +23,7 @@ public class TestConversionNeaDea {
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
+        //dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
@@ -38,6 +39,7 @@ public class TestConversionNeaDea {
         System.out.println(nea.neaToString(alphabet));
         //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
+        //dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
@@ -50,7 +52,7 @@ public class TestConversionNeaDea {
         //nea.drawNea();
         System.out.println("Nea: \n"+ nea.neaToString(alphabet));
         Dea dea = nea.convertNeaToDea();
-
+        //dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
@@ -64,8 +66,10 @@ public class TestConversionNeaDea {
         System.out.println("Nea: \n"+ nea.neaToString(alphabet));
         //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
+        dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
+
 
     @Test
     public void testOrAndConcatNeaToDea() {
@@ -76,9 +80,11 @@ public class TestConversionNeaDea {
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("ab+a".toCharArray(), "", ""), new ArrayList<>(), alphabet);
         //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-
+        //dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
+
+//bis hier passts
 
     @Test
     public void testOrAndBraceNeaToDea() {

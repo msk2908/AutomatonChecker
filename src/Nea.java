@@ -59,7 +59,6 @@ public class Nea {
         Scanner scanner = new Scanner(System.in);
         System.out.println("ENTER zum Beenden...");
         scanner.nextLine();
-        System.exit(0);
     }
 
 
@@ -76,6 +75,7 @@ public class Nea {
         } catch (Exception e) {
             throw new IllegalArgumentException("Your automaton did not contain a starting state, how did you manage to do this");
         }
+        //TODO get rid of equal states with no epsilon-transition
 
         //List<State> reachableStates = deleteUnreachableStatesFromList(this.states);     //get rid of unreachable states -> voll unnötig, fliegen sowieso
         List<State> startList = new ArrayList<>();
@@ -86,6 +86,7 @@ public class Nea {
 
         split(listOfDifferentiatedStates, startMap);
 
+        // get rid of states that endet up twice in Dea on accident
         List<State> removeDoubles = new ArrayList<>();
         for (int i = 0; i < this.states.size(); i++) {
             for (int j = 0; j < this.states.size(); j++) {
@@ -111,6 +112,7 @@ public class Nea {
             for (HashMap<Input, List<State>> stateMap : listOfDifferentiatedStates) {
                 for (Input input : stateMap.keySet()) {
                     HashMap<Input, List<State>> following = getFollowingStates(stateMap.get(input));
+                    //TODO if following have the same transitions, then create only one state for them
                     if (!compare.contains(following) && !following.isEmpty()) {
                         compare.add(following);
                     }
@@ -142,7 +144,7 @@ public class Nea {
                         }
                     }
                     for (int i = 0; i < toRemove.size(); i++) {
-                        State state1 = toRemove.getFirst();
+                        State state1 = toRemove.get(i);
                         state.addTransitions(state1.transitions);
                         state.removeTransition(alphabet.get("Epsilon"), state1);
                         this.states.remove(state1);
@@ -150,8 +152,22 @@ public class Nea {
                     break;
                 }
             }
-            flag = false;
+
+            int counter = 0;
+            //count epsilons
+            for (State state: states) {
+                try {
+                    counter += state.transitions.get(alphabet.get("Epsilon")).size();
+                } catch (NullPointerException n) {
+                    counter += 0;
+                }
+            }
+            if (counter == 0) {
+                flag = false;
+            }
         }
+
+
 
     }
 
