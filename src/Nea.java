@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import static java.util.stream.Collectors.toCollection;
+
 public class Nea {
     List<State> states;
     Alphabet alphabet;
@@ -43,7 +45,7 @@ public class Nea {
                     x += 150;
                     quadrupleFlag = false;
                 } else {
-                    y -= 150;
+                    y += 150;
                     flag = true;
                     quadrupleFlag = true;
                 }
@@ -68,14 +70,14 @@ public class Nea {
 
     public Dea convertNeaToDea() {
         getRidOfEpsilons();
-        List<HashMap<Input, List<State>>> listOfDifferentiatedStates = new ArrayList<>();
+        List<HashMap<Input, List<State>>> listOfDifferentiatedStates = new ArrayList<>(); // to save new states for Dea
         State startingState;
         try {
             startingState = getStartingState();
         } catch (Exception e) {
             throw new IllegalArgumentException("Your automaton did not contain a starting state, how did you manage to do this");
         }
-        //TODO get rid of equal states with no epsilon-transition
+
 
         //List<State> reachableStates = deleteUnreachableStatesFromList(this.states);     //get rid of unreachable states -> voll unnötig, fliegen sowieso
         List<State> startList = new ArrayList<>();
@@ -84,22 +86,26 @@ public class Nea {
         startMap.put(alphabet.get("Epsilon"), startList);
         listOfDifferentiatedStates.add(startMap);  // first state has to be the starting state
 
+        //TODO get rid of equal states with no epsilon-transition
         split(listOfDifferentiatedStates, startMap);
+        getRidOfEquals(listOfDifferentiatedStates);
+        checkForWeirdLoop(this.states);
 
-        // get rid of states that endet up twice in Dea on accident
-        List<State> removeDoubles = new ArrayList<>();
-        for (int i = 0; i < this.states.size(); i++) {
-            for (int j = 0; j < this.states.size(); j++) {
-                if (i != j && this.states.get(i).equals(this.states.get(j))) {
-                    this.states.get(i).addTransitions(this.states.get(j).transitions);
-                    removeDoubles.add(this.states.get(j));
-                }
-            }
-        }
-        this.states.removeAll(removeDoubles);        // necessary bc starting state does things
+        // get rid of states that ended up twice in Dea on accident
+        // necessary bc starting state does things
 
         return new Dea(states, false, alphabet);
     }
+
+    private void getRidOfEquals(List<HashMap<Input, List<State>>> listOfDifferentiatedStates) {
+        for (HashMap<Input, List<State>> state1 : listOfDifferentiatedStates) {
+            for (Input input : state1.keySet()) {
+                //check if state1 goes to states that are equal
+                checkForEqualStates(state1.get(input));
+            }
+        }
+    }
+
 
     private void split(List<HashMap<Input, List<State>>> listOfDifferentiatedStates, HashMap<Input, List<State>> startMap) {
         List<HashMap<Input, List<State>>> compare = new ArrayList<>();
@@ -155,7 +161,7 @@ public class Nea {
 
             int counter = 0;
             //count epsilons
-            for (State state: states) {
+            for (State state : states) {
                 try {
                     counter += state.transitions.get(alphabet.get("Epsilon")).size();
                 } catch (NullPointerException n) {
@@ -166,7 +172,6 @@ public class Nea {
                 flag = false;
             }
         }
-
 
 
     }
@@ -214,6 +219,119 @@ public class Nea {
         return mapOfListOfStatesToGoTo;
     }
 
+    private HashMap<Input, List<State>> getFollowingStates(State statesToCheck) {
+        List<State> list = new ArrayList<>();
+        list.add(statesToCheck);
+        return getFollowingStates(list);
+    }
+
+
+    private void checkForEqualStates(List<State> states) {
+        boolean somethingChanged = true;
+        boolean stop = false;
+        while (somethingChanged) {
+            List<State> compare = new ArrayList<>(this.states);
+            State toRemove = null;
+            for (State state : states) {
+                for (State state1 : states) {
+                    if (state.transitions.equals(state1.transitions) && !(state1.id == state.id)) {
+                        toRemove = state1;
+                        stop = true;
+                        break;
+                    }
+                }
+                if (stop) {
+                    break;
+                }
+            }
+            //delete all transitions to states to remove
+            if (!(toRemove == null)) {
+                for (State state : this.states) {
+                    for (Input input : state.transitions.keySet()) {
+                        if (state.transitions.get(input).contains(toRemove)) {
+                            state.removeTransition(input, toRemove);
+                        }
+
+                    }
+                }
+            }
+
+
+            this.states.remove(toRemove);
+            states.remove(toRemove);
+            somethingChanged = !compare.equals(this.states);
+        }
+    }
+
+    /**
+     * removes any unnecessary loops
+     * @param toCheck: List of states to check for Loop
+     */
+    private void checkForWeirdLoop(List<State> toCheck) {
+        State toRemove = null;
+        State toRemoveFrom = null;
+        boolean somethingChanged = true;
+        boolean stop = false;
+
+        while (somethingChanged) {
+            boolean one = false;
+            boolean two = false;
+            List<State> compare = new ArrayList<>(this.states);
+            for (State state : toCheck) {
+                for (State state1: toCheck) {
+                    if (checkIfEqual(state, state1)) {
+                        HashMap<Input, List<State>> followUp = state.transitions;
+                        HashMap<Input, List<State>> followUp1 = state1.transitions;
+
+                        for (Input input: followUp.keySet()) {
+                            if (followUp.get(input).contains(state1)) {
+                                one = true;
+                            }
+                            if (followUp1.get(input).contains(state)) {
+                                two = true;
+                            }
+                        }
+
+                        if (one && two) {
+                            // found a loophole
+                            toRemove = state1;
+                            toRemoveFrom = state;
+                            stop = true;
+                            break;
+                        }
+                    }
+                }
+                if (stop) {
+                    break;
+                }
+            }
+
+            if (toRemove != null) {
+                HashMap<Input, List<State>> transitions = toRemove.transitions;
+                for (Input input: transitions.keySet()) {
+                    toRemoveFrom.removeTransition(input, toRemove);
+                    toRemoveFrom.setTransitions(input, toRemoveFrom);
+                }
+                for (State state: this.states) {
+                    for (Input input: state.transitions.keySet()) {
+                        if (state.transitions.get(input).contains(toRemove)) {
+                            state.removeTransition(input, toRemove);
+                            state.setTransitions(input, toRemoveFrom);
+                        }
+                    }
+                }
+            }
+            this.states.remove(toRemove);
+            toCheck.remove(toRemove);
+
+            somethingChanged = !compare.equals(this.states);
+        }
+
+    }
+
+    private boolean checkIfEqual(State a, State b) {
+        return (a.transitions.equals(b.transitions) && !(a.id == b.id));
+    }
 
     private State getStartingState() throws Exception {
 
@@ -226,7 +344,7 @@ public class Nea {
         throw new Exception("automaton has no starting state");
     }
 
-    private List<State> sortById(List<State> states) {
+    private void sortById(List<State> states) {
         List<State> result = new ArrayList<>(states);
         List<Integer> idsSorted = getAllIdsInOrder(states);
         for (int i : idsSorted) {
@@ -237,7 +355,6 @@ public class Nea {
                 }
             }
         }
-        return result;
     }
 
     private List<Integer> getAllIdsInOrder(List<State> states) {

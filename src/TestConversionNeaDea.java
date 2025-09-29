@@ -39,7 +39,7 @@ public class TestConversionNeaDea {
         System.out.println(nea.neaToString(alphabet));
         //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-        //dea.drawDea();
+        dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
@@ -52,7 +52,7 @@ public class TestConversionNeaDea {
         //nea.drawNea();
         System.out.println("Nea: \n"+ nea.neaToString(alphabet));
         Dea dea = nea.convertNeaToDea();
-        //dea.drawDea();
+        dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
@@ -80,11 +80,10 @@ public class TestConversionNeaDea {
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("ab+a".toCharArray(), "", ""), new ArrayList<>(), alphabet);
         //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-        //dea.drawDea();
+        dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
-//bis hier passts
 
     @Test
     public void testOrAndBraceNeaToDea() {
@@ -95,9 +94,10 @@ public class TestConversionNeaDea {
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("(a+b)+a".toCharArray(), "", ""), new ArrayList<>(), alphabet);
         //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-        //dea.drawDea();
+        dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
+
 
     @Test
     public void testLoopAndOrNeaToDea() {
@@ -108,12 +108,12 @@ public class TestConversionNeaDea {
         Nea nea = Main.convertToNea(null, Main.convertToSyntaxTree("(a+b)*".toCharArray(), "", ""), new ArrayList<>(), alphabet);
         //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-        //dea.drawDea();
+        dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
 
-
+//yessssssss
     @Test
     public void testComplicated() {
         //does not actually test something because putting the automaton requires mental working
@@ -126,11 +126,12 @@ public class TestConversionNeaDea {
         RegEx regEx = Main.convertToSyntaxTree("ab+(ab+c)*".toCharArray(), "", "");
         System.out.println(regEx);
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        //nea.drawNea();
         System.out.println("Nea: \n" + nea.neaToString(alphabet));
 
 
         Dea dea = nea.convertNeaToDea();
-
+        dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 

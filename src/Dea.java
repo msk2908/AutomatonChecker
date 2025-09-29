@@ -44,7 +44,7 @@ public class Dea {
                     x += 150;
                     quadrupleFlag = false;
                 } else {
-                    y -= 150;
+                    y += 150;
                     flag = true;
                     quadrupleFlag = true;
                 }
