@@ -35,19 +35,28 @@ public class State {
         }
     }
 
-    public void removeTransition(Input input, State state) {
+    public Input removeTransition(Input input, State state) {
         transitions.get(input).remove(state);
         if (transitions.get(input).isEmpty()) {
             transitions.remove(input);
         }
+        return input;
     }
 
-    public void removeTransition(State state) {
-        for (Input input: transitions.keySet()) {
-            if (transitions.get(input).contains(state)) {
-                removeTransition(input, state);
+    public Input removeTransition(State state) {
+        boolean somethingChanged = true;
+
+        while (somethingChanged) {
+            HashMap<Input, List<State>> compare = new HashMap<>(transitions);
+            for (Input input: transitions.keySet()) {
+                if (transitions.get(input).contains(state)) {
+                    return removeTransition(input, state);
+                }
             }
+            somethingChanged = !transitions.equals(compare);
         }
+        return null;
+
     }
 
     public void removeTransition(List<State> states) {

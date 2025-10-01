@@ -106,12 +106,14 @@ public class Nea {
                         // add new transition to the state that is kept
                         state.setTransitions(input, keepOne);
 
+                        // replace all transitions leading to one of the states to delete
+                        replaceTransitions(followingStates, keepOne);
+
                         //remove all states from list of states
                         this.states.removeAll(followingStates);
 
                         // add the "new" state to the list of states
                         this.states.add(keepOne);
-
 
 
                         stop = true;
@@ -131,19 +133,30 @@ public class Nea {
 
     private void getRidOfLostStates() {
         List<State> notLost = new ArrayList<>();
-        for (State state: this.states) {
-            for (Input input: state.transitions.keySet()) {
+        for (State state : this.states) {
+            for (Input input : state.transitions.keySet()) {
                 notLost.addAll(state.transitions.get(input));
             }
         }
         List<State> toRemove = new ArrayList<>();
-        for (State state: this.states) {
+        for (State state : this.states) {
             if (!notLost.contains(state) && !state.starting) {
                 toRemove.add(state);
             }
         }
 
         this.states.removeAll(toRemove);
+    }
+
+    private void replaceTransitions(List<State> followingStates, State keepOne) {
+        for (State state : this.states) {
+            for (State state1 : followingStates) {
+                Input input = state.removeTransition(state1);
+                if (input != null) {
+                    state.setTransitions(input, keepOne);
+                }
+            }
+        }
     }
 
 
@@ -375,7 +388,6 @@ public class Nea {
         }
         return newTransitions;
     }
-
 
 
     private void sortById(List<State> states) {
