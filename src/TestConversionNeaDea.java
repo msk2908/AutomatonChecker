@@ -132,6 +132,9 @@ public class TestConversionNeaDea {
 
         Dea dea = nea.convertNeaToDea();
         dea.drawDea();
+
+        dea.minimize();
+
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 

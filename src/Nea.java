@@ -70,36 +70,11 @@ public class Nea {
 
     public Dea convertNeaToDea() {
         getRidOfEpsilons();
-        List<HashMap<Input, List<State>>> listOfDifferentiatedStates = new ArrayList<>(); // to save new states for Dea
-        State startingState;
-        try {
-            startingState = getStartingState();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Your automaton did not contain a starting state, how did you manage to do this");
-        }
-
         //ok wait let me just do this again pls
         onlyLeaveSingleTransitions();
 
-
-
-
-        /*List<State> startList = new ArrayList<>();
-        startList.add(startingState);
-        HashMap<Input, List<State>> startMap = new HashMap<>();
-        startMap.put(alphabet.get("Epsilon"), startList);
-        listOfDifferentiatedStates.add(startMap);  // first state has to be the starting state
-
-        //TODO get rid of equal states with no epsilon-transition
-        split(listOfDifferentiatedStates, startMap);
-        //putTogether(listOfDifferentiatedStates);
-
-        //this seems to be minimization?
-        //getRidOfEquals(listOfDifferentiatedStates);
-        //getRidOfSubsets(listOfDifferentiatedStates);
-
-        // get rid of states that ended up twice in Dea on accident
-        // necessary bc starting state does things*/
+        //TODO delete states with no ingoing transitions
+        getRidOfLostStates();
 
         return new Dea(states, false, alphabet);
     }
@@ -113,14 +88,28 @@ public class Nea {
             for (State state : this.states) {
                 for (Input input : state.transitions.keySet()) {
                     if (state.transitions.get(input).size() > 1) {
-                        List<State> followingStates = state.transitions.get(input);
-                        this.states.removeAll(state.transitions.get(input));
+
+                        List<State> followingStates = new ArrayList<>(state.transitions.get(input));
+
+                        // collect all transitions of the states just deleted (trust me bro)
                         HashMap<Input, List<State>> followingTransitions = getFollowingStates(followingStates);
-                        state.removeTransition(state.transitions.get(input));
+
+                        // delete transitions to states just deleted
+                        state.removeTransition(followingStates);
+
+                        // keep one of the deleted states
                         State keepOne = followingStates.getFirst();
+
+                        // add all transitions of the others
                         keepOne.addTransitions(moveTransitions(followingTransitions, followingStates, keepOne));
+
+                        // add new transition to the state that is kept
                         state.setTransitions(input, keepOne);
 
+                        //remove all states from list of states
+                        this.states.removeAll(followingStates);
+
+                        // add the "new" state to the list of states
                         this.states.add(keepOne);
 
 
@@ -140,37 +129,28 @@ public class Nea {
 
     }
 
-
-    private void getRidOfEquals(List<HashMap<Input, List<State>>> listOfDifferentiatedStates) {
-        for (HashMap<Input, List<State>> state1 : listOfDifferentiatedStates) {
-            for (Input input : state1.keySet()) {
-                //check if state1 goes to states that are equal
-                checkForEqualStates(state1.get(input));
+    private void getRidOfLostStates() {
+        List<State> notLost = new ArrayList<>();
+        for (State state: this.states) {
+            for (Input input: state.transitions.keySet()) {
+                notLost.addAll(state.transitions.get(input));
             }
         }
+        List<State> toRemove = new ArrayList<>();
+        for (State state: this.states) {
+            if (!notLost.contains(state) && !state.starting) {
+                toRemove.add(state);
+            }
+        }
+
+        this.states.removeAll(toRemove);
     }
 
 
-    private void split(List<HashMap<Input, List<State>>> listOfDifferentiatedStates, HashMap<Input, List<State>> startMap) {
-        List<HashMap<Input, List<State>>> compare = new ArrayList<>();
-        while (compare.size() != listOfDifferentiatedStates.size()) {
-            listOfDifferentiatedStates.clear();
-            listOfDifferentiatedStates.addAll(compare);
-            compare.clear();
 
-            compare.add(startMap);
-            for (HashMap<Input, List<State>> stateMap : listOfDifferentiatedStates) {
-                for (Input input : stateMap.keySet()) {
-                    HashMap<Input, List<State>> following = getFollowingStates(stateMap.get(input));
-                    //TODO if following have the same transitions, then create only one state for them
-                    if (!compare.contains(following) && !following.isEmpty()) {
-                        compare.add(following);
-                    }
-                }
-            }
 
-        }
-    }
+
+
 
     /*private void putTogether(List<HashMap<Input, List<State>>> listOfPossibleTransitions) {
         List<State> states = new ArrayList<>();
@@ -325,12 +305,6 @@ public class Nea {
         return mapOfListOfStatesToGoTo;
     }
 
-    private HashMap<Input, List<State>> getFollowingStates(State stateToCheck) {
-        List<State> list = new ArrayList<>();
-        list.add(stateToCheck);
-        return getFollowingStates(list);
-    }
-
     private State isSubset(State a, State b) {
         State subset = null;
         boolean aIsSubset = true;
@@ -373,46 +347,6 @@ public class Nea {
     }
 
 
-    private void checkForEqualStates(List<State> states) {
-        boolean somethingChanged = true;
-
-        while (somethingChanged) {
-            boolean stop = false;
-            List<State> compare = new ArrayList<>(this.states);
-            State toRemove = null;
-            for (State state : states) {
-                for (State state1 : states) {
-                    if (state.transitions.equals(state1.transitions) && !(state1.id == state.id)) {
-                        toRemove = state1;
-                        stop = true;
-                        break;
-                    }
-                }
-                if (stop) {
-                    break;
-                }
-            }
-            //delete all transitions to states to remove
-            if (!(toRemove == null)) {
-                for (State state : this.states) {
-                    for (Input input : state.transitions.keySet()) {
-                        if (state.transitions.get(input).contains(toRemove)) {
-                            //add all transitions that don't go to the removed State
-                            state.addTransitions(moveTransitions(toRemove.transitions, toRemove, state));
-                            state.removeTransition(input, toRemove);
-                        }
-
-                    }
-                }
-            }
-
-
-            this.states.remove(toRemove);
-            states.remove(toRemove);
-            somethingChanged = !compare.equals(this.states);
-        }
-    }
-
     private HashMap<Input, List<State>> moveTransitions(HashMap<Input, List<State>> transitions, State toRemoveFrom, State toMoveTo) {
         HashMap<Input, List<State>> newTransitions = new HashMap<>();
         for (Input input : transitions.keySet()) {
@@ -442,16 +376,7 @@ public class Nea {
         return newTransitions;
     }
 
-    private State getStartingState() throws Exception {
 
-        for (State state : states) {
-            if (state.starting) {
-                return state;
-            }
-        }
-
-        throw new Exception("automaton has no starting state");
-    }
 
     private void sortById(List<State> states) {
         List<State> result = new ArrayList<>(states);
