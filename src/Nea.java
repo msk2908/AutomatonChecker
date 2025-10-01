@@ -82,11 +82,13 @@ public class Nea {
 
     private void onlyLeaveSingleTransitions() {
         boolean somethingChanged = true;
-        boolean stop = false;
+
         while (somethingChanged) {
+            boolean stop = false;
             List<State> compare = new ArrayList<>(this.states);
             for (State state : this.states) {
                 for (Input input : state.transitions.keySet()) {
+                    // if there is more than one transition per input, merge
                     if (state.transitions.get(input).size() > 1) {
 
                         List<State> followingStates = new ArrayList<>(state.transitions.get(input));
@@ -114,7 +116,6 @@ public class Nea {
 
                         // add the "new" state to the list of states
                         this.states.add(keepOne);
-
 
                         stop = true;
                     }
