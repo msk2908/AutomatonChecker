@@ -20,7 +20,7 @@ public class State {
         //TODO evtl. bool to check if input is possible? -> not really needed?
         List<State> newList = new ArrayList<>();
         newList.add(state);
-        if (transitions.containsKey(input)) {
+        if (transitions.containsKey(input) && !transitions.get(input).contains(state)) {
             transitions.get(input).add(state);
         } else {
             transitions.put(input, newList);
@@ -39,6 +39,20 @@ public class State {
         transitions.get(input).remove(state);
         if (transitions.get(input).isEmpty()) {
             transitions.remove(input);
+        }
+    }
+
+    public void removeTransition(State state) {
+        for (Input input: transitions.keySet()) {
+            if (transitions.get(input).contains(state)) {
+                removeTransition(input, state);
+            }
+        }
+    }
+
+    public void removeTransition(List<State> states) {
+        for (State state : states) {
+            removeTransition(state);
         }
     }
 

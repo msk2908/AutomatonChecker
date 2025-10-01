@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -74,12 +75,83 @@ public class Dea {
 
     public Dea minimize() {
         //TODO
+        checkForWeirdLoop(this.states);
         /**
         //1. write down a table of all pairs {p,q} initially
         //2. mark {p,q} if i $\in$ F and q $\notin$ F or vice versa
         //3. repeat the following until no more changes occur: if there exists an unmarked pair {p,q} st {$\delta$(p), $\delta$(q)} is unmarked for some a ?in $\Sigma$, then mark {p,q}
         //4. when done, q $\approx$ q iff {p,q} is**/
         return new Dea(new ArrayList<>(), true, this.alphabet);
+    }
+
+    /**
+     * removes any unnecessary loops
+     * @param toCheck: List of states to check for Loop
+     */
+    private void checkForWeirdLoop(List<State> toCheck) {
+        State toRemove = null;
+        State toRemoveFrom = null;
+        boolean somethingChanged = true;
+        boolean stop = false;
+
+        while (somethingChanged) {
+            boolean one = false;
+            boolean two = false;
+            List<State> compare = new ArrayList<>(this.states);
+            for (State state : toCheck) {
+                for (State state1: toCheck) {
+                    if (checkIfEqual(state, state1)) {
+                        HashMap<Input, List<State>> followUp = state.transitions;
+                        HashMap<Input, List<State>> followUp1 = state1.transitions;
+
+                        for (Input input: followUp.keySet()) {
+                            if (followUp.get(input).contains(state1)) {
+                                one = true;
+                            }
+                            if (followUp1.get(input).contains(state)) {
+                                two = true;
+                            }
+                        }
+
+                        if (one && two) {
+                            // found a loophole
+                            toRemove = state1;
+                            toRemoveFrom = state;
+                            stop = true;
+                            break;
+                        }
+                    }
+                }
+                if (stop) {
+                    break;
+                }
+            }
+
+            if (toRemove != null) {
+                HashMap<Input, List<State>> transitions = toRemove.transitions;
+                for (Input input: transitions.keySet()) {
+                    toRemoveFrom.removeTransition(input, toRemove);
+                    toRemoveFrom.setTransitions(input, toRemoveFrom);
+                }
+                for (State state: this.states) {
+                    for (Input input: state.transitions.keySet()) {
+                        if (state.transitions.get(input).contains(toRemove)) {
+                            state.removeTransition(input, toRemove);
+                            state.setTransitions(input, toRemoveFrom);
+                        }
+                    }
+                }
+            }
+            this.states.remove(toRemove);
+            toCheck.remove(toRemove);
+
+            somethingChanged = !compare.equals(this.states);
+        }
+
+    }
+
+    private boolean checkIfEqual(State a, State b) {
+        return (a.transitions.equals(b.transitions) && !(a.id == b.id));
     }
 
 }

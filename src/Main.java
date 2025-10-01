@@ -427,7 +427,7 @@ public class Main {
                 saveStates.addAll(states);
                 Nea evaluateLoop = convertToNea(actualState, inside, states, alphabet);
 
-                        //get last states of the left side of concatenation to go on here
+                //get last states of the left side of concatenation to go on here
                 List<State> followUpStates = new ArrayList<>();
                 for (State state : evaluateLoop.states) {
                     if (state.terminal && !saveStates.contains(state)) {
