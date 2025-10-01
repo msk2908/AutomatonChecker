@@ -47,6 +47,6 @@ public class Transition {
         g.drawLine(x2, y2, (int) leftX, (int) leftY);
         g.drawLine(x2, y2, (int) rightX, (int) rightY);
 
-        g.drawString(name, (x1+x2)/2, (y1+y2)/2);
+        g.drawString(name, (x1+x2+100)/2, (y1+y2+100)/3);
     }
 }

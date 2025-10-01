@@ -121,7 +121,6 @@ public class Main {
                 }
             }
 
-
             for (int j = 0; j < number; j++) {
                 System.out.println("Please give one possible transition for state " + state.name);
                 String in = br.readLine();
@@ -416,7 +415,7 @@ public class Main {
             }
             case RegExType.LITERAL: {
                 //TODO might also be starting or non-final, check if actualState already has transitions or there is a follow-up (eg (a+b)*c))
-                State last = new State(setId(states), regEx.rToString() + " final destination", new HashMap<>(), true, false);
+                State last = new State(setId(states), regEx.rToString() + " final", new HashMap<>(), true, false);
                 actualState.setTransitions(alphabet.get(regEx.rToString()), last);
                 states.add(last);
                 break;
@@ -428,7 +427,7 @@ public class Main {
                 saveStates.addAll(states);
                 Nea evaluateLoop = convertToNea(actualState, inside, states, alphabet);
 
-                        //get last states of the left side of concatenation to go on here
+                //get last states of the left side of concatenation to go on here
                 List<State> followUpStates = new ArrayList<>();
                 for (State state : evaluateLoop.states) {
                     if (state.terminal && !saveStates.contains(state)) {
