@@ -7,13 +7,13 @@ import java.util.List;
 
 public class StatePanel extends JPanel {
 
-    private List<Kreis> states = new ArrayList<>();
-    private HashMap<State, Coordinate> stateCoordinateHashMap = new HashMap<>();
-    private List<Color> colorList = new ArrayList<>();
-    private List<List<Transition>> transitions = new ArrayList<>();
+    private final  List<Kreis> states = new ArrayList<>();
+    private final List<Color> colorList = new ArrayList<>();
+    private final List<List<Transition>> transitions = new ArrayList<>();
 
     public StatePanel(List<State> states, List<Coordinate> coordinates) {
         int counter = 0;
+        HashMap<State, Coordinate> stateCoordinateHashMap = new HashMap<>();
         for (State state : states) {
             int x = coordinates.get(counter).getX();
             int y = coordinates.get(counter).getY();
@@ -23,6 +23,9 @@ public class StatePanel extends JPanel {
                     (int) (Math.random() * 256),
                     (int) (Math.random() * 256)));
             this.states.add(new Kreis(x, y, colorList.get(counter), state.name));
+            if (state.terminal) {
+                this.states.add(new Kreis(x, y, colorList.get(counter), state.name, true));
+            }
             counter++;
         }
 
@@ -34,6 +37,9 @@ public class StatePanel extends JPanel {
                 for (State state1 : stateTransitions.get(input)) {
                     Coordinate coordinateZiel = stateCoordinateHashMap.get(state1);
                     list.add(new Transition(coordinateStart, coordinateZiel, input.iToString()));
+                    if (state.starting) {
+                        list.add(new Transition(new Coordinate(-100, coordinateStart.y), new Coordinate(coordinateStart.x,coordinateStart.y), ""));
+                    }
                 }
             }
             transitions.add(list);
@@ -48,7 +54,7 @@ public class StatePanel extends JPanel {
         for (Kreis k : states) {
             k.zeichne(g);
         }
-        for (int i = 0; i < states.size(); i++) {
+        for (int i = 0; i < colorList.size(); i++) {
             g.setColor(colorList.get(i));
             for (Transition t : transitions.get(i)) {
                 t.drawArrow(g);

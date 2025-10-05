@@ -11,7 +11,7 @@ public class AutomatonDrawer {
     }
 
     public JFrame paintFrame() {
-        JFrame fenster = new JFrame("AAAAAAAAAAAAAAAAAAAAAAAAAAaaaaa");
+        JFrame fenster = new JFrame("Automaton");
         fenster.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fenster.setSize(400, 400);
 

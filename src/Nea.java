@@ -29,6 +29,7 @@ public class Nea {
         List<Coordinate> coordinates = new ArrayList<>();
         boolean flag = true;
         boolean quadrupleFlag = true;
+        // only shifts states a little, could still be worked on
         for (State state : states) {
             coordinates.add(new Coordinate(x, y));
             if (flag) {
@@ -57,7 +58,7 @@ public class Nea {
         JFrame fenster = stateDrawerList.paintFrame();
         stateDrawerList.paint(fenster);
 
-        // Konsole offen halten
+        // keep open console
         Scanner scanner = new Scanner(System.in);
         System.out.println("ENTER zum Beenden...");
         scanner.nextLine();

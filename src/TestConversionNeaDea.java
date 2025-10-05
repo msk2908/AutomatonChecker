@@ -113,7 +113,6 @@ public class TestConversionNeaDea {
     }
 
 
-//yessssssss
     @Test
     public void testComplicated() {
         //does not actually test something because putting the automaton requires mental working
@@ -129,12 +128,9 @@ public class TestConversionNeaDea {
         //nea.drawNea();
         System.out.println("Nea: \n" + nea.neaToString(alphabet));
 
-
         Dea dea = nea.convertNeaToDea();
+
         dea.drawDea();
-
-        dea.minimize();
-
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
