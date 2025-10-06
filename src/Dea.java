@@ -78,38 +78,114 @@ public class Dea {
         try {
             startingState = getStartingState();
         } catch (Exception e) {
-            throw new IllegalArgumentException("Your automaton did not contain a starting state, how did you manage to do this");
+            throw new IllegalArgumentException("Your automaton did not contain a starting state, how did you manage to do this?");
         }
 
-        List<State> startList = new ArrayList<>();
+        boolean somethingChanged = true;
+
+        while (somethingChanged){
+            List<State> compare = new ArrayList<>(states);
+            //for every distinct pair of states
+            boolean stop = false;
+            for (State state: this.states) {
+                for (State state1 : this.states) {
+                    // get rid of one of two states with the same possible transitions
+                    if (!(state.id == state1.id) && haveEqualTransitions(state, state1)) {
+                        removeSecond(state, state1);
+                        stop = true;
+                        break;
+                    }
+                }
+                if (stop) {
+                    break;
+                }
+            }
+            somethingChanged = !compare.equals(states);
+        }
 
 
+
+        /*List<State> startList = new ArrayList<>();
         startList.add(startingState);
 
         HashMap<Input, List<State>> startMap = new HashMap<>();
 
-        startMap.put(alphabet.get("Epsilon"), startList);
+        startMap.put(alphabet.get("Epsilon"), startList); // starting state gets Epsilon-transition
 
         listOfDifferentiatedStates.add(startMap);
 
-
-        //TODO get rid of equal states with no epsilon-transition
-
         split(listOfDifferentiatedStates, startMap);
 
+        getRidOfEquals(listOfDifferentiatedStates);*/
 
-        getRidOfEquals(listOfDifferentiatedStates);
+        //checkForWeirdLoop(this.states);
 
 
-        checkForWeirdLoop(this.states);
-        /**
-         //1. write down a table of all pairs {p,q} initially
-         //2. mark {p,q} if i $\in$ F and q $\notin$ F or vice versa
-         //3. repeat the following until no more changes occur: if there exists an unmarked pair {p,q} st {$\delta$(p), $\delta$(q)} is unmarked for some a ?in $\Sigma$, then mark {p,q}
-         //4. when done, q $\approx$ q iff {p,q} is**/
+
         return new Dea(this.states, true, this.alphabet);
     }
 
+
+    private void removeSecond(State a, State b) {
+        // removes state b from the set of states
+
+        // set a new transition to a if b previously had a self-loop
+        for (Input input: b.transitions.keySet()) {
+            for (State state : b.transitions.get(input)) {
+                if (state.equals(b)) {
+                    a.setTransitions(input, a);
+                }
+            }
+        }
+
+        // set all transitions to b to a instead
+        for (State state: this.states) {
+            Input input = state.containsTransitionTo(b);
+            while (input != null) {
+                // move all transitions
+                state.transitions.get(input).remove(b);
+                if (!state.transitions.get(input).contains(a)) {
+                    state.transitions.get(input).add(a);
+                }
+                // check whether there are more transitions
+                input = state.containsTransitionTo(b);
+            }
+        }
+
+        this.states.remove(b);
+
+    }
+
+    private boolean haveEqualTransitions(State a, State b) {
+        if (haveEqualKeysets(a,b)) {
+            for (Input input : a.transitions.keySet()) {
+                for (State state: a.transitions.get(input)) {
+                    if (!b.transitions.get(input).contains(state)) {
+                        return false;
+                    }
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean haveEqualKeysets(State a, State b) {
+        return a.transitions.keySet().equals(b.transitions.keySet());
+    }
+
+
+
+
+
+
+
+
+
+
+
+    //-----------------------------------------------------------------------------------------------------------
     /**
      * removes any unnecessary loops
      *
@@ -159,6 +235,9 @@ public class Dea {
                 for (Input input : transitions.keySet()) {
                     toRemoveFrom.removeTransition(input, toRemove);
                     toRemoveFrom.setTransitions(input, toRemoveFrom);
+                    if (toRemove.starting) {
+                        toRemoveFrom.setStarting();
+                    }
                 }
                 for (State state : this.states) {
                     for (Input input : state.transitions.keySet()) {

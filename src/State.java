@@ -15,6 +15,15 @@ public class State {
         this.terminal = terminal;
     }
 
+    public Input containsTransitionTo(State state) {
+        for (Input input : transitions.keySet()) {
+            if (transitions.get(input).contains(state)) {
+                return input;
+            }
+        }
+        return null;
+    }
+
     public void setTransitions(Input input, State state) {
         // creates a transition for the automaton with the given input from alphabet to the given state
         //TODO evtl. bool to check if input is possible? -> not really needed?
