@@ -93,7 +93,7 @@ public class Nea {
 
                         List<State> followingStates = new ArrayList<>(state.transitions.get(input));
 
-                        // collect all transitions of the states just deleted (trust me bro)
+                        // collect all transitions of the states just deleted
                         HashMap<Input, List<State>> followingTransitions = getFollowingStates(followingStates);
 
                         // delete transitions to states just deleted

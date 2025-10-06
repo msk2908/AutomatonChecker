@@ -23,12 +23,9 @@ public class TestConversionNeaDea {
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-        //dea.drawDea();
+        dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
-
-
-
 
     @Test
     public void testEasyLoopNeaToDea() {
@@ -39,6 +36,7 @@ public class TestConversionNeaDea {
         System.out.println(nea.neaToString(alphabet));
         //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
+        dea.minimize();
         dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
@@ -114,7 +112,7 @@ public class TestConversionNeaDea {
 
 
     @Test
-    public void testComplicated() {
+    public void testNeaToDeaComplicated() {
         //does not actually test something because putting the automaton requires mental working
         //TODO make this test test something
         List<String> list = new ArrayList<>();
@@ -129,7 +127,6 @@ public class TestConversionNeaDea {
         System.out.println("Nea: \n" + nea.neaToString(alphabet));
 
         Dea dea = nea.convertNeaToDea();
-
         dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
