@@ -1,3 +1,5 @@
+package Drawing;
+
 import java.awt.Graphics;
 import java.awt.Color;
 
@@ -31,7 +33,7 @@ public class Kreis {
         }
         g.drawOval(x, y, 100, 100);
         g.drawString(this.name, x+50, y+50);
-        // Wenn du einen gefüllten Kreis willst:
+        // Wenn du einen gefüllten Drawing.Kreis willst:
         // g.fillOval(x, y, breite, hoehe);
     }
 }

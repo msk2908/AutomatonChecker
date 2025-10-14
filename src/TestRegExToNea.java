@@ -1,3 +1,7 @@
+import RegExClasses.Concat;
+import RegExClasses.Loop;
+import RegExClasses.Or;
+import RegExClasses.RegEx;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -52,7 +56,7 @@ public class TestRegExToNea {
         State bFinal = new State(4,"b final destination", new HashMap<>(), true, false);
 
 
-        State initial = new State(0,"Or[a,b]", transitionsInitial, false, true);
+        State initial = new State(0,"RegExClasses.Or[a,b]", transitionsInitial, false, true);
 
 
         a.setTransitions(new Input("a", TransitionType.LITERAL), aFinal);
@@ -78,7 +82,7 @@ public class TestRegExToNea {
         alphabetList.add("b");
         Alphabet alphabet = new Alphabet(alphabetList);
         RegEx regEx = new Concat(new RegEx('a'), new RegEx('b'));
-        State concatAB = new State(0,"Concat[a,b]", new HashMap<>(), false, true);
+        State concatAB = new State(0,"RegExClasses.Concat[a,b]", new HashMap<>(), false, true);
         State b = new State(1,"b", new HashMap<>(), false, false);
         State bFinal = new State(2,"b final destination", new HashMap<>(), true, false);
         concatAB.setTransitions(new Input("a", TransitionType.LITERAL), b);
@@ -100,7 +104,7 @@ public class TestRegExToNea {
         alphabetList.add("b");
         Alphabet alphabet = new Alphabet(alphabetList);
         RegEx regEx = new Loop(new RegEx('a'));
-        State loopA = new State(0,"Loop[a]", new HashMap<>(), true, true);
+        State loopA = new State(0,"RegExClasses.Loop[a]", new HashMap<>(), true, true);
         State a = new State(1,"a final destination", new HashMap<>(), true, true);
         loopA.setTransitions(new Input("a", TransitionType.LITERAL), a);
         a.setTransitions(new Input("Epsilon", TransitionType.EPSILON), loopA);
@@ -127,8 +131,8 @@ public class TestRegExToNea {
         Alphabet alphabet = new Alphabet(alphabetList);
         RegEx regEx = new Or(new Concat(new RegEx('a'), new RegEx('b')), new RegEx('c'));
 
-        State initial = new State(0,"Or[Concat[a,b],c]", new HashMap<>(), false, true);
-        State concat = new State(1,"Concat[a,b]", new HashMap<>(), false, false);
+        State initial = new State(0,"RegExClasses.Or[RegExClasses.Concat[a,b],c]", new HashMap<>(), false, true);
+        State concat = new State(1,"RegExClasses.Concat[a,b]", new HashMap<>(), false, false);
         State c = new State(2,"c", new HashMap<>(), false, false);
         State cFinal = new State(3,"c final destination", new HashMap<>(), true, false);
         State b = new State(4,"b", new HashMap<>(), false, false);
@@ -170,8 +174,8 @@ public class TestRegExToNea {
         Alphabet alphabet = new Alphabet(alphabetList);
         RegEx regEx = new Or(new RegEx('a'), new Concat(new RegEx('b'), new RegEx('c')));
 
-        State initial = new State(0,"Or[a,Concat[b,c]]", new HashMap<>(), false, true);
-        State concat = new State(2,"Concat[b,c]", new HashMap<>(), false, false);
+        State initial = new State(0,"RegExClasses.Or[a,RegExClasses.Concat[b,c]]", new HashMap<>(), false, true);
+        State concat = new State(2,"RegExClasses.Concat[b,c]", new HashMap<>(), false, false);
         State a = new State(1,"a", new HashMap<>(), false, false);
         State aFinal = new State(3,"a final destination", new HashMap<>(), true, false);
         State c = new State(4,"c", new HashMap<>(), false, false);

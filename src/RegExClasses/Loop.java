@@ -1,4 +1,6 @@
-public class Loop extends RegEx{
+package RegExClasses;
+
+public class Loop extends RegEx {
     RegEx regEx;
     RegExType type;
     public Loop(RegEx regEx) {
@@ -7,7 +9,7 @@ public class Loop extends RegEx{
     }
 
     public String rToString() {
-        return "Loop[" + regEx.rToString() + "]" ;
+        return "RegExClasses.Loop[" + regEx.rToString() + "]" ;
     }
 
     public RegEx getRegEx() {

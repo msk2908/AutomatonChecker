@@ -1,3 +1,5 @@
+import Drawing.Coordinate;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -189,7 +191,7 @@ public class Dea {
     /**
      * removes any unnecessary loops
      *
-     * @param toCheck: List of states to check for Loop
+     * @param toCheck: List of states to check for RegExClasses.Loop
      */
     private void checkForWeirdLoop(List<State> toCheck) {
         State toRemove = null;

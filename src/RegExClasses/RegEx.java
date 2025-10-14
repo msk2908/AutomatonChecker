@@ -1,3 +1,5 @@
+package RegExClasses;
+
 public class RegEx {
     Character a;
     RegExType type;
@@ -19,5 +21,13 @@ public class RegEx {
     public RegEx getLeft() { return this;}
     public RegEx getRight() { return this;}
     public RegEx getRegEx() { return this;}
+
+    public Character getA() {
+        return this.a;
+    }
+
+    public RegExType getType() {
+        return this.type;
+    }
 
 }

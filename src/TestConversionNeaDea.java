@@ -1,13 +1,9 @@
 
-import evtlSpaeterNutzbar.NEAGui;
+import RegExClasses.RegEx;
 import org.junit.Test;
 
-import javax.swing.*;
-import javax.swing.text.Style;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 
 
 import static org.junit.Assert.assertEquals;

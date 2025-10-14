@@ -1,3 +1,7 @@
+import RegExClasses.Concat;
+import RegExClasses.Loop;
+import RegExClasses.Or;
+import RegExClasses.RegEx;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

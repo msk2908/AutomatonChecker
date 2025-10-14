@@ -1,3 +1,5 @@
+package RegExClasses;
+
 public class Or extends RegEx {
     RegEx regExLeft;
     RegEx regExRight;
@@ -19,7 +21,7 @@ public class Or extends RegEx {
             right = regExRight.rToString();
         }
 
-        return "Or[" + left + "," + right + "]";
+        return "RegExClasses.Or[" + left + "," + right + "]";
     }
 
     public RegEx getLeft() {

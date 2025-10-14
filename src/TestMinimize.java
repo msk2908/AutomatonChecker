@@ -1,3 +1,4 @@
+import RegExClasses.RegEx;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -39,4 +40,6 @@ public class TestMinimize {
         dea.drawDea();
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
+
+
 }

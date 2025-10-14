@@ -1,6 +1,6 @@
+package Drawing;
+
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 
 public class Transition {
 
