@@ -22,7 +22,7 @@ public class TestRegExToNea {
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(),alphabet);
         System.out.println("created: " + nea.neaToString(alphabet));
         List<State> states = new ArrayList<>();
-        State state2 = new State(1, "a final destination", new HashMap<>(), true, false);
+        State state2 = new State(1, "a final", new HashMap<>(), true, false);
         HashMap<Input, List<State>> transitionsInitial = new HashMap<>();
         State initial = new State(0, "a", transitionsInitial, false, true);
         initial.setTransitions(new Input("a", TransitionType.LITERAL), state2);
@@ -52,8 +52,8 @@ public class TestRegExToNea {
         State b = new State(2,"b", transitionsB, false, false);
 
 
-        State aFinal = new State(3,"a final destination", new HashMap<>(), true, false);
-        State bFinal = new State(4,"b final destination", new HashMap<>(), true, false);
+        State aFinal = new State(3,"a final", new HashMap<>(), true, false);
+        State bFinal = new State(4,"b final", new HashMap<>(), true, false);
 
 
         State initial = new State(0,"RegExClasses.Or[a,b]", transitionsInitial, false, true);
@@ -84,7 +84,7 @@ public class TestRegExToNea {
         RegEx regEx = new Concat(new RegEx('a'), new RegEx('b'));
         State concatAB = new State(0,"RegExClasses.Concat[a,b]", new HashMap<>(), false, true);
         State b = new State(1,"b", new HashMap<>(), false, false);
-        State bFinal = new State(2,"b final destination", new HashMap<>(), true, false);
+        State bFinal = new State(2,"b final", new HashMap<>(), true, false);
         concatAB.setTransitions(new Input("a", TransitionType.LITERAL), b);
         b.setTransitions(new Input("b", TransitionType.LITERAL), bFinal);
         List<State> states = new ArrayList<>();
@@ -105,7 +105,7 @@ public class TestRegExToNea {
         Alphabet alphabet = new Alphabet(alphabetList);
         RegEx regEx = new Loop(new RegEx('a'));
         State loopA = new State(0,"RegExClasses.Loop[a]", new HashMap<>(), true, true);
-        State a = new State(1,"a final destination", new HashMap<>(), true, true);
+        State a = new State(1,"a final", new HashMap<>(), true, true);
         loopA.setTransitions(new Input("a", TransitionType.LITERAL), a);
         a.setTransitions(new Input("Epsilon", TransitionType.EPSILON), loopA);
         List<State> states = new ArrayList<>();
@@ -134,9 +134,9 @@ public class TestRegExToNea {
         State initial = new State(0,"RegExClasses.Or[RegExClasses.Concat[a,b],c]", new HashMap<>(), false, true);
         State concat = new State(1,"RegExClasses.Concat[a,b]", new HashMap<>(), false, false);
         State c = new State(2,"c", new HashMap<>(), false, false);
-        State cFinal = new State(3,"c final destination", new HashMap<>(), true, false);
+        State cFinal = new State(3,"c final", new HashMap<>(), true, false);
         State b = new State(4,"b", new HashMap<>(), false, false);
-        State bFinal = new State(5,"b final destination", new HashMap<>(), true, false);
+        State bFinal = new State(5,"b final", new HashMap<>(), true, false);
 
 
 
@@ -177,9 +177,9 @@ public class TestRegExToNea {
         State initial = new State(0,"RegExClasses.Or[a,RegExClasses.Concat[b,c]]", new HashMap<>(), false, true);
         State concat = new State(2,"RegExClasses.Concat[b,c]", new HashMap<>(), false, false);
         State a = new State(1,"a", new HashMap<>(), false, false);
-        State aFinal = new State(3,"a final destination", new HashMap<>(), true, false);
+        State aFinal = new State(3,"a final", new HashMap<>(), true, false);
         State c = new State(4,"c", new HashMap<>(), false, false);
-        State cFinal = new State(5,"c final destination", new HashMap<>(), true, false);
+        State cFinal = new State(5,"c final", new HashMap<>(), true, false);
 
         initial.setTransitions(new Input("Epsilon", TransitionType.EPSILON), a);
         initial.setTransitions(new Input("Epsilon", TransitionType.EPSILON), concat);
