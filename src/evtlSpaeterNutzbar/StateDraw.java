@@ -1,5 +1,7 @@
 package evtlSpaeterNutzbar;
 
+import Drawing.Coordinate;
+
 import java.awt.*;
 
 public class StateDraw {
@@ -42,6 +44,11 @@ public class StateDraw {
 
     public boolean isFinal() {
         return isFinal;
+    }
+
+    //TODO irgendwie unnötig
+    public Coordinate getCoordinate() {
+        return new Coordinate(x,y);
     }
 
     public boolean contains(Point p) {

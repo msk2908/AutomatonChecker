@@ -78,5 +78,6 @@ class DrawingPanelR extends JPanel {
     public List<StateDraw> getStates() {
         return stateDraws;
     }
+    public List<Transition> getTransition() { return transitions; }
     public List<Transition> getTransitions() { return transitions;}
 }

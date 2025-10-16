@@ -7,6 +7,8 @@ import java.util.List;
 public class NEAGui extends JFrame {
     private static DrawingPanelR drawingPanelR;
     static List<StateDraw> states;
+    static List<Transition> transitions;
+    static InputAutomaton automaton;
 
     public NEAGui() {
         setTitle("NEA Zeichner");
@@ -31,14 +33,15 @@ public class NEAGui extends JFrame {
         resetBtn.addActionListener(e -> drawingPanelR.reset());
 
         states = drawingPanelR.getStates();
-
+        transitions = drawingPanelR.getTransitions();
+        automaton = new InputAutomaton(states, transitions);
         setVisible(true);
     }
 
 
-    public static List<StateDraw> main() {
+    public static InputAutomaton main() {
         SwingUtilities.invokeLater(NEAGui::new);
-        return states;
+        return automaton;
     }
 
 }

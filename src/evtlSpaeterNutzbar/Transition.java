@@ -1,8 +1,10 @@
 package evtlSpaeterNutzbar;
 
+import Drawing.Coordinate;
+
 import java.awt.*;
 
-class Transition {
+public class Transition {
     StateDraw from, to;
     String symbol;
 
@@ -52,4 +54,5 @@ class Transition {
     public String getLabel() {
         return symbol;
     }
+
 }

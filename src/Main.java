@@ -5,7 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
-import evtlSpaeterNutzbar.NEAGui;
+import evtlSpaeterNutzbar.*;
 
 
 public class Main {
@@ -17,15 +17,17 @@ public class Main {
         System.out.println("create new exercise or check solution? e/s");
         String def = br.readLine();
         if (def.equals("e")) {
-
-        } else {
             System.out.println("select a difficulty: (insert positive integer)");
             int depth = reader.nextInt();
             createNewExercise(depth);
+        } else {
+            InputAutomaton automaton = NEAGui.main();
+            SolutionChecker solutionChecker = new SolutionChecker();
+            List<State> states = SolutionChecker.convertInputToStates(automaton);
         }
 
 
-        List<StateDraw> statedraws = NEAGui.main();
+
 
         //Dea givenDea = convertInputToAutomaton(statedraws);
 
@@ -50,6 +52,8 @@ public class Main {
 
 
     }
+
+
 
 
     public static void createNewExercise(int depth) throws IOException {
