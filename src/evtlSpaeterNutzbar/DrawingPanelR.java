@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 class DrawingPanelR extends JPanel {
-    enum Mode {NONE, ADD_STATE, ADD_TRANSITION}
+    enum Mode {NONE, ADD_STATE, IS_DONE, ADD_TRANSITION}
 
     private Mode currentMode = Mode.NONE;
     private List<StateDraw> stateDraws = new ArrayList<>();
+    private List<String> stateNames = new ArrayList<>();
     private List<Transition> transitions = new ArrayList<>();
     private StateDraw selectedStateDrawForTransition = null;
+    public boolean done = false;
 
     public DrawingPanelR() {
         setBackground(Color.WHITE);
@@ -21,10 +23,13 @@ class DrawingPanelR extends JPanel {
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 switch (currentMode) {
+                    case IS_DONE: {
+                        done = true;
+                    }
                     case ADD_STATE:
                         String name = JOptionPane.showInputDialog("Name des Zustands:");
                         if (name == null || name.isEmpty()) return;
-
+                        stateNames.add(name);
                         boolean isStart = JOptionPane.showConfirmDialog(null, "Startzustand?", "Frage", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
                         boolean isFinal = JOptionPane.showConfirmDialog(null, "Endzustand?", "Frage", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
                         stateDraws.add(new StateDraw(name, e.getX(), e.getY(), isStart, isFinal));
@@ -77,6 +82,10 @@ class DrawingPanelR extends JPanel {
 
     public List<StateDraw> getStates() {
         return stateDraws;
+    }
+
+    public List<String> getNames() {
+        return stateNames;
     }
     public List<Transition> getTransition() { return transitions; }
     public List<Transition> getTransitions() { return transitions;}

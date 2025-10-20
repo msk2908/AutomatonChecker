@@ -20,10 +20,23 @@ public class Main {
             System.out.println("select a difficulty: (insert positive integer)");
             int depth = reader.nextInt();
             createNewExercise(depth);
-        } else {
+        } else {System.out.println("Please enter regex to check automaton for: ");
+            String regExS = reader.nextLine();
+            RegEx regEx = convertToSyntaxTree(regExS.toCharArray(), "", "");
             InputAutomaton automaton = NEAGui.main();
+            while(!automaton.complete) {
+                System.out.println("nice input bro");
+            }
+
             SolutionChecker solutionChecker = new SolutionChecker();
             List<State> states = SolutionChecker.convertInputToStates(automaton);
+
+            System.out.println();
+            System.out.println(automaton.stateDrawList);
+            System.out.println(automaton.transitionList);
+            //System.out.println("Hello?");
+            //def = br.readLine();
+
         }
 
 
