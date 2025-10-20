@@ -29,11 +29,10 @@ public class Main {
             }
 
             SolutionChecker solutionChecker = new SolutionChecker();
-            List<State> states = SolutionChecker.convertInputToStates(automaton);
-
-            System.out.println();
-            System.out.println(automaton.stateDrawList);
-            System.out.println(automaton.transitionList);
+            Dea dea = SolutionChecker.convertInputToStates(automaton);
+            dea.drawDea();
+            // seems to work
+            // TODO check if inserted solution is correct
             //System.out.println("Hello?");
             //def = br.readLine();
 

@@ -17,7 +17,7 @@ public class Alphabet {
         this.possibleInputs = inputs;
     }
 
-    public void add(String input) {
+    public Input add(String input) {
         Input i;
         if (input.equals("Epsilon")) {
             i = new Input(input, TransitionType.EPSILON);
@@ -27,6 +27,7 @@ public class Alphabet {
         if (!this.possibleInputs.contains(i)) {
             this.possibleInputs.add(i);
         }
+        return i;
     }
 
     public void add(Alphabet alphabet) {
