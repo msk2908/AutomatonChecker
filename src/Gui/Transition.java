@@ -1,6 +1,4 @@
-package evtlSpaeterNutzbar;
-
-import Drawing.Coordinate;
+package Gui;
 
 import java.awt.*;
 

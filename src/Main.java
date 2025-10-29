@@ -1,11 +1,10 @@
 import RegExClasses.*;
-import evtlSpaeterNutzbar.*;
+import Gui.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
-import evtlSpaeterNutzbar.*;
 
 
 public class Main {

@@ -21,7 +21,7 @@ public class Or extends RegEx {
             right = regExRight.rToString();
         }
 
-        return "RegExClasses.Or[" + left + "," + right + "]";
+        return "Or[" + left + "," + right + "]";
     }
 
     public RegEx getLeft() {

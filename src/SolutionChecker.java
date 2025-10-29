@@ -1,7 +1,7 @@
 
-import evtlSpaeterNutzbar.*;
+import RegExClasses.RegEx;
+import Gui.*;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +39,13 @@ public class SolutionChecker {
         return new Dea(states, false, alphabet);
     }
 
+    public boolean compareDea(Dea dea1, Dea dea2) {
+        return true;
+    }
 
+    public boolean DeaMatchesRegEx(RegEx regEx, Dea dea) {
 
+        return true;
+    }
 
 }

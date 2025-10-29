@@ -11,7 +11,7 @@ public class Concat extends RegEx {
     }
 
     public String rToString() {
-        return "RegExClasses.Concat["+ regExLeft.rToString()+ "," + regExRight.rToString() + "]";
+        return "Concat["+ regExLeft.rToString()+ "," + regExRight.rToString() + "]";
     }
 
     public RegEx getLeft() {

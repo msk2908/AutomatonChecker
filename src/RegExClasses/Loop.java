@@ -9,7 +9,7 @@ public class Loop extends RegEx {
     }
 
     public String rToString() {
-        return "RegExClasses.Loop[" + regEx.rToString() + "]" ;
+        return "Loop[" + regEx.rToString() + "]" ;
     }
 
     public RegEx getRegEx() {

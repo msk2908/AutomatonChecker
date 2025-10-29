@@ -1,4 +1,4 @@
-package evtlSpaeterNutzbar;
+package Gui;
 
 import java.util.List;
 
