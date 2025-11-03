@@ -56,6 +56,10 @@ public class SolutionChecker {
         HashMap<State, List<State>> matchingStates = new HashMap<>();
         states1 = dea1.states;
 
+        if (dea1.states.size() != dea2.states.size()) {
+            return false;
+        }
+
         // match up states that have the same transitions
         for (State state : dea1.states) {
             boolean stateMatched = false;
@@ -70,6 +74,8 @@ public class SolutionChecker {
             if (!stateMatched) {
                 return false;
             }
+
+
             // TODO check if transitions match
 
         }

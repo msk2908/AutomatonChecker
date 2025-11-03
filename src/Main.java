@@ -46,6 +46,7 @@ public class Main {
             boolean correct = solutionChecker.compareDea(dea, deaFromRegEx);
             System.out.println(correct);
             dea.drawDea();
+
             // seems to work
             // TODO check if inserted solution is correct
             //def = br.readLine();
