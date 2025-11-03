@@ -162,6 +162,7 @@ public class Dea {
         if (haveEqualKeysets(a,b)) {
             for (Input input : a.transitions.keySet()) {
                 for (State state: a.transitions.get(input)) {
+                    // TODO get matching input from b (this fails because there b does not know a's input
                     if (!b.transitions.get(input).contains(state)) {
                         return false;
                     }
@@ -174,7 +175,34 @@ public class Dea {
     }
 
     private boolean haveEqualKeysets(State a, State b) {
-        return a.transitions.keySet().equals(b.transitions.keySet());
+        // TODO use String
+        List<String> inputA = new ArrayList<>();
+        List<String> inputB = new ArrayList<>();
+
+        for (Input input : a.transitions.keySet()) {
+            inputA.add(input.input);
+        }
+        for (Input input : b.transitions.keySet()) {
+            inputB.add(input.input);
+        }
+
+        if (inputB.size() != inputA.size()) {
+            return false;
+        }
+
+        for (String input : inputA) {
+            boolean contains = false;
+            for (int i = 0; i < inputB.size(); i++) {
+                if (input.equals(inputB.get(i))) {
+                    contains = true;
+                }
+            }
+            if (!contains) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 

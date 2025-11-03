@@ -8,6 +8,7 @@ public class Alphabet {
 
         int length = possibleInputs.size();
         List<Input> inputs = new ArrayList<>();
+        possibleInputs.remove("Epsilon");
         inputs.add(new Input("Epsilon", TransitionType.EPSILON));
         for (int i = 0; i < length; i++) {
             Input input = new Input(possibleInputs.get(i), TransitionType.LITERAL);

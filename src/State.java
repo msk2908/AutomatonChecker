@@ -3,7 +3,7 @@ import java.util.*;
 public class State {
     final int id;
     final String name;
-    HashMap<Input, List<State>> transitions = new LinkedHashMap<>();
+    HashMap<Input, List<State>> transitions;
     boolean terminal;
     boolean starting;
 

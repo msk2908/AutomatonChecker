@@ -12,12 +12,14 @@ public class SolutionChecker {
 
     }
 
-    public static Dea convertInputToStates(InputAutomaton automaton) {
+    // TODO test this
+    public static Dea convertInputToDea(InputAutomaton automaton) {
         List<State> states = new ArrayList<>();
         HashMap<StateDraw, Integer> idMap = new HashMap<StateDraw, Integer>();
         Alphabet alphabet = new Alphabet(new ArrayList<>());
 
         int id = 0;
+        // catch all states
         for (StateDraw stateDraw: automaton.stateDrawList) {
             String name = stateDraw.getName();
             boolean terminal = stateDraw.isFinal();
@@ -28,10 +30,10 @@ public class SolutionChecker {
             id++;
         }
 
+        // catch all transitions
         for (Transition transition : automaton.transitionList) {
             int idFrom = idMap.get(transition.getFrom());
             int idTo = idMap.get(transition.getTo());
-            List<State> transitionsList = new ArrayList<>();
             states.get(idFrom).setTransitions(alphabet.add(transition.getLabel()), states.get(idTo));
         }
 
@@ -67,15 +69,9 @@ public class SolutionChecker {
             if (!stateMatched) {
                 return false;
             }
-        // TODO check if all states are matched
-            /*if(matches1.isEmpty()) {
-                return false;
-            } else {
-                matches.put(state, matches1);
-            }*/
+        // TODO check if transitions match
 
         }
-
         return true;
     }
 

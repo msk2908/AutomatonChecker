@@ -6,6 +6,7 @@ import java.util.List;
 public class RegEx {
     Character a;
     RegExType type;
+
     public RegEx(RegExType type) {
         this.type = type;
     }
@@ -17,13 +18,22 @@ public class RegEx {
 
     public String rToString() {
         if (this.type.equals(RegExType.NONE)) {
-            a =' ';
+            a = ' ';
         }
         return a.toString();
     }
-    public RegEx getLeft() { return this;}
-    public RegEx getRight() { return this;}
-    public RegEx getRegEx() { return this;}
+
+    public RegEx getLeft() {
+        return this;
+    }
+
+    public RegEx getRight() {
+        return this;
+    }
+
+    public RegEx getRegEx() {
+        return this;
+    }
 
     public Character getA() {
         return this.a;
@@ -33,24 +43,24 @@ public class RegEx {
         return this.type;
     }
 
+
+    // TODO test this -> check for doubles is done when creating alphabet
     public List<String> getAlphabet() {
         List<String> alphabetList = new ArrayList<>();
         switch (this.type) {
-            case RegExType.LITERAL : {
+            case RegExType.LITERAL: {
                 alphabetList.add(this.a.toString());
+                break;
             }
             case RegExType.LOOP: {
                 alphabetList.addAll(this.getRegEx().getAlphabet());
+                break;
             }
-            case RegExType.CONCAT: {
+            default: {
                 alphabetList.addAll(this.getRight().getAlphabet());
                 alphabetList.addAll(this.getLeft().getAlphabet());
+                break;
             }
-            case RegExType.OR: {
-                alphabetList.addAll(this.getRight().getAlphabet());
-                alphabetList.addAll(this.getLeft().getAlphabet());
-            }
-
         }
         return alphabetList;
     }
