@@ -24,6 +24,16 @@ public class State {
         return null;
     }
 
+    public List<String> containsTransitionsTo(State state) {
+        List<String> inputs = new ArrayList<>();
+        for (Input input : transitions.keySet()) {
+            if (transitions.get(input).contains(state)) {
+                inputs.add(input.input);
+            }
+        }
+        return inputs;
+    }
+
     public void setTransitions(Input input, State state) {
         // creates a transition for the automaton with the given input from alphabet to the given state
         //TODO evtl. bool to check if input is possible? -> not really needed?

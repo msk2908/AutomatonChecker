@@ -20,7 +20,7 @@ public class SolutionChecker {
 
         int id = 0;
         // catch all states
-        for (StateDraw stateDraw: automaton.stateDrawList) {
+        for (StateDraw stateDraw : automaton.stateDrawList) {
             String name = stateDraw.getName();
             boolean terminal = stateDraw.isFinal();
             boolean starting = stateDraw.isStart();
@@ -53,15 +53,16 @@ public class SolutionChecker {
 
         HashMap<State, List<State>> matches = new HashMap<>();
         List<State> states1 = new ArrayList<>();
-        HashMap<State, State> matchingStates = new HashMap<>();
+        HashMap<State, List<State>> matchingStates = new HashMap<>();
         states1 = dea1.states;
 
         // match up states that have the same transitions
-        for (State state: dea1.states) {
+        for (State state : dea1.states) {
             boolean stateMatched = false;
+            matchingStates.put(state, new ArrayList<>());
             for (State state1 : dea2.states) {
-                if (dea1.haveEqualTransitions(state, state1)) {
-                    matchingStates.put(state, state1);
+                if (dea1.haveEqualKeysets(state, state1)) {
+                    matchingStates.get(state).add(state1);
                     stateMatched = true;
                 }
             }
@@ -69,7 +70,7 @@ public class SolutionChecker {
             if (!stateMatched) {
                 return false;
             }
-        // TODO check if transitions match
+            // TODO check if transitions match
 
         }
         return true;

@@ -33,8 +33,8 @@ public class Main {
             String regExS = reader.nextLine();
             RegEx regEx = convertToSyntaxTree(regExS.toCharArray(), "", "");
             Alphabet alphabet = new Alphabet(regEx.getAlphabet());
-            Nea givenAutomaton = convertToNea(null, regEx, new ArrayList<>(), alphabet);
-            Dea given = givenAutomaton.convertNeaToDea();
+            Nea automatonFromRegEx = convertToNea(null, regEx, new ArrayList<>(), alphabet);
+            Dea deaFromRegEx = automatonFromRegEx.convertNeaToDea();
             InputAutomaton automaton = NEAGui.main();
             while(!automaton.complete) {
                 // this just does nothing but keeping the input field open
@@ -43,7 +43,7 @@ public class Main {
 
             SolutionChecker solutionChecker = new SolutionChecker();
             Dea dea = SolutionChecker.convertInputToDea(automaton);
-            boolean correct = solutionChecker.compareDea(dea, given);
+            boolean correct = solutionChecker.compareDea(dea, deaFromRegEx);
             System.out.println(correct);
             dea.drawDea();
             // seems to work

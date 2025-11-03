@@ -74,7 +74,7 @@ public class Dea {
     }
 
 
-    public Dea minimize() {
+    public void minimize() {
         List<HashMap<Input, List<State>>> listOfDifferentiatedStates = new ArrayList<>(); // to save new states for Dea
         State startingState;
         try {
@@ -123,8 +123,6 @@ public class Dea {
         //checkForWeirdLoop(this.states);
 
 
-
-        return new Dea(this.states, true, this.alphabet);
     }
 
 
@@ -159,14 +157,9 @@ public class Dea {
     }
 
     public boolean haveEqualTransitions(State a, State b) {
-        List<String> inputsA = getKeySet(a);
-        List<String> inputsB = getKeySet(b);
-        Alphabet alphabetA  = new Alphabet(inputsA);
-        Alphabet alphabetB = new Alphabet(inputsB);
         if (haveEqualKeysets(a,b)) {
-            for (Input input : a.getTransitions().keySet()) {
+            for (Input input : a.transitions.keySet()) {
                 for (State state: a.transitions.get(input)) {
-                    // TODO get matching input from b (this fails because there b does not know a's input)
                     if (!b.transitions.get(input).contains(state)) {
                         return false;
                     }
@@ -178,6 +171,29 @@ public class Dea {
         return true;
     }
 
+    /*public boolean haveSimilarTransitions(State a, State b) {
+        List<String> inputsA = getKeySet(a);
+        List<String> inputsB = getKeySet(b);
+        if (haveEqualKeysets(a,b)) {
+            for (Input input : a.getTransitions().keySet()) {
+                for (State state: a.transitions.get(input)) {
+                    // TODO get matching input from b (this fails because there b does not know a's input)
+                    if (b.containsTransitionTo(state) != null) {
+                        // get all transitions from b to
+                        State match = matches.get(state);
+                        List<String> in = b.containsTransitionsTo(match);
+                        if (!in.contains(input.input)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }*/
+
     private List<String> getKeySet(State state) {
         List<String> inputs = new ArrayList<>();
         for (Input input : state.transitions.keySet()) {
@@ -186,7 +202,7 @@ public class Dea {
         return inputs;
     }
 
-    private boolean haveEqualKeysets(State a, State b) {
+    public boolean haveEqualKeysets(State a, State b) {
         List<String> inputA = getKeySet(a);
         List<String> inputB = getKeySet(b);
 
