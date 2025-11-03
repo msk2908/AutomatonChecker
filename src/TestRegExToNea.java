@@ -55,9 +55,7 @@ public class TestRegExToNea {
         State aFinal = new State(3,"a final", new HashMap<>(), true, false);
         State bFinal = new State(4,"b final", new HashMap<>(), true, false);
 
-
         State initial = new State(0,"Or[a,b]", transitionsInitial, false, true);
-
 
         a.setTransitions(new Input("a", TransitionType.LITERAL), aFinal);
         b.setTransitions(new Input("b", TransitionType.LITERAL), bFinal);

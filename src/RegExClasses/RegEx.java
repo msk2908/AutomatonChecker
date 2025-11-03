@@ -1,5 +1,8 @@
 package RegExClasses;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RegEx {
     Character a;
     RegExType type;
@@ -28,6 +31,28 @@ public class RegEx {
 
     public RegExType getType() {
         return this.type;
+    }
+
+    public List<String> getAlphabet() {
+        List<String> alphabetList = new ArrayList<>();
+        switch (this.type) {
+            case RegExType.LITERAL : {
+                alphabetList.add(this.a.toString());
+            }
+            case RegExType.LOOP: {
+                alphabetList.addAll(this.getRegEx().getAlphabet());
+            }
+            case RegExType.CONCAT: {
+                alphabetList.addAll(this.getRight().getAlphabet());
+                alphabetList.addAll(this.getLeft().getAlphabet());
+            }
+            case RegExType.OR: {
+                alphabetList.addAll(this.getRight().getAlphabet());
+                alphabetList.addAll(this.getLeft().getAlphabet());
+            }
+
+        }
+        return alphabetList;
     }
 
 }

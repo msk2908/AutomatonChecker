@@ -158,7 +158,7 @@ public class Dea {
 
     }
 
-    private boolean haveEqualTransitions(State a, State b) {
+    public boolean haveEqualTransitions(State a, State b) {
         if (haveEqualKeysets(a,b)) {
             for (Input input : a.transitions.keySet()) {
                 for (State state: a.transitions.get(input)) {

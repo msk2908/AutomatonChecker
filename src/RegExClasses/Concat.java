@@ -21,4 +21,5 @@ public class Concat extends RegEx {
     public RegEx getRight() {
         return regExRight;
     }
+
 }

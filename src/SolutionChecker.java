@@ -40,12 +40,51 @@ public class SolutionChecker {
     }
 
     public boolean compareDea(Dea dea1, Dea dea2) {
+        // for every state of dea1
+        // if dea2 contains a state with all the given transitions
+        if (!dea1.minimized) {
+            dea1.minimize();
+        }
+        if (!dea2.minimized) {
+            dea2.minimize();
+        }
+
+        HashMap<State, List<State>> matches = new HashMap<>();
+        List<State> states1 = new ArrayList<>();
+        HashMap<State, State> matchingStates = new HashMap<>();
+        states1 = dea1.states;
+
+        // match up states that have the same transitions
+        for (State state: dea1.states) {
+            boolean stateMatched = false;
+            for (State state1 : dea2.states) {
+                if (dea1.haveEqualTransitions(state, state1)) {
+                    matchingStates.put(state, state1);
+                    stateMatched = true;
+                }
+            }
+            // if there is no matching state for one of the states, the deas are not equal
+            if (!stateMatched) {
+                return false;
+            }
+        // TODO check if all states are matched
+            /*if(matches1.isEmpty()) {
+                return false;
+            } else {
+                matches.put(state, matches1);
+            }*/
+
+        }
+
         return true;
     }
 
-    public boolean DeaMatchesRegEx(RegEx regEx, Dea dea) {
 
-        return true;
+    public boolean DeaMatchesRegEx(RegEx regEx, Dea dea) {
+        Alphabet alphabet = new Alphabet(regEx.getAlphabet());
+        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        Dea givenDea = nea.convertNeaToDea();
+        return compareDea(givenDea, dea);
     }
 
 }
