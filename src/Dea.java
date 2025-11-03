@@ -159,10 +159,14 @@ public class Dea {
     }
 
     public boolean haveEqualTransitions(State a, State b) {
+        List<String> inputsA = getKeySet(a);
+        List<String> inputsB = getKeySet(b);
+        Alphabet alphabetA  = new Alphabet(inputsA);
+        Alphabet alphabetB = new Alphabet(inputsB);
         if (haveEqualKeysets(a,b)) {
-            for (Input input : a.transitions.keySet()) {
+            for (Input input : a.getTransitions().keySet()) {
                 for (State state: a.transitions.get(input)) {
-                    // TODO get matching input from b (this fails because there b does not know a's input
+                    // TODO get matching input from b (this fails because there b does not know a's input)
                     if (!b.transitions.get(input).contains(state)) {
                         return false;
                     }
@@ -174,17 +178,18 @@ public class Dea {
         return true;
     }
 
-    private boolean haveEqualKeysets(State a, State b) {
-        // TODO use String
-        List<String> inputA = new ArrayList<>();
-        List<String> inputB = new ArrayList<>();
+    private List<String> getKeySet(State state) {
+        List<String> inputs = new ArrayList<>();
+        for (Input input : state.transitions.keySet()) {
+            inputs.add(input.input);
+        }
+        return inputs;
+    }
 
-        for (Input input : a.transitions.keySet()) {
-            inputA.add(input.input);
-        }
-        for (Input input : b.transitions.keySet()) {
-            inputB.add(input.input);
-        }
+    private boolean haveEqualKeysets(State a, State b) {
+        List<String> inputA = getKeySet(a);
+        List<String> inputB = getKeySet(b);
+
 
         if (inputB.size() != inputA.size()) {
             return false;
