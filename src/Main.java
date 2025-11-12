@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         Scanner reader = new Scanner(System.in);
@@ -35,20 +35,8 @@ public class Main {
             Alphabet alphabet = new Alphabet(regEx.getAlphabet());
             Nea automatonFromRegEx = convertToNea(null, regEx, new ArrayList<>(), alphabet);
             Dea deaFromRegEx = automatonFromRegEx.convertNeaToDea();
-            InputAutomaton automaton = NEAGui.main();
-            while(!automaton.complete) {
-                // this just does nothing but keeping the input field open
-                System.out.println("nice input bro");
-            }
+            checkSolution(regEx, alphabet, deaFromRegEx);
 
-            SolutionChecker solutionChecker = new SolutionChecker();
-            Dea dea = SolutionChecker.convertInputToDea(automaton);
-            boolean correct = solutionChecker.compareDea(dea, deaFromRegEx);
-            System.out.println(correct);
-            dea.drawDea();
-
-            // seems to work
-            // TODO check if inserted solution is correct
             //def = br.readLine();
 
         }
@@ -58,9 +46,8 @@ public class Main {
 
         //Dea givenDea = convertInputToAutomaton(statedraws);
 
-        //TODO alphabet is wrong
 
-        Nea default1 = new Nea(null, new Alphabet(new ArrayList<>()));
+        /*Nea default1 = new Nea(null, new Alphabet(new ArrayList<>()));
         System.out.println("Use default automaton? y/n");
         def = br.readLine();
 
@@ -75,7 +62,7 @@ public class Main {
 
         } else {
             default1 = setUpDefault();
-        }
+        }*/
 
 
     }
@@ -83,15 +70,17 @@ public class Main {
 
 
 
-    public static void createNewExercise(int depth) throws IOException {
+    public static void createNewExercise(int depth) throws IOException, InterruptedException {
         BufferedReader br = new BufferedReader((new InputStreamReader(System.in)));
         RegExCreator regExCreator = new RegExCreator();
-        RegEx regEx = regExCreator.create(4);
+        RegEx regEx = regExCreator.create(depth);
+        Alphabet alphabet = new Alphabet(regEx.getAlphabet());
+        Nea nea = convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println("Exercise: create an automaton that recognizes : " + regEx.rToString());
         System.out.println("Check solution? y/n");
         String a = br.readLine();
         if (a.equals("y")) {
-            checkSolution(regEx, getAlphabet(regEx));
+            checkSolution(regEx, getAlphabet(regEx), nea.convertNeaToDea());
         }
 
     }
@@ -116,8 +105,21 @@ public class Main {
         return alphabet;
     }
 
-    public static void checkSolution(RegEx regEx, Alphabet alphabet) {
+    public static void checkSolution(RegEx regEx, Alphabet alphabet, Dea deaCompare) throws InterruptedException {
         Nea nea = convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        InputAutomaton automaton = NEAGui.main();
+        boolean complete = false;
+        while(!automaton.complete) {
+            // TODO keep terminal busy
+            System.out.println("text");
+            //System.in.wait();
+        }
+
+        SolutionChecker solutionChecker = new SolutionChecker();
+        Dea dea = SolutionChecker.convertInputToDea(automaton);
+        boolean correct = solutionChecker.compareDea(dea, deaCompare);
+        System.out.println(correct);
+        dea.drawDea();
     }
 
     //TODO move all of this stuff in classes that are maybe not the main

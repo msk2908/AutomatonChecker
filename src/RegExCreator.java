@@ -12,10 +12,10 @@ public class RegExCreator {
      */
     public RegEx create(int depth) {
         Random rand = new Random();
-        int r = rand.nextInt(3);
         RegEx regEx = new RegEx('a');
 
         while (depth > 0) {
+            int r = rand.nextInt(3);
             switch (r) {
                 case 0 :  {
                     // add Concatenation
