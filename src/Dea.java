@@ -75,6 +75,7 @@ public class Dea {
 
 
     public void minimize() {
+        // TODO being terminal is broken
         List<HashMap<Input, List<State>>> listOfDifferentiatedStates = new ArrayList<>(); // to save new states for Dea
         State startingState;
         try {
@@ -329,7 +330,7 @@ public class Dea {
     }
 
 
-    private HashMap<Input, List<State>> getFollowingStates(List<State> statesToCheck) {
+    public HashMap<Input, List<State>> getFollowingStates(List<State> statesToCheck) {
         sortById(statesToCheck);
         HashMap<Input, List<State>> mapOfListOfStatesToGoTo = new HashMap<>();
         for (Input input : alphabet.possibleInputs) {
@@ -351,7 +352,15 @@ public class Dea {
         return mapOfListOfStatesToGoTo;
     }
 
-    private State getStartingState() throws Exception {
+    public HashMap<Input, List<State>> getFollowingStates(State actualState) {
+        List<State> list = new ArrayList<>();
+        list.add(actualState);
+        return getFollowingStates(list);
+    }
+
+
+
+    public State getStartingState() throws Exception {
 
         for (State state : states) {
             if (state.starting) {

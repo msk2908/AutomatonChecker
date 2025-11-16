@@ -37,13 +37,13 @@ public class SolutionChecker {
             states.get(idFrom).setTransitions(alphabet.add(transition.getLabel()), states.get(idTo));
         }
 
-
+        // output: Dea that was input by user
         return new Dea(states, false, alphabet);
     }
 
-    public boolean compareDea(Dea dea1, Dea dea2) {
+    public boolean compareDea(Dea dea1, Dea dea2) throws Exception {
         // for every state of dea1
-        // if dea2 contains a state with all the given transitions
+        // if dea2 contains a state with all the given transitions put in matchingStates-map
         if (!dea1.minimized) {
             dea1.minimize();
         }
@@ -51,39 +51,81 @@ public class SolutionChecker {
             dea2.minimize();
         }
 
+        Alphabet a1 = dea1.alphabet;
+        Alphabet a2 = dea2.alphabet;
+
+        List<String> a1String = a1.aToString();
+        List<String> a2String = a2.aToString();
+
+
+        // check if alphabets are equal
+        if (a1String.size() != a2String.size()) {
+            return false;
+        }
+
+        // if one dea has more states they are not equal
+        if (dea1.states.size() != dea2.states.size()) {
+            return false;
+        }
+
+
         HashMap<State, List<State>> matches = new HashMap<>();
         List<State> states1 = new ArrayList<>();
         HashMap<State, List<State>> matchingStates = new HashMap<>();
         states1 = dea1.states;
 
-        if (dea1.states.size() != dea2.states.size()) {
-            return false;
-        }
+        // TODO check if transitions match
 
-        // match up states that have the same transitions
-        for (State state : dea1.states) {
-            boolean stateMatched = false;
-            matchingStates.put(state, new ArrayList<>());
-            for (State state1 : dea2.states) {
-                if (dea1.haveEqualKeysets(state, state1)) {
-                    matchingStates.get(state).add(state1);
-                    stateMatched = true;
-                }
-            }
-            // if there is no matching state for one of the states, the deas are not equal
-            if (!stateMatched) {
-                return false;
-            }
+        State startingState1 = dea1.getStartingState();
+        State startingState2 = dea2.getStartingState();
 
+        List<State> statesToCheck = new ArrayList<>();
 
-            // TODO check if transitions match
+        HashMap<Input, List<State>> possibleFollowUps1 = dea1.getFollowingStates(startingState1);
+        HashMap<Input, List<State>> possibleFollowUps2 = dea2.getFollowingStates(startingState2);
 
-        }
         return true;
     }
 
+    public boolean statesMatch(Dea dea1, Dea dea2, State state1, State state2) {
+        /* two states are the same iff:
+        1) they have the same number of outgoing transitions
+        2) the states before were equal
+        3) they have equal following states
+        */
+        if (state1.transitions.size() != state2.transitions.size() || getDistanceFromTerminal(dea1, state1) != getDistanceFromTerminal(dea2, state2)) {
+            return false;
+        }
 
-    public boolean DeaMatchesRegEx(RegEx regEx, Dea dea) {
+        return true;
+    }
+
+    public int getDistanceFromTerminal(Dea dea, State state) {
+        int n = 0;
+        if (state.terminal) {
+            return n;
+        }
+        HashMap<Input, List<State>> next = dea.getFollowingStates(state);
+        while (!next.isEmpty()) {
+            List<State> actualStates = new ArrayList<>();
+            for (Input input : next.keySet()) {
+                for (State state1 : next.get(input)) {
+                    actualStates.add(state1);
+                    if (state1.terminal) {
+                        return n;
+                    }
+                }
+            }
+            n++;
+            next = dea.getFollowingStates(actualStates);
+        }
+        return -1;
+    }
+
+
+
+
+    public boolean DeaMatchesRegEx(RegEx regEx, Dea dea) throws Exception {
         Alphabet alphabet = new Alphabet(regEx.getAlphabet());
         Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         Dea givenDea = nea.convertNeaToDea();

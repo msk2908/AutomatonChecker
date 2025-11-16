@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws Exception {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         Scanner reader = new Scanner(System.in);
@@ -24,7 +24,7 @@ public class Main {
             if (depth <= 0) {
                 System.out.println("looks a little too easy");
             } else {
-                createNewExercise(depth);
+                createNewExercise(depth, br);
             }
 
         } else {
@@ -35,7 +35,7 @@ public class Main {
             Alphabet alphabet = new Alphabet(regEx.getAlphabet());
             Nea automatonFromRegEx = convertToNea(null, regEx, new ArrayList<>(), alphabet);
             Dea deaFromRegEx = automatonFromRegEx.convertNeaToDea();
-            checkSolution(regEx, alphabet, deaFromRegEx);
+            checkSolution(regEx, alphabet, deaFromRegEx, br);
 
             //def = br.readLine();
 
@@ -70,8 +70,8 @@ public class Main {
 
 
 
-    public static void createNewExercise(int depth) throws IOException, InterruptedException {
-        BufferedReader br = new BufferedReader((new InputStreamReader(System.in)));
+    public static void createNewExercise(int depth, BufferedReader br) throws Exception {
+        //BufferedReader br = new BufferedReader((new InputStreamReader(System.in)));
         RegExCreator regExCreator = new RegExCreator();
         RegEx regEx = regExCreator.create(depth);
         Alphabet alphabet = new Alphabet(regEx.getAlphabet());
@@ -80,7 +80,7 @@ public class Main {
         System.out.println("Check solution? y/n");
         String a = br.readLine();
         if (a.equals("y")) {
-            checkSolution(regEx, getAlphabet(regEx), nea.convertNeaToDea());
+            checkSolution(regEx, getAlphabet(regEx), nea.convertNeaToDea(), br);
         }
 
     }
@@ -105,16 +105,18 @@ public class Main {
         return alphabet;
     }
 
-    public static void checkSolution(RegEx regEx, Alphabet alphabet, Dea deaCompare) throws InterruptedException {
+    public static void checkSolution(RegEx regEx, Alphabet alphabet, Dea deaCompare, BufferedReader reader) throws Exception {
         Nea nea = convertToNea(null, regEx, new ArrayList<>(), alphabet);
-        InputAutomaton automaton = NEAGui.main();
+        InputAutomaton automaton = NEAGui.inputMain();
         boolean complete = false;
         while(!automaton.complete) {
+            Thread.sleep(500);
             // TODO keep terminal busy
-            System.out.println("text");
+            //System.out.println("done?");
+            //String input = reader.readLine();
             //System.in.wait();
         }
-
+        System.out.println("Why did we go on?");
         SolutionChecker solutionChecker = new SolutionChecker();
         Dea dea = SolutionChecker.convertInputToDea(automaton);
         boolean correct = solutionChecker.compareDea(dea, deaCompare);
@@ -480,10 +482,8 @@ public class Main {
 
                 states.add(right);
 
-
                 actualState.setTransitions(alphabet.get("Epsilon"), left);
                 actualState.setTransitions(alphabet.get("Epsilon"), right);
-
 
                 System.out.println(regEx.getLeft().rToString());
                 System.out.println(regEx.getRight().rToString());

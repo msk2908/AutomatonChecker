@@ -39,13 +39,23 @@ public class NEAGui extends JFrame {
         setVisible(true);
 
         new javax.swing.Timer(10000, e -> {
-            states.add((StateDraw) drawingPanelR.getStates());
-            transitions.add((Transition) drawingPanelR.getTransitions());
+            //TODO something is weird
+            for (StateDraw stateDraw : drawingPanelR.getStates()) {
+                if (!states.contains(stateDraw)) {
+                    states.add(stateDraw);
+                }
+            }
+
+            for (Transition transition: drawingPanelR.getTransitions()) {
+                if (!transitions.contains(transition)) {
+                    transitions.add(transition);
+                }
+            }
         }).start();
     }
 
 
-    public static InputAutomaton main() {
+    public static InputAutomaton inputMain() {
         drawingPanelR = new DrawingPanelR();
         states = drawingPanelR.getStates();
         transitions = drawingPanelR.getTransitions();
