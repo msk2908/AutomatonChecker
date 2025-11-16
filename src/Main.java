@@ -1,3 +1,6 @@
+import RegExClasses.*;
+import Gui.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,14 +9,47 @@ import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-        //TODO alphabet is wrong
-        Nea default1 = new Nea(null, new Alphabet(new ArrayList<>()));
-        System.out.println("Use default automaton? y/n");
+        Scanner reader = new Scanner(System.in);
+        System.out.println("create new exercise or check solution? e/s");
         String def = br.readLine();
+
+
+        if (def.equals("e")) {
+            // create a new RegEx to find a dea for
+            System.out.println("select a difficulty: (insert positive integer)");
+            int depth = reader.nextInt();
+            if (depth <= 0) {
+                System.out.println("looks a little too easy");
+            } else {
+                createNewExercise(depth, br);
+            }
+
+        } else {
+            // check solution to given exercise
+            System.out.println("Please enter regex to check automaton for: ");
+            String regExS = reader.nextLine();
+            RegEx regEx = convertToSyntaxTree(regExS.toCharArray(), "", "");
+            Alphabet alphabet = new Alphabet(regEx.getAlphabet());
+            Nea automatonFromRegEx = convertToNea(null, regEx, new ArrayList<>(), alphabet);
+            Dea deaFromRegEx = automatonFromRegEx.convertNeaToDea();
+            checkSolution(regEx, alphabet, deaFromRegEx, br);
+
+            //def = br.readLine();
+
+        }
+
+
+
+
+        //Dea givenDea = convertInputToAutomaton(statedraws);
+
+
+        /*Nea default1 = new Nea(null, new Alphabet(new ArrayList<>()));
+        System.out.println("Use default automaton? y/n");
+        def = br.readLine();
 
         if (def.equals("n")) {
             System.out.println("Enter Automaton or RegEx? a/r");
@@ -26,8 +62,75 @@ public class Main {
 
         } else {
             default1 = setUpDefault();
-        }
+        }*/
+
+
     }
+
+
+
+
+    public static void createNewExercise(int depth, BufferedReader br) throws Exception {
+        //BufferedReader br = new BufferedReader((new InputStreamReader(System.in)));
+        RegExCreator regExCreator = new RegExCreator();
+        RegEx regEx = regExCreator.create(depth);
+        Alphabet alphabet = new Alphabet(regEx.getAlphabet());
+        Nea nea = convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        System.out.println("Exercise: create an automaton that recognizes : " + regEx.rToString());
+        System.out.println("Check solution? y/n");
+        String a = br.readLine();
+        if (a.equals("y")) {
+            checkSolution(regEx, getAlphabet(regEx), nea.convertNeaToDea(), br);
+        }
+
+    }
+
+    public static Alphabet getAlphabet(RegEx regEx) {
+        Alphabet alphabet = new Alphabet(new ArrayList<>());
+        switch (regEx.getType()) {
+            case LITERAL : {
+                alphabet.add(regEx.getA().toString());
+                break;
+            }
+            case LOOP: {
+                alphabet.add(getAlphabet(regEx.getRegEx()));
+                break;
+            }
+            default: {
+                alphabet.add(getAlphabet(regEx.getLeft()));
+                alphabet.add(getAlphabet(regEx.getRight()));
+                break;
+            }
+        }
+        return alphabet;
+    }
+
+    public static void checkSolution(RegEx regEx, Alphabet alphabet, Dea deaCompare, BufferedReader reader) throws Exception {
+        Nea nea = convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        InputAutomaton automaton = NEAGui.inputMain();
+        boolean complete = false;
+        while(!automaton.complete) {
+            Thread.sleep(500);
+            // TODO keep terminal busy
+            //System.out.println("done?");
+            //String input = reader.readLine();
+            //System.in.wait();
+        }
+        System.out.println("Why did we go on?");
+        SolutionChecker solutionChecker = new SolutionChecker();
+        Dea dea = SolutionChecker.convertInputToDea(automaton);
+        boolean correct = solutionChecker.compareDea(dea, deaCompare);
+        System.out.println(correct);
+        dea.drawDea();
+    }
+
+    //TODO move all of this stuff in classes that are maybe not the main
+
+    /*public static Dea convertInputToAutomaton(List<StateDraw> statedraws, ) {
+        for (StateDraw stateDraw: statedraws) {
+            stateDraw.getName();
+        }
+    }*/
 
 
     public static State getStateByName(String name, List<State> states) {
@@ -63,6 +166,7 @@ public class Main {
         return new Nea(s1, alphabet);
     }
 
+    // TODO test this
     public static Nea enterAutomaton(BufferedReader br) throws IOException {
 
         boolean starting = false;
@@ -101,6 +205,7 @@ public class Main {
 
         // insert all transitions
         List<State> stateList = new ArrayList<>();
+        List<String> alphabetList = new ArrayList<>();
         for (State state : states) {
             // get transitions for every state, put into Hashmap
             // Creates a reader instance which takes
@@ -124,6 +229,9 @@ public class Main {
             for (int j = 0; j < number; j++) {
                 System.out.println("Please give one possible transition for state " + state.name);
                 String in = br.readLine();
+                if (!alphabetList.contains(in)) {
+                    alphabetList.add(in);
+                }
                 Input input = new Input(in, checkTransitionType(in));
                 System.out.println("Where can state " + state.name + "go with transition " + in);
                 String next = br.readLine();
@@ -138,18 +246,18 @@ public class Main {
             }
             stateList.add(state);
         }
-        //TODO insert useful alphabet, get from loop
-        return new Nea(stateList, new Alphabet(new ArrayList<>()));
+
+        return new Nea(stateList, new Alphabet(alphabetList));
     }
 
 
 
     // RegEx functions
-    // TODO check for correct syntax when interpreting switch e for ε epsilon etc
+    // RegEx functions
     public static Nea enterRegEx(BufferedReader br) throws IOException {
         List<State> states = new ArrayList<>();
 
-        System.out.println("Please input used alphabet, each input separated by ',': ");
+        System.out.println("Please input used alphabet, each input separated by ',' (Epsilon exists per default): ");
         String alphabetStr = br.readLine();
 
 
@@ -187,7 +295,7 @@ public class Main {
     }
 
     /**
-     * converts a given RegEx into a syntax tree
+     * converts a given RegEx into a syntax tree (aka Parser)
      **/
     public static RegEx convertToSyntaxTree(char[] regExChar, String evaluateLeft, String justRead) {
         char[] rest = regExChar;
@@ -359,12 +467,12 @@ public class Main {
         }
 
 
-        switch (regEx.type) {
+        switch (regEx.getType()) {
             case RegExType.OR: {
                 State left;
                 State right;
-                // create two follow-up states with an Epsilon-Transition
-                RegExType type = regEx.getRight().type;
+                // create two follow-up states with an Epsilon-Drawing.Transition
+                RegExType type = regEx.getRight().getType();
 
                 left = new State(setId(states), regEx.getLeft().rToString(), new HashMap<>(), false, false);
 
@@ -374,10 +482,8 @@ public class Main {
 
                 states.add(right);
 
-
                 actualState.setTransitions(alphabet.get("Epsilon"), left);
                 actualState.setTransitions(alphabet.get("Epsilon"), right);
-
 
                 System.out.println(regEx.getLeft().rToString());
                 System.out.println(regEx.getRight().rToString());
@@ -391,9 +497,9 @@ public class Main {
                 RegEx left = regEx.getLeft();
                 RegEx right = regEx.getRight(); // is never empty or broken (will be checked by concat() when inputting RegEx)
                 Nea evaluateLeft;
-                if (Objects.requireNonNull(left.type) == RegExType.LITERAL) {// create one new state with transition to right
+                if (Objects.requireNonNull(left.getType()) == RegExType.LITERAL) {// create one new state with transition to right
                     State next = new State(setId(states), right.rToString(), new HashMap<>(), false, false);
-                    actualState.setTransitions(alphabet.get(left.a.toString()), next);
+                    actualState.setTransitions(alphabet.get(left.getA().toString()), next);
                     convertToNea(next, right, states, alphabet);
                 } else {
                     evaluateLeft = convertToNea(actualState, left, states, alphabet);
@@ -421,7 +527,7 @@ public class Main {
                 break;
             }
             case RegExType.LOOP: {
-                // evaluate everything and put an Epsilon-Transition to starting state
+                // evaluate everything and put an Epsilon-Drawing.Transition to starting state
                 RegEx inside = regEx.getRegEx();
                 List<State> saveStates = new ArrayList<>();
                 saveStates.addAll(states);

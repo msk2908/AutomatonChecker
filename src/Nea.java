@@ -1,10 +1,10 @@
+import Drawing.Coordinate;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-
-import static java.util.stream.Collectors.toCollection;
 
 public class Nea {
     List<State> states;

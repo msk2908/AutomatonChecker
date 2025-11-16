@@ -1,3 +1,5 @@
+package RegExClasses;
+
 public class Or extends RegEx {
     RegEx regExLeft;
     RegEx regExRight;

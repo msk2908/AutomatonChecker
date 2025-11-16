@@ -1,3 +1,7 @@
+import Drawing.Coordinate;
+import Drawing.Kreis;
+import Drawing.Transition;
+
 import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Color;
@@ -38,7 +42,7 @@ public class StatePanel extends JPanel {
                     Coordinate coordinateZiel = stateCoordinateHashMap.get(state1);
                     list.add(new Transition(coordinateStart, coordinateZiel, input.iToString()));
                     if (state.starting) {
-                        list.add(new Transition(new Coordinate(-100, coordinateStart.y), new Coordinate(coordinateStart.x,coordinateStart.y), ""));
+                        list.add(new Transition(new Coordinate(-100, coordinateStart.getY()), new Coordinate(coordinateStart.getX(),coordinateStart.getY()), ""));
                     }
                 }
             }

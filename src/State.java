@@ -3,7 +3,7 @@ import java.util.*;
 public class State {
     final int id;
     final String name;
-    HashMap<Input, List<State>> transitions = new LinkedHashMap<>();
+    HashMap<Input, List<State>> transitions;
     boolean terminal;
     boolean starting;
 
@@ -22,6 +22,16 @@ public class State {
             }
         }
         return null;
+    }
+
+    public List<String> containsTransitionsTo(State state) {
+        List<String> inputs = new ArrayList<>();
+        for (Input input : transitions.keySet()) {
+            if (transitions.get(input).contains(state)) {
+                inputs.add(input.input);
+            }
+        }
+        return inputs;
     }
 
     public void setTransitions(Input input, State state) {
@@ -142,6 +152,7 @@ public class State {
         return idList.stream().sorted().toList();
 
     }
+
 
 
 }

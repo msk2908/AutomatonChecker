@@ -1,4 +1,8 @@
-public class Loop extends RegEx{
+package RegExClasses;
+
+import java.util.List;
+
+public class Loop extends RegEx {
     RegEx regEx;
     RegExType type;
     public Loop(RegEx regEx) {
@@ -13,4 +17,5 @@ public class Loop extends RegEx{
     public RegEx getRegEx() {
         return regEx;
     }
+
 }

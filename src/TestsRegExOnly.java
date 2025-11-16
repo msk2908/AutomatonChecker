@@ -1,4 +1,11 @@
+import RegExClasses.Concat;
+import RegExClasses.Loop;
+import RegExClasses.Or;
+import RegExClasses.RegEx;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -192,6 +199,20 @@ public class TestsRegExOnly {
         RegEx result = Main.convertToSyntaxTree(regExChar, "", "");
         System.out.println(result.rToString());
         assertEquals(all.rToString(), result.rToString());
+    }
+
+    @Test
+    public void testGetAlphabet() {
+        List<String> alphabetList = new ArrayList<>();
+        alphabetList.add("a");
+        alphabetList.add("b");
+        alphabetList.add("c");
+        Alphabet check = new Alphabet(alphabetList);
+        RegEx regEx = Main.convertToSyntaxTree("ab(ac+b*)".toCharArray(), "", "");
+        Alphabet alphabet = Main.getAlphabet(regEx);
+        System.out.println(alphabet.aToString());
+        System.out.println(check.aToString());
+        assertEquals(alphabet.aToString(), check.aToString());
     }
 
 }

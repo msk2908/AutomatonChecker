@@ -1,5 +1,6 @@
 import javax.swing.JFrame;
 import java.util.List;
+import Drawing.Coordinate;
 
 
 public class AutomatonDrawer {
@@ -20,7 +21,7 @@ public class AutomatonDrawer {
     }
 
     public void paint(JFrame fenster) {
-        // Panel mit Kreis hinzufügen
+        // Panel mit Drawing.Kreis hinzufügen
         StatePanel panel = new StatePanel(states, coordinates);
         fenster.add(panel);
 

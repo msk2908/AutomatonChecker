@@ -1,3 +1,5 @@
+import Drawing.Coordinate;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +74,8 @@ public class Dea {
     }
 
 
-    public Dea minimize() {
+    public void minimize() {
+        // TODO being terminal is broken
         List<HashMap<Input, List<State>>> listOfDifferentiatedStates = new ArrayList<>(); // to save new states for Dea
         State startingState;
         try {
@@ -121,8 +124,6 @@ public class Dea {
         //checkForWeirdLoop(this.states);
 
 
-
-        return new Dea(this.states, true, this.alphabet);
     }
 
 
@@ -156,7 +157,7 @@ public class Dea {
 
     }
 
-    private boolean haveEqualTransitions(State a, State b) {
+    public boolean haveEqualTransitions(State a, State b) {
         if (haveEqualKeysets(a,b)) {
             for (Input input : a.transitions.keySet()) {
                 for (State state: a.transitions.get(input)) {
@@ -171,8 +172,59 @@ public class Dea {
         return true;
     }
 
-    private boolean haveEqualKeysets(State a, State b) {
-        return a.transitions.keySet().equals(b.transitions.keySet());
+    /*public boolean haveSimilarTransitions(State a, State b) {
+        List<String> inputsA = getKeySet(a);
+        List<String> inputsB = getKeySet(b);
+        if (haveEqualKeysets(a,b)) {
+            for (Input input : a.getTransitions().keySet()) {
+                for (State state: a.transitions.get(input)) {
+                    // TODO get matching input from b (this fails because there b does not know a's input)
+                    if (b.containsTransitionTo(state) != null) {
+                        // get all transitions from b to
+                        State match = matches.get(state);
+                        List<String> in = b.containsTransitionsTo(match);
+                        if (!in.contains(input.input)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }*/
+
+    private List<String> getKeySet(State state) {
+        List<String> inputs = new ArrayList<>();
+        for (Input input : state.transitions.keySet()) {
+            inputs.add(input.input);
+        }
+        return inputs;
+    }
+
+    public boolean haveEqualKeysets(State a, State b) {
+        List<String> inputA = getKeySet(a);
+        List<String> inputB = getKeySet(b);
+
+
+        if (inputB.size() != inputA.size()) {
+            return false;
+        }
+
+        for (String input : inputA) {
+            boolean contains = false;
+            for (int i = 0; i < inputB.size(); i++) {
+                if (input.equals(inputB.get(i))) {
+                    contains = true;
+                }
+            }
+            if (!contains) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
@@ -189,7 +241,7 @@ public class Dea {
     /**
      * removes any unnecessary loops
      *
-     * @param toCheck: List of states to check for Loop
+     * @param toCheck: List of states to check for RegExClasses.Loop
      */
     private void checkForWeirdLoop(List<State> toCheck) {
         State toRemove = null;
@@ -278,7 +330,7 @@ public class Dea {
     }
 
 
-    private HashMap<Input, List<State>> getFollowingStates(List<State> statesToCheck) {
+    public HashMap<Input, List<State>> getFollowingStates(List<State> statesToCheck) {
         sortById(statesToCheck);
         HashMap<Input, List<State>> mapOfListOfStatesToGoTo = new HashMap<>();
         for (Input input : alphabet.possibleInputs) {
@@ -300,7 +352,15 @@ public class Dea {
         return mapOfListOfStatesToGoTo;
     }
 
-    private State getStartingState() throws Exception {
+    public HashMap<Input, List<State>> getFollowingStates(State actualState) {
+        List<State> list = new ArrayList<>();
+        list.add(actualState);
+        return getFollowingStates(list);
+    }
+
+
+
+    public State getStartingState() throws Exception {
 
         for (State state : states) {
             if (state.starting) {

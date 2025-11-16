@@ -1,3 +1,5 @@
+package RegExClasses;
+
 public class Concat extends RegEx {
     RegEx regExLeft;
     RegEx regExRight;
@@ -19,4 +21,5 @@ public class Concat extends RegEx {
     public RegEx getRight() {
         return regExRight;
     }
+
 }
