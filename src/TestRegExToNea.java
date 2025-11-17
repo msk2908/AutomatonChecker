@@ -15,11 +15,12 @@ public class TestRegExToNea {
     // easy (only one property)
     @Test
     public void testLiteralToNea() {
+        RegExCreator regExCreator = new RegExCreator();
         RegEx regEx = new RegEx('a');
         List<String > alphabetList = new ArrayList<>();
         alphabetList.add("a");
         Alphabet alphabet = new Alphabet(alphabetList);
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(),alphabet);
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(),alphabet);
         System.out.println("created: " + nea.neaToString(alphabet));
         List<State> states = new ArrayList<>();
         State state2 = new State(1, "a final", new HashMap<>(), true, false);
@@ -35,13 +36,14 @@ public class TestRegExToNea {
 
     @Test
     public void testEasyOrToNea() {
+        RegExCreator regExCreator = new RegExCreator();
         //kinda fails sometimes because sometimes a gets put first, sometimes b (HashMap has no order) but this is fine (use alphabet...?)
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
         Alphabet alphabet = new Alphabet(alphabetList);
         RegEx regEx = new Or(new RegEx('a'), new RegEx('b'));
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println("created: \n" + nea.neaToString(alphabet));
         List<State> states = new ArrayList<>();
         HashMap<Input, List<State>> transitionsInitial = new HashMap<>();
@@ -75,6 +77,7 @@ public class TestRegExToNea {
 
     @Test
     public void testEasyConcatToNea() {
+        RegExCreator regExCreator = new RegExCreator();
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
@@ -91,12 +94,13 @@ public class TestRegExToNea {
         states.add(bFinal);
         Nea compare = new Nea(states, alphabet);
 
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         assertEquals(compare.neaToString(alphabet), nea.neaToString(alphabet));
     }
 
     @Test
     public void testEasyLoopToNea() {
+        RegExCreator regExCreator = new RegExCreator();
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
         alphabetList.add("b");
@@ -110,7 +114,7 @@ public class TestRegExToNea {
         states.add(loopA);
         states.add(a);
         Nea compare = new Nea(states, alphabet);
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println(compare.neaToString(alphabet));
         System.out.println(nea.neaToString(alphabet));
         assertEquals(compare.neaToString(alphabet), nea.neaToString(alphabet));
@@ -121,6 +125,7 @@ public class TestRegExToNea {
 
     @Test
     public void testConcatAndOrLeft() {
+        RegExCreator regExCreator = new RegExCreator();
         // ab+c
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
@@ -152,7 +157,7 @@ public class TestRegExToNea {
         states.add(bFinal);
         states.add(cFinal);
         Nea compare = new Nea(states, alphabet);
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         String comp = compare.neaToString(alphabet);
         System.out.println("expected: \n" + comp);
         String got = nea.neaToString(alphabet);
@@ -164,6 +169,7 @@ public class TestRegExToNea {
 
     @Test
     public void testConcatAndOrRight() {
+        RegExCreator regExCreator = new RegExCreator();
         // a+bc
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
@@ -193,7 +199,7 @@ public class TestRegExToNea {
         states.add(c);
         states.add(cFinal);
         Nea compare = new Nea(states, alphabet);
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         String comp = compare.neaToString(alphabet);
         System.out.println("expected: \n" + comp);
         String got = nea.neaToString(alphabet);
@@ -204,29 +210,30 @@ public class TestRegExToNea {
 
     @Test
     public void testComplicated() {
+        RegExCreator regExCreator = new RegExCreator();
         //does not actually test something because putting the automaton requires mental working
-        //TODO make this test test something
         List<String> list = new ArrayList<>();
         list.add("a");
         list.add("b");
         list.add("c");
         list.add("Epsilon");
         Alphabet alphabet = new Alphabet(list);
-        RegEx regEx = Main.convertToSyntaxTree("ab+(ab+c)*".toCharArray(), "", "");
+        RegEx regEx = regExCreator.convertToSyntaxTree("ab+(ab+c)*".toCharArray(), "", "");
         System.out.println(regEx);
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println("solution: \n" + nea.neaToString(alphabet));
     }
 
     @Test
     public void testComplicated2() {
+        RegExCreator regExCreator = new RegExCreator();
         List<String> strings = new ArrayList<>();
         strings.add("a");
         strings.add("b");
         Alphabet alphabet = new Alphabet(strings);
-        RegEx regEx = Main.convertToSyntaxTree("a+(b*+ab)*".toCharArray(), "", "");
+        RegEx regEx = regExCreator.convertToSyntaxTree("a+(b*+ab)*".toCharArray(), "", "");
         System.out.println(regEx.rToString());
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println(nea.neaToString(alphabet));
     }
 }

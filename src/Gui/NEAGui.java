@@ -39,7 +39,6 @@ public class NEAGui extends JFrame {
         setVisible(true);
 
         new javax.swing.Timer(10000, e -> {
-            //TODO something is weird
             for (StateDraw stateDraw : drawingPanelR.getStates()) {
                 if (!states.contains(stateDraw)) {
                     states.add(stateDraw);
