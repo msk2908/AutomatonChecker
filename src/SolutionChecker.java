@@ -127,7 +127,8 @@ public class SolutionChecker {
 
     public boolean DeaMatchesRegEx(RegEx regEx, Dea dea) throws Exception {
         Alphabet alphabet = new Alphabet(regEx.getAlphabet());
-        Nea nea = Main.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        RegExCreator regExCreator = new RegExCreator();
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         Dea givenDea = nea.convertNeaToDea();
         return compareDea(givenDea, dea);
     }

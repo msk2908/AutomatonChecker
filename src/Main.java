@@ -10,7 +10,7 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-
+        RegExCreator regExCreator = new RegExCreator();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         Scanner reader = new Scanner(System.in);
         System.out.println("create new exercise or check solution? e/s");
@@ -31,51 +31,23 @@ public class Main {
             // check solution to given exercise
             System.out.println("Please enter regex to check automaton for: ");
             String regExS = reader.nextLine();
-            RegEx regEx = convertToSyntaxTree(regExS.toCharArray(), "", "");
+            RegEx regEx = regExCreator.convertToSyntaxTree(regExS.toCharArray(), "", "");
             Alphabet alphabet = new Alphabet(regEx.getAlphabet());
-            Nea automatonFromRegEx = convertToNea(null, regEx, new ArrayList<>(), alphabet);
+            Nea automatonFromRegEx = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
             Dea deaFromRegEx = automatonFromRegEx.convertNeaToDea();
             checkSolution(regEx, alphabet, deaFromRegEx, br);
 
-            //def = br.readLine();
 
         }
 
-
-
-
-        //Dea givenDea = convertInputToAutomaton(statedraws);
-
-
-        /*Nea default1 = new Nea(null, new Alphabet(new ArrayList<>()));
-        System.out.println("Use default automaton? y/n");
-        def = br.readLine();
-
-        if (def.equals("n")) {
-            System.out.println("Enter Automaton or RegEx? a/r");
-            def = br.readLine();
-            if (def.equals("a")) {
-                default1 = enterAutomaton(br);
-            } else {
-                default1 = enterRegEx(br);
-            }
-
-        } else {
-            default1 = setUpDefault();
-        }*/
-
-
     }
-
-
-
 
     public static void createNewExercise(int depth, BufferedReader br) throws Exception {
         //BufferedReader br = new BufferedReader((new InputStreamReader(System.in)));
         RegExCreator regExCreator = new RegExCreator();
         RegEx regEx = regExCreator.create(depth);
         Alphabet alphabet = new Alphabet(regEx.getAlphabet());
-        Nea nea = convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println("Exercise: create an automaton that recognizes : " + regEx.rToString());
         System.out.println("Check solution? y/n");
         String a = br.readLine();
@@ -106,7 +78,8 @@ public class Main {
     }
 
     public static void checkSolution(RegEx regEx, Alphabet alphabet, Dea deaCompare, BufferedReader reader) throws Exception {
-        Nea nea = convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        RegExCreator regExCreator = new RegExCreator();
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         InputAutomaton automaton = NEAGui.inputMain();
         boolean complete = false;
         while(!automaton.complete) {
@@ -124,23 +97,18 @@ public class Main {
         dea.drawDea();
     }
 
-    //TODO move all of this stuff in classes that are maybe not the main
-
-    /*public static Dea convertInputToAutomaton(List<StateDraw> statedraws, ) {
-        for (StateDraw stateDraw: statedraws) {
-            stateDraw.getName();
-        }
-    }*/
 
 
-    public static State getStateByName(String name, List<State> states) {
-        for (State state : states) {
-            if (state.name.equals(name)) {
-                return state;
-            }
-        }
-        return null;
-    }
+
+
+
+
+
+
+
+
+
+
 
     public static Nea setUpDefault() {
         List<String> alphabetList = new ArrayList<>();
@@ -250,11 +218,21 @@ public class Main {
         return new Nea(stateList, new Alphabet(alphabetList));
     }
 
+    public static State getStateByName(String name, List<State> states) {
+        for (State state : states) {
+            if (state.name.equals(name)) {
+                return state;
+            }
+        }
+        return null;
+    }
+
 
 
     // RegEx functions
     // RegEx functions
     public static Nea enterRegEx(BufferedReader br) throws IOException {
+        RegExCreator regExCreator = new RegExCreator();
         List<State> states = new ArrayList<>();
 
         System.out.println("Please input used alphabet, each input separated by ',' (Epsilon exists per default): ");
@@ -285,276 +263,12 @@ public class Main {
         System.out.println("Please input RegEx: ");
         String regExStr = br.readLine();
 
-        RegEx regexABD = convertToSyntaxTree(regExStr.toCharArray(), "", "");
+        RegEx regexABD = regExCreator.convertToSyntaxTree(regExStr.toCharArray(), "", "");
         System.out.println(regexABD.rToString());
-
-        Nea nea = convertToNea(null, regexABD, new ArrayList<>(), alphabet);
+        Nea nea = regExCreator.convertToNea(null, regexABD, new ArrayList<>(), alphabet);
 
         return nea;
 
-    }
-
-    /**
-     * converts a given RegEx into a syntax tree (aka Parser)
-     **/
-    public static RegEx convertToSyntaxTree(char[] regExChar, String evaluateLeft, String justRead) {
-        char[] rest = regExChar;
-        if (regExChar.length == 0 && evaluateLeft.isEmpty()) {
-            try {
-                return new RegEx(justRead.toCharArray()[0]);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                // catches case "a+" (missing argument on right side of Or)
-                System.out.println("not enough arguments");
-            }
-
-        }
-        if (regExChar.length == 1) {
-            return new RegEx(regExChar[0]);
-        }
-        for (Character character : regExChar) {
-            // do I really need this for-loop if only ever considering the first entry?
-            StringBuilder buf = new StringBuilder();
-            for (int i = 1; i < rest.length; i++) {
-                buf.append(rest[i]);
-            }
-            rest = buf.toString().toCharArray();
-
-            switch (character) {
-                case '(': {
-                    /* if parenthesis open: loop until the same parenthesis does close again,
-                     evaluate the expression in it (parenthesisEvaluated), then check if there is more expression (checkHowToGoOn)*/
-                    StringBuilder par = new StringBuilder();
-                    int i = 0;
-                    int counter = 0; //counts the amount of opened parenthesis to not close the first one too early
-                    while (i < rest.length) {
-                        // get everything inside the parenthesis
-                        if (rest[i] == '(') {
-                            counter += 1;
-                        } else {
-                            if (rest[i] == ')') {
-                                if (counter == 0) {
-                                    break;
-                                } else {
-                                    counter -= 1;
-                                }
-                            }
-                        }
-                        par.append(rest[i]);
-                        i++;
-                    }
-
-                    RegEx parenthesisEvaluated = convertToSyntaxTree(par.toString().toCharArray(), "", "");
-                    buf = new StringBuilder();
-                    i += 1;
-                    while (i < rest.length) {
-                        buf.append(rest[i]);
-                        i++;
-                    }
-                    rest = buf.toString().toCharArray();
-                    if (!evaluateLeft.isEmpty() || !justRead.isEmpty()) {
-                        //RegEx evaluateEverythingInParenthesis = convertToSyntaxTree(par.toCharArray(), "", "");
-                        parenthesisEvaluated = new Concat(concat(evaluateLeft.concat(justRead).toCharArray()), checkHowToGoOn(parenthesisEvaluated, rest));
-                    } else {
-                        parenthesisEvaluated = checkHowToGoOn(parenthesisEvaluated, rest);
-                    }
-
-
-                    return parenthesisEvaluated;
-
-                }
-                case '+': {
-                    evaluateLeft += justRead;
-                    try {
-                        RegEx rightSide = convertToSyntaxTree(rest, "", "");
-                        return new Or(concat(evaluateLeft.toCharArray()), rightSide);
-                    } catch (IllegalArgumentException e) {
-                        throw new IllegalArgumentException("Or does not have enough arguments");
-                    }
-
-                }
-                case '*': {
-                    if (evaluateLeft.isEmpty() && rest.length > 0) {
-                        RegEx loop = new Loop(new RegEx(justRead.toCharArray()[0]));
-                        return checkHowToGoOn(loop, rest);
-                        //return new Concat(new , convertToSyntaxTree(rest, "", ""));
-                    }
-                    if (evaluateLeft.isEmpty()) {
-                        return new Loop(new RegEx(justRead.toCharArray()[0]));
-                    }
-                    RegEx loop = new Concat(concat(evaluateLeft.toCharArray()), new Loop(convertToSyntaxTree(justRead.toCharArray(), "", justRead)));
-                    return checkHowToGoOn(loop, rest);
-                }
-
-                default: {
-                    evaluateLeft += justRead;
-                    justRead = character.toString();
-                    convertToSyntaxTree(rest, evaluateLeft, justRead);
-                    break;
-                }
-            }
-        }
-        if (justRead.equals(")")) {
-            return concat(evaluateLeft.toCharArray());
-        }
-        return concat(evaluateLeft.concat(justRead).toCharArray());
-    }
-
-
-    /**
-     * helper function for convertToSyntaxTree, puts two parts of a RegEx together
-     **/
-    public static RegEx concat(char[] regex) throws IllegalArgumentException {
-        char[] rest = regex;
-        StringBuilder buf = new StringBuilder();
-        try {
-            for (int i = 1; i < rest.length; i++) {
-                buf.append(rest[i]);
-            }
-            rest = buf.toString().toCharArray();
-
-            if (rest.length > 0) {
-                return new Concat(new RegEx(regex[0]), concat(rest));
-            }
-            return new RegEx(regex[0]);
-        } catch (Exception e) {
-            // catches case "+b" (missing argument on the left side of Or)
-            throw new IllegalArgumentException("not enough arguments");
-        }
-
-    }
-
-    /**
-     * helper function, checks if there is something to do after evaluating a parenthesis or the inside of a Loop
-     **/
-    public static RegEx checkHowToGoOn(RegEx parenthesisEvaluated, char[] rest) {
-        // checks what comes after the parenthesis to evaluate the whole expression
-        if (rest.length == 0) {
-            return parenthesisEvaluated;
-        } else {
-            char check = rest[0];
-            StringBuilder buf = new StringBuilder();
-            for (int i = 1; i < rest.length; i++) {
-                buf.append(rest[i]);
-            }
-            rest = buf.toString().toCharArray();
-            switch (check) {
-                case '*': {
-                    //loops the whole parenthesis
-                    return checkHowToGoOn(new Loop(parenthesisEvaluated), rest);
-                }
-                case '+': {
-                    return new Or(parenthesisEvaluated, convertToSyntaxTree(rest, "", ""));
-                }
-                default: {
-                    String all = check + buf.toString();
-                    return new Concat(parenthesisEvaluated, convertToSyntaxTree(all.toCharArray(), "", ""));
-                }
-            }
-        }
-    }
-
-
-    /**
-     * converts a given RegEx to a Nea
-     **/
-    public static Nea convertToNea(State actualState, RegEx regEx, List<State> states, Alphabet alphabet) {
-        if (actualState == null) {
-            //create starting state
-            actualState = new State(setId(states), regEx.rToString(), new HashMap<>(), false, true);
-        }
-        if (!states.contains(actualState)) {
-            states.add(actualState);
-        }
-
-
-        switch (regEx.getType()) {
-            case RegExType.OR: {
-                State left;
-                State right;
-                // create two follow-up states with an Epsilon-Drawing.Transition
-                RegExType type = regEx.getRight().getType();
-
-                left = new State(setId(states), regEx.getLeft().rToString(), new HashMap<>(), false, false);
-
-                states.add(left);
-
-                right = new State(setId(states), regEx.getRight().rToString(), new HashMap<>(), false, false);
-
-                states.add(right);
-
-                actualState.setTransitions(alphabet.get("Epsilon"), left);
-                actualState.setTransitions(alphabet.get("Epsilon"), right);
-
-                System.out.println(regEx.getLeft().rToString());
-                System.out.println(regEx.getRight().rToString());
-                convertToNea(left, regEx.getLeft(), states, alphabet);
-                convertToNea(right, regEx.getRight(), states, alphabet);
-                break;
-
-            }
-
-            case RegExType.CONCAT: {
-                RegEx left = regEx.getLeft();
-                RegEx right = regEx.getRight(); // is never empty or broken (will be checked by concat() when inputting RegEx)
-                Nea evaluateLeft;
-                if (Objects.requireNonNull(left.getType()) == RegExType.LITERAL) {// create one new state with transition to right
-                    State next = new State(setId(states), right.rToString(), new HashMap<>(), false, false);
-                    actualState.setTransitions(alphabet.get(left.getA().toString()), next);
-                    convertToNea(next, right, states, alphabet);
-                } else {
-                    evaluateLeft = convertToNea(actualState, left, states, alphabet);
-                    //get last states of the left side of concatenation to go on here
-                    List<State> followUpStates = new ArrayList<>();
-                    for (State state : evaluateLeft.states) {
-                        if (state.terminal) {
-                            state.setTerminal(false);
-                            followUpStates.add(state);
-                        }
-                    }
-
-
-                    for (State state : followUpStates) {
-                        convertToNea(state, right, states, alphabet);
-                    }
-                }
-                break;
-            }
-            case RegExType.LITERAL: {
-                //TODO might also be starting or non-final, check if actualState already has transitions or there is a follow-up (eg (a+b)*c))
-                State last = new State(setId(states), regEx.rToString() + " final", new HashMap<>(), true, false);
-                actualState.setTransitions(alphabet.get(regEx.rToString()), last);
-                states.add(last);
-                break;
-            }
-            case RegExType.LOOP: {
-                // evaluate everything and put an Epsilon-Drawing.Transition to starting state
-                RegEx inside = regEx.getRegEx();
-                List<State> saveStates = new ArrayList<>();
-                saveStates.addAll(states);
-                Nea evaluateLoop = convertToNea(actualState, inside, states, alphabet);
-
-                //get last states of the left side of concatenation to go on here
-                List<State> followUpStates = new ArrayList<>();
-                for (State state : evaluateLoop.states) {
-                    if (state.terminal && !saveStates.contains(state)) {
-                        //state.setTerminal(false);
-                        followUpStates.add(state);
-                    }
-                }
-                for (State state : followUpStates) {
-                    state.setTransitions(alphabet.get("Epsilon"), actualState);
-                }
-            }
-        }
-
-        return new Nea(states, alphabet);
-    }
-
-    /**
-     * sets the id of states based on the existing number of states (kinda useless, but fine)
-     */
-    public static int setId(List<State> states) {
-        return states.size();
     }
 
     /**
