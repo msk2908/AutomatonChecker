@@ -2,6 +2,7 @@
 import RegExClasses.RegEx;
 import Gui.*;
 
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +88,7 @@ public class SolutionChecker {
         return true;
     }
 
-    public boolean statesMatch(Dea dea1, Dea dea2, State state1, State state2) {
+    private boolean statesMatch(Dea dea1, Dea dea2, State state1, State state2) {
         /* two states are the same iff:
         1) they have the same number of outgoing transitions
         2) the states before were equal
@@ -131,6 +132,30 @@ public class SolutionChecker {
         Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         Dea givenDea = nea.convertNeaToDea();
         return compareDea(givenDea, dea);
+    }
+
+
+
+    public boolean checkSolution(RegEx regEx, Alphabet alphabet, Dea deaCompare, BufferedReader reader) throws Exception {
+        RegExCreator regExCreator = new RegExCreator();
+        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        InputAutomaton automaton = NEAGui.inputMain();
+        boolean complete = false;
+        while(!automaton.complete) {
+            Thread.sleep(500);
+            // TODO keep terminal busy
+            //System.out.println("done?");
+            //String input = reader.readLine();
+            //System.in.wait();
+        }
+        Dea dea = convertInputToDea(automaton);
+        boolean correct = compareDea(dea, deaCompare);
+        System.out.println(correct);
+        if (!correct) {
+            deaCompare.drawDea();
+        }
+        //dea.drawDea();
+        return correct;
     }
 
 }
