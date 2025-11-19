@@ -19,12 +19,14 @@ public class Main {
 
         if (def.equals("e")) {
             // create a new RegEx to find a dea for
-            System.out.println("select a difficulty: (insert positive integer)");
+            System.out.println("select a difficulty: ");
             int depth = reader.nextInt();
             if (depth <= 0) {
                 System.out.println("looks a little too easy");
             } else {
-                createNewExercise(depth, br);
+                //createNewExercise(depth, br);
+                Challenge challenge = new Challenge();
+                challenge.startGame(depth);
             }
 
         } else {
@@ -35,67 +37,19 @@ public class Main {
             Alphabet alphabet = new Alphabet(regEx.getAlphabet());
             Nea automatonFromRegEx = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
             Dea deaFromRegEx = automatonFromRegEx.convertNeaToDea();
-            checkSolution(regEx, alphabet, deaFromRegEx, br);
+            SolutionChecker solutionChecker = new SolutionChecker();
+            solutionChecker.checkSolution(regEx, alphabet, deaFromRegEx, br);
 
 
         }
 
     }
 
-    public static void createNewExercise(int depth, BufferedReader br) throws Exception {
-        //BufferedReader br = new BufferedReader((new InputStreamReader(System.in)));
-        RegExCreator regExCreator = new RegExCreator();
-        RegEx regEx = regExCreator.create(depth);
-        Alphabet alphabet = new Alphabet(regEx.getAlphabet());
-        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
-        System.out.println("Exercise: create an automaton that recognizes : " + regEx.rToString());
-        System.out.println("Check solution? y/n");
-        String a = br.readLine();
-        if (a.equals("y")) {
-            checkSolution(regEx, getAlphabet(regEx), nea.convertNeaToDea(), br);
-        }
 
-    }
 
-    public static Alphabet getAlphabet(RegEx regEx) {
-        Alphabet alphabet = new Alphabet(new ArrayList<>());
-        switch (regEx.getType()) {
-            case LITERAL : {
-                alphabet.add(regEx.getA().toString());
-                break;
-            }
-            case LOOP: {
-                alphabet.add(getAlphabet(regEx.getRegEx()));
-                break;
-            }
-            default: {
-                alphabet.add(getAlphabet(regEx.getLeft()));
-                alphabet.add(getAlphabet(regEx.getRight()));
-                break;
-            }
-        }
-        return alphabet;
-    }
 
-    public static void checkSolution(RegEx regEx, Alphabet alphabet, Dea deaCompare, BufferedReader reader) throws Exception {
-        RegExCreator regExCreator = new RegExCreator();
-        Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
-        InputAutomaton automaton = NEAGui.inputMain();
-        boolean complete = false;
-        while(!automaton.complete) {
-            Thread.sleep(500);
-            // TODO keep terminal busy
-            //System.out.println("done?");
-            //String input = reader.readLine();
-            //System.in.wait();
-        }
-        System.out.println("Why did we go on?");
-        SolutionChecker solutionChecker = new SolutionChecker();
-        Dea dea = SolutionChecker.convertInputToDea(automaton);
-        boolean correct = solutionChecker.compareDea(dea, deaCompare);
-        System.out.println(correct);
-        dea.drawDea();
-    }
+
+
 
 
 

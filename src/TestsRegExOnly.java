@@ -229,7 +229,7 @@ public class TestsRegExOnly {
         alphabetList.add("c");
         Alphabet check = new Alphabet(alphabetList);
         RegEx regEx = regExCreator.convertToSyntaxTree("ab(ac+b*)".toCharArray(), "", "");
-        Alphabet alphabet = Main.getAlphabet(regEx);
+        Alphabet alphabet = regExCreator.getAlphabet(regEx);
         System.out.println(alphabet.aToString());
         System.out.println(check.aToString());
         assertEquals(alphabet.aToString(), check.aToString());

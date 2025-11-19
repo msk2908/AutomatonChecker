@@ -316,7 +316,25 @@ public class RegExCreator {
     }
 
 
-
+    public Alphabet getAlphabet(RegEx regEx) {
+        Alphabet alphabet = new Alphabet(new ArrayList<>());
+        switch (regEx.getType()) {
+            case LITERAL : {
+                alphabet.add(regEx.getA().toString());
+                break;
+            }
+            case LOOP: {
+                alphabet.add(getAlphabet(regEx.getRegEx()));
+                break;
+            }
+            default: {
+                alphabet.add(getAlphabet(regEx.getLeft()));
+                alphabet.add(getAlphabet(regEx.getRight()));
+                break;
+            }
+        }
+        return alphabet;
+    }
 
 
 
