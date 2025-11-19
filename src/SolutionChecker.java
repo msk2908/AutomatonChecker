@@ -59,7 +59,7 @@ public class SolutionChecker {
         List<String> a2String = a2.aToString();
 
 
-        // check if alphabets are equal
+        // check if alphabets are same-sized
         if (a1String.size() != a2String.size()) {
             return false;
         }
@@ -79,6 +79,8 @@ public class SolutionChecker {
 
         State startingState1 = dea1.getStartingState();
         State startingState2 = dea2.getStartingState();
+
+        int distanceFromStartingState = 0;
 
         List<State> statesToCheck = new ArrayList<>();
 
@@ -154,7 +156,6 @@ public class SolutionChecker {
         if (!correct) {
             deaCompare.drawDea();
         }
-        //dea.drawDea();
         return correct;
     }
 
