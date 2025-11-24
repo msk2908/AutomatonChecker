@@ -52,7 +52,7 @@ public class Challenge {
         RegEx regEx = regExCreator.create(depth);
         Alphabet alphabet = new Alphabet(regEx.getAlphabet());
         Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
-        System.out.println("Exercise: create an automaton that recognizes : " + regEx.rToString());
+        System.out.println("Exercise: create an automaton that recognizes : " + regEx.printRegEx());
         SolutionChecker solutionChecker = new SolutionChecker();
         return solutionChecker.checkSolution(regEx, regExCreator.getAlphabet(regEx), nea.convertNeaToDea(), br);
 

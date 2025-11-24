@@ -23,6 +23,13 @@ public class RegEx {
         return a.toString();
     }
 
+    public String printRegEx() {
+        if (this.type.equals(RegExType.NONE)) {
+            a = ' ';
+        }
+        return a.toString();
+    }
+
     public RegEx getLeft() {
         return this;
     }

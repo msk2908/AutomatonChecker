@@ -13,7 +13,9 @@ public class Loop extends RegEx {
     public String rToString() {
         return "Loop[" + regEx.rToString() + "]" ;
     }
-
+    public String printRegEx() {
+        return "("+ regEx.printRegEx() + ")*";
+    }
     public RegEx getRegEx() {
         return regEx;
     }
