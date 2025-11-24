@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-public class Dea {
+public class  Dea {
     List<State> states;
     boolean minimized;
     Alphabet alphabet;
