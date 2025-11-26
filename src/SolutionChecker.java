@@ -4,6 +4,7 @@ import Gui.*;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class SolutionChecker {
         List<String> a2String = a2.aToString();
 
 
-        // check if alphabets are equal
+        // check if alphabets are same-sized
         if (a1String.size() != a2String.size()) {
             return false;
         }
@@ -69,21 +70,81 @@ public class SolutionChecker {
             return false;
         }
 
+        HashMap<Input, Input> convertAlphabet = new HashMap<>();
+        for (String inputA : a1String) {
+            try {
+                convertAlphabet.put(dea1.alphabet.get(inputA), dea2.alphabet.get(inputA));
+            } catch (IllegalArgumentException exception) {
+                return false;
+            }
+        }
 
-        HashMap<State, List<State>> matches = new HashMap<>();
-        List<State> states1 = new ArrayList<>();
         HashMap<State, List<State>> matchingStates = new HashMap<>();
-        states1 = dea1.states;
-
-        // TODO check if transitions match
-
         State startingState1 = dea1.getStartingState();
         State startingState2 = dea2.getStartingState();
-
-        List<State> statesToCheck = new ArrayList<>();
+        List<State> a = new ArrayList<>();
+        a.add(startingState2);
+        matchingStates.put(startingState1, a);
 
         HashMap<Input, List<State>> possibleFollowUps1 = dea1.getFollowingStates(startingState1);
         HashMap<Input, List<State>> possibleFollowUps2 = dea2.getFollowingStates(startingState2);
+
+        while (!possibleFollowUps1.isEmpty()) {
+            for (Input inputA : possibleFollowUps1.keySet()) {
+                Input inputB = convertAlphabet.get(inputA);
+                for (State stateA : possibleFollowUps1.get(inputA)) {
+                    if (possibleFollowUps2.get(inputB) == null) {
+                        return false;
+                    }
+                    if (!statesMatch(dea1, dea2, stateA, possibleFollowUps2.get(inputB).getFirst())) {
+                        return false;
+                    }
+                    matchingStates.put(stateA, possibleFollowUps2.get(inputB));
+                }
+            }
+
+            for (State state: matchingStates.keySet()) {
+                if (state.starting) {
+                    List<State> matches = matchingStates.get(state);
+                    if (!matches.getFirst().starting) {
+                        return false;
+                    }
+                }
+                if (state.terminal) {
+                    List<State> matches = matchingStates.get(state);
+                    if (!matches.getFirst().terminal) {
+                        return false;
+                    }
+                }
+            }
+
+            HashMap<Input, List<State>> newFollowUps1 = new HashMap<>();
+            HashMap<Input, List<State>> newFollowUps2 = new HashMap<>();
+            for (List<State> states: possibleFollowUps1.values()) {
+                HashMap<Input, List<State>> next = dea1.getFollowingStates(states);
+                for (Input input : next.keySet()) {
+                    if (!newFollowUps1.containsKey(input) && !matchingStates.containsKey(next.get(input).getFirst())) {
+                        newFollowUps1.put(input, next.get(input));
+                    }
+                }
+
+            }
+
+            for (List<State> states: possibleFollowUps2.values()) {
+                HashMap<Input, List<State>> next = dea2.getFollowingStates(states);
+                for (Input input : next.keySet()) {
+                    if (!newFollowUps2.containsKey(input)) {
+                        newFollowUps2.put(input, next.get(input));
+                    }
+                }
+            }
+
+            possibleFollowUps1 = newFollowUps1;
+            possibleFollowUps2 = newFollowUps2;
+
+        }
+
+
 
         return true;
     }
@@ -94,6 +155,9 @@ public class SolutionChecker {
         2) the states before were equal
         3) they have equal following states
         */
+        if (state1 == null || state2 == null) {
+            return false;
+        }
         if (state1.transitions.size() != state2.transitions.size() || getDistanceFromTerminal(dea1, state1) != getDistanceFromTerminal(dea2, state2)) {
             return false;
         }
@@ -154,7 +218,6 @@ public class SolutionChecker {
         if (!correct) {
             deaCompare.drawDea();
         }
-        //dea.drawDea();
         return correct;
     }
 

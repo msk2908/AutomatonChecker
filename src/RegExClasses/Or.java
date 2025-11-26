@@ -24,6 +24,10 @@ public class Or extends RegEx {
         return "Or[" + left + "," + right + "]";
     }
 
+    public String printRegEx() {
+        return regExLeft.printRegEx() + "+" + regExRight.getRegEx().printRegEx();
+    }
+
     public RegEx getLeft() {
         return regExLeft;
     }

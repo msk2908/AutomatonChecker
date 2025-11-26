@@ -14,6 +14,10 @@ public class Concat extends RegEx {
         return "Concat["+ regExLeft.rToString()+ "," + regExRight.rToString() + "]";
     }
 
+    public String printRegEx() {
+        return regExLeft.printRegEx() + regExRight.getRegEx().printRegEx();
+    }
+
     public RegEx getLeft() {
         return regExLeft;
     }

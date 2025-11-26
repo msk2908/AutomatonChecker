@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-public class Dea {
+public class  Dea {
     List<State> states;
     boolean minimized;
     Alphabet alphabet;
@@ -58,19 +58,6 @@ public class Dea {
         AutomatonDrawer stateDrawerList = new AutomatonDrawer(states, coordinates);
         JFrame fenster = stateDrawerList.paintFrame();
         stateDrawerList.paint(fenster);
-
-        // Konsole offen halten
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("ENTER zum Beenden...");
-        scanner.nextLine();
-        System.exit(0);
-    }
-
-    public void minimization() {
-       /* Minimizes the DFA using state equivalence:
-            1. Partition states into accepting and non-accepting.
-            2. Refine partitions until no further splits occur.
-            3. Build a new DFA from the resulting state classes.*/
     }
 
 
@@ -86,11 +73,11 @@ public class Dea {
 
         boolean somethingChanged = true;
 
-        while (somethingChanged){
+        while (somethingChanged) {
             List<State> compare = new ArrayList<>(states);
             //for every distinct pair of states
             boolean stop = false;
-            for (State state: this.states) {
+            for (State state : this.states) {
                 for (State state1 : this.states) {
                     // get rid of one of two states with the same possible transitions
                     if (!(state.id == state1.id) && haveEqualTransitions(state, state1)) {
@@ -131,21 +118,28 @@ public class Dea {
         // removes state b from the set of states
 
         // set a new transition to a if b previously had a self-loop
-        for (Input input: b.transitions.keySet()) {
+        for (Input input : b.transitions.keySet()) {
             for (State state : b.transitions.get(input)) {
                 if (state.equals(b)) {
+                    if (b.terminal) {
+                        a.setTerminal(true);
+                    }
+                    if (b.starting) {
+                        a.setStarting();
+                    }
                     a.setTransitions(input, a);
                 }
             }
         }
 
         // set all transitions to b to a instead
-        for (State state: this.states) {
+        for (State state : this.states) {
             Input input = state.containsTransitionTo(b);
             while (input != null) {
                 // move all transitions
                 state.transitions.get(input).remove(b);
                 if (!state.transitions.get(input).contains(a)) {
+
                     state.transitions.get(input).add(a);
                 }
                 // check whether there are more transitions
@@ -158,9 +152,9 @@ public class Dea {
     }
 
     public boolean haveEqualTransitions(State a, State b) {
-        if (haveEqualKeysets(a,b)) {
+        if (haveEqualKeysets(a, b)) {
             for (Input input : a.transitions.keySet()) {
-                for (State state: a.transitions.get(input)) {
+                for (State state : a.transitions.get(input)) {
                     if (!b.transitions.get(input).contains(state)) {
                         return false;
                     }
@@ -228,16 +222,8 @@ public class Dea {
     }
 
 
-
-
-
-
-
-
-
-
-
     //-----------------------------------------------------------------------------------------------------------
+
     /**
      * removes any unnecessary loops
      *
@@ -359,9 +345,7 @@ public class Dea {
     }
 
 
-
     public State getStartingState() throws Exception {
-
         for (State state : states) {
             if (state.starting) {
                 return state;
@@ -406,6 +390,12 @@ public class Dea {
                         if (state.transitions.get(input).contains(toRemove)) {
                             //add all transitions that don't go to the removed State
                             state.addTransitions(moveTransitions(toRemove.transitions, toRemove, state));
+                            if (toRemove.terminal) {
+                                state.setTerminal(true);
+                            }
+                            if (toRemove.starting) {
+                                state.setStarting();
+                            }
                             state.removeTransition(input, toRemove);
                         }
 
