@@ -1,14 +1,18 @@
 import RegExClasses.RegEx;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class TestMinimize {
 
     @Test
-    public void testMinimizeLoopAndOrNeaToDea() {
+    public void testMinimizeLoopAndOrNeaToDea() throws Exception {
         RegExCreator regExCreator = new RegExCreator();
         List<String> alphabetList = new ArrayList<>();
         alphabetList.add("a");
@@ -17,11 +21,13 @@ public class TestMinimize {
         Nea nea = regExCreator.convertToNea(null, regExCreator.convertToSyntaxTree("(a+b)*".toCharArray(), "", ""), new ArrayList<>(), alphabet);
         //nea.drawNea();
         Dea dea = nea.convertNeaToDea();
-        dea.drawDea();
+        //dea.drawDea();
         dea.minimize();
-        dea.drawDea();
-        keepOpen();
-        System.out.println("Dea: \n" + dea.deaToString(alphabet));
+        //dea.drawDea();
+        //keepOpen();
+        //System.out.println("Dea: \n" + dea.deaToString(alphabet));
+        SolutionChecker solutionChecker = new SolutionChecker();
+        assertTrue(solutionChecker.compareDea(dea, nea.convertNeaToDea()));
     }
 
     @Test

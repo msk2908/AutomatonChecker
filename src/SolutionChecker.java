@@ -93,6 +93,9 @@ public class SolutionChecker {
             for (Input inputA : possibleFollowUps1.keySet()) {
                 Input inputB = convertAlphabet.get(inputA);
                 for (State stateA : possibleFollowUps1.get(inputA)) {
+                    if (possibleFollowUps2.get(inputB) == null) {
+                        return false;
+                    }
                     if (!statesMatch(dea1, dea2, stateA, possibleFollowUps2.get(inputB).getFirst())) {
                         return false;
                     }
@@ -120,7 +123,7 @@ public class SolutionChecker {
             for (List<State> states: possibleFollowUps1.values()) {
                 HashMap<Input, List<State>> next = dea1.getFollowingStates(states);
                 for (Input input : next.keySet()) {
-                    if (!newFollowUps1.containsKey(input)) {
+                    if (!newFollowUps1.containsKey(input) && !matchingStates.containsKey(next.get(input).getFirst())) {
                         newFollowUps1.put(input, next.get(input));
                     }
                 }

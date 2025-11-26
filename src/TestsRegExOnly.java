@@ -215,6 +215,7 @@ public class TestsRegExOnly {
         RegEx concat = new Concat(new RegEx('a'), new RegEx('b'));
         RegEx all = new Or(new RegEx('a'), new Or(new RegEx('b'), new Or(concat, new Or(loopB, braces))));
         System.out.println(all.rToString());
+        System.out.println(all.printRegEx());
         RegEx result = regExCreator.convertToSyntaxTree(regExChar, "", "");
         System.out.println(result.rToString());
         assertEquals(all.rToString(), result.rToString());
@@ -233,6 +234,29 @@ public class TestsRegExOnly {
         System.out.println(alphabet.aToString());
         System.out.println(check.aToString());
         assertEquals(alphabet.aToString(), check.aToString());
+    }
+
+    @Test
+    public void testSomethingFailed() {
+        RegExCreator regExCreator = new RegExCreator();
+        char[] regExChar = "(ab*+b+cb)*".toCharArray();
+        RegEx ab = new Concat(new RegEx('a'), new Loop(new RegEx('b')));
+        Concat cb = new Concat(new RegEx('c'), new RegEx('b'));
+        RegEx all = new Loop(new Or(ab, new Or(new RegEx('b'), cb)));
+        System.out.println(ab.printRegEx());
+        System.out.println(all.rToString());
+
+        System.out.println(all.rToString());
+        RegEx result = regExCreator.convertToSyntaxTree(regExChar, "", "");
+        System.out.println(result.rToString());
+        assertEquals(all.rToString(), result.rToString());
+
+    }
+
+    @Test
+    public void testPrint() {
+        RegEx a = new Concat(new Loop(new RegEx('b')), new RegEx('a'));
+        System.out.println(a.printRegEx());
     }
 
 }

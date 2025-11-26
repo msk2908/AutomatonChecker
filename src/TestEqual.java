@@ -173,6 +173,17 @@ public class TestEqual {
     }
 
     @Test
+    public void testEqualEverything2() throws Exception {
+        RegExCreator regExCreator = new RegExCreator();
+        SolutionChecker solutionChecker = new SolutionChecker();
+        RegEx regEx = regExCreator.convertToSyntaxTree("(ab*+b+cb)*".toCharArray(), null, null);
+        RegEx regEx2 = regExCreator.convertToSyntaxTree("(ab*+b+cb)*".toCharArray(), null, null);
+        Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
+        Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
+        assertTrue(solutionChecker.compareDea(dea1, dea2));
+    }
+
+    @Test
     public void testTransitionInWrongOrder() throws Exception {
         RegExCreator regExCreator = new RegExCreator();
         SolutionChecker solutionChecker = new SolutionChecker();
