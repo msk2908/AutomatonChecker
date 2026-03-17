@@ -110,7 +110,7 @@ public class  Dea {
 
         //checkForWeirdLoop(this.states);
 
-
+        this.minimized = true;
     }
 
 

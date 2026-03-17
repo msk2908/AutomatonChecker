@@ -43,14 +43,17 @@ public class SolutionChecker {
         return new Dea(states, false, alphabet);
     }
 
-    public boolean compareDea(Dea dea1, Dea dea2) throws Exception {
+    public CorrectDEA compareDea(Dea dea1, Dea dea2) throws Exception {
         // for every state of dea1
         // if dea2 contains a state with all the given transitions put in matchingStates-map
         if (!dea1.minimized) {
             dea1.minimize();
         }
         if (!dea2.minimized) {
-            dea2.minimize();
+            dea2.minimize(); // todo return not minimized here
+            if (compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA)) {
+                return CorrectDEA.NOT_MINIMIZED;
+            }
         }
 
         Alphabet a1 = dea1.alphabet;
@@ -62,12 +65,12 @@ public class SolutionChecker {
 
         // check if alphabets are same-sized
         if (a1String.size() != a2String.size()) {
-            return false;
+            return CorrectDEA.WRONG_DEA;
         }
 
         // if one dea has more states they are not equal
         if (dea1.states.size() != dea2.states.size()) {
-            return false;
+            return CorrectDEA.WRONG_DEA;
         }
 
         HashMap<Input, Input> convertAlphabet = new HashMap<>();
@@ -75,7 +78,7 @@ public class SolutionChecker {
             try {
                 convertAlphabet.put(dea1.alphabet.get(inputA), dea2.alphabet.get(inputA));
             } catch (IllegalArgumentException exception) {
-                return false;
+                return CorrectDEA.WRONG_DEA;
             }
         }
 
@@ -94,10 +97,10 @@ public class SolutionChecker {
                 Input inputB = convertAlphabet.get(inputA);
                 for (State stateA : possibleFollowUps1.get(inputA)) {
                     if (possibleFollowUps2.get(inputB) == null) {
-                        return false;
+                        return CorrectDEA.WRONG_DEA;
                     }
                     if (!statesMatch(dea1, dea2, stateA, possibleFollowUps2.get(inputB).getFirst())) {
-                        return false;
+                        return CorrectDEA.WRONG_DEA;
                     }
                     matchingStates.put(stateA, possibleFollowUps2.get(inputB));
                 }
@@ -107,13 +110,13 @@ public class SolutionChecker {
                 if (state.starting) {
                     List<State> matches = matchingStates.get(state);
                     if (!matches.getFirst().starting) {
-                        return false;
+                        return CorrectDEA.WRONG_DEA;
                     }
                 }
                 if (state.terminal) {
                     List<State> matches = matchingStates.get(state);
                     if (!matches.getFirst().terminal) {
-                        return false;
+                        return CorrectDEA.WRONG_DEA;
                     }
                 }
             }
@@ -145,8 +148,8 @@ public class SolutionChecker {
         }
 
 
-
-        return true;
+        //TODO: Wenn eingegebener Automat nicht minimal, aber richtig (prüfe, ob äquivalent und dann ob minimal), return true, aber: neue Eingabe möglich
+        return CorrectDEA.CORRECT_DEA;
     }
 
     private boolean statesMatch(Dea dea1, Dea dea2, State state1, State state2) {
@@ -195,7 +198,7 @@ public class SolutionChecker {
         RegExCreator regExCreator = new RegExCreator();
         Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         Dea givenDea = nea.convertNeaToDea();
-        return compareDea(givenDea, dea);
+        return compareDea(givenDea, dea).equals(CorrectDEA.CORRECT_DEA);
     }
 
 
@@ -213,7 +216,7 @@ public class SolutionChecker {
             //System.in.wait();
         }
         Dea dea = convertInputToDea(automaton);
-        boolean correct = compareDea(dea, deaCompare);
+        boolean correct = compareDea(dea, deaCompare).equals(CorrectDEA.CORRECT_DEA);
         System.out.println(correct);
         if (!correct) {
             deaCompare.drawDea();

@@ -16,7 +16,9 @@ public class TestEqual {
         RegEx regEx = regExCreator.convertToSyntaxTree("a".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
-        assertTrue(solutionChecker.compareDea(dea1, dea2));
+        dea1.minimize();
+        dea2.minimize();
+        assertTrue(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -26,7 +28,7 @@ public class TestEqual {
         RegEx regEx = regExCreator.convertToSyntaxTree("a".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, new RegEx(RegExType.NONE), new ArrayList<>(), new Alphabet(new ArrayList<>())).convertNeaToDea();
-        assertFalse(solutionChecker.compareDea(dea1, dea2));
+        assertFalse(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -37,7 +39,7 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("b".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertFalse(solutionChecker.compareDea(dea1, dea2));
+        assertFalse(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -48,7 +50,9 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("ab".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertTrue(solutionChecker.compareDea(dea1, dea2));
+        dea1.minimize();
+        dea2.minimize();
+        assertTrue(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -59,7 +63,7 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("ac".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertFalse(solutionChecker.compareDea(dea1, dea2));
+        assertFalse(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -70,7 +74,9 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("a*".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertTrue(solutionChecker.compareDea(dea1, dea2));
+        dea1.minimize();
+        dea2.minimize();
+        assertTrue(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -81,7 +87,7 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("a*".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertFalse(solutionChecker.compareDea(dea1, dea2));
+        assertFalse(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -92,7 +98,9 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("ab*".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertTrue(solutionChecker.compareDea(dea1, dea2));
+        dea1.minimize();
+        dea2.minimize();
+        assertTrue(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -103,7 +111,7 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("a*b".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertFalse(solutionChecker.compareDea(dea1, dea2));
+        assertFalse(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -114,7 +122,9 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("a+b".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertTrue(solutionChecker.compareDea(dea1, dea2));
+        dea1.minimize();
+        dea2.minimize();
+        assertTrue(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -125,7 +135,7 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("b+b".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertFalse(solutionChecker.compareDea(dea1, dea2));
+        assertFalse(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -136,7 +146,9 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("ab+b".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertTrue(solutionChecker.compareDea(dea1, dea2));
+        dea1.minimize();
+        dea2.minimize();
+        assertTrue(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -147,7 +159,7 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("bb+b".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertFalse(solutionChecker.compareDea(dea1, dea2));
+        assertFalse(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -158,7 +170,7 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("b+b*c+ab".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertFalse(solutionChecker.compareDea(dea1, dea2));
+        assertFalse(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -169,7 +181,9 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("ab*+b+cb".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertTrue(solutionChecker.compareDea(dea1, dea2));
+        dea1.minimize();
+        dea2.minimize();
+        assertTrue(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -180,7 +194,9 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("(ab*+b+cb)*".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertTrue(solutionChecker.compareDea(dea1, dea2));
+        dea1.minimize();
+        dea2.minimize();
+        assertTrue(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
     @Test
@@ -191,7 +207,7 @@ public class TestEqual {
         RegEx regEx2 = regExCreator.convertToSyntaxTree("ba".toCharArray(), null, null);
         Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
         Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
-        assertFalse(solutionChecker.compareDea(dea1, dea2));
+        assertFalse(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
 }
