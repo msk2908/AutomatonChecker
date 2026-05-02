@@ -61,8 +61,9 @@ public class  Dea {
     }
 
 
-    public void minimize() {
+    public boolean minimize() {
         // TODO being terminal is broken
+        boolean iDidSomething  = false;
         List<HashMap<Input, List<State>>> listOfDifferentiatedStates = new ArrayList<>(); // to save new states for Dea
         State startingState;
         try {
@@ -82,6 +83,7 @@ public class  Dea {
                     // get rid of one of two states with the same possible transitions
                     if (!(state.id == state1.id) && haveEqualTransitions(state, state1)) {
                         removeSecond(state, state1);
+                        iDidSomething = true;
                         stop = true;
                         break;
                     }
@@ -111,6 +113,7 @@ public class  Dea {
         //checkForWeirdLoop(this.states);
 
         this.minimized = true;
+        return iDidSomething;
     }
 
 

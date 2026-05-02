@@ -50,10 +50,10 @@ public class SolutionChecker {
             dea1.minimize();
         }
         if (!dea2.minimized) {
-            dea2.minimize(); // todo return not minimized here
-            //if (compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA)) {
-            //    return CorrectDEA.NOT_MINIMIZED;
-            //}
+             // todo return not minimized here
+            if (dea2.minimize() && compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA)) {
+                return CorrectDEA.NOT_MINIMIZED;
+            }
         }
 
         Alphabet a1 = dea1.alphabet;

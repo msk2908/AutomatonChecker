@@ -55,6 +55,7 @@ public class TestMinimize {
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 
+
     private void keepOpen() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("ENTER zum Beenden...");
