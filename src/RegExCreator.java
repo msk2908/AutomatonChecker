@@ -213,7 +213,13 @@ public class RegExCreator {
                         i++;
                     }
                     rest = buf.toString().toCharArray();
-                    if (!evaluateLeft.isEmpty() || !justRead.isEmpty()) {
+                    if (evaluateLeft == null) {
+                        evaluateLeft = "";
+                    }
+                    if (justRead == null) {
+                        justRead = "";
+                    }
+                    if (!evaluateLeft.isEmpty() ||  !justRead.isEmpty()) {
                         //RegEx evaluateEverythingInParenthesis = convertToSyntaxTree(par.toCharArray(), "", "");
                         parenthesisEvaluated = new Concat(concat(evaluateLeft.concat(justRead).toCharArray()), checkHowToGoOn(parenthesisEvaluated, rest));
                     } else {

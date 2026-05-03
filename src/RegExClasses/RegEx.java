@@ -69,7 +69,17 @@ public class RegEx {
                 break;
             }
         }
-        return alphabetList;
+        return deleteDoubles(alphabetList);
+    }
+
+    private List<String> deleteDoubles(List<String> alphabetlist) {
+        List<String> noDoubles = new ArrayList<>();
+        for (String letter : alphabetlist) {
+            if (!noDoubles.contains(letter)) {
+                noDoubles.add(letter);
+            }
+        }
+        return noDoubles;
     }
 
 }

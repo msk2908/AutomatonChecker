@@ -210,4 +210,15 @@ public class TestEqual {
         assertFalse(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
     }
 
+    @Test
+    public void testKleene() throws Exception {
+        RegExCreator regExCreator = new RegExCreator();
+        SolutionChecker solutionChecker = new SolutionChecker();
+        RegEx regEx = regExCreator.convertToSyntaxTree("a*".toCharArray(), "", "");
+        RegEx regEx2 = regExCreator.convertToSyntaxTree("(a+a)*".toCharArray(), "", "");
+        Dea dea1 = regExCreator.convertToNea(null, regEx, new ArrayList<>(), new Alphabet(regEx.getAlphabet())).convertNeaToDea();
+        Dea dea2 = regExCreator.convertToNea(null, regEx2, new ArrayList<>(), new Alphabet(regEx2.getAlphabet())).convertNeaToDea();
+        assertTrue(solutionChecker.compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA));
+    }
+
 }

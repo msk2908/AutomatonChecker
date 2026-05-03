@@ -158,9 +158,14 @@ public class  Dea {
         if (haveEqualKeysets(a, b)) {
             for (Input input : a.transitions.keySet()) {
                 for (State state : a.transitions.get(input)) {
-                    if (!b.transitions.get(input).contains(state)) {
+                    try {
+                        if (!b.transitions.get(input).contains(state)) {
+                            return false;
+                        }
+                    } catch (NullPointerException exception) {
                         return false;
                     }
+
                 }
             }
         } else {
