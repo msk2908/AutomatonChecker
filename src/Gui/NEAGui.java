@@ -12,7 +12,7 @@ public class NEAGui extends JFrame {
     static boolean done = false;
 
     public NEAGui() {
-        setTitle("Please draw your solution here");
+        setTitle("Lösung bittte hier einzeichnen");
         setSize(800, 600);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -24,17 +24,23 @@ public class NEAGui extends JFrame {
         JButton doneBtn = new JButton("Fertig mit der Eingabe");
         JButton addTransitionBtn = new JButton("Übergang hinzufügen");
         JButton resetBtn = new JButton("Zurücksetzen");
+        //JButton tryAgainBtn = new JButton("Nochmal von vorne");
+        JButton newExerciseBtn = new JButton("Neue Aufgabe");
 
         controlPanel.add(addStateBtn);
         controlPanel.add(addTransitionBtn);
         controlPanel.add(doneBtn);
         controlPanel.add(resetBtn);
+        //controlPanel.add(tryAgainBtn);
+        controlPanel.add(newExerciseBtn);
         add(controlPanel, BorderLayout.SOUTH);
 
         addStateBtn.addActionListener(e -> drawingPanelR.setMode(DrawingPanelR.Mode.ADD_STATE));
         addTransitionBtn.addActionListener(e -> drawingPanelR.setMode(DrawingPanelR.Mode.ADD_TRANSITION));
         doneBtn.addActionListener(_ -> automaton.setComplete());
         resetBtn.addActionListener(e -> drawingPanelR.reset());
+        //tryAgainBtn.addActionListener(e -> drawingPanelR.reset());
+        newExerciseBtn.addActionListener(e -> {drawingPanelR.reset(); automaton.setNewExercise(true); automaton.setComplete();});
 
         setVisible(true);
 

@@ -15,18 +15,36 @@ public class Challenge {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         String goOn = "";
-        if (createNewExercise(playerStats.getLevel(), br)) {
-            playerStats.win();
-            System.out.println("Correct!");
-        } else {
-            playerStats.lose();
-            System.out.println("Sorry, something was missing");
+        try {
+            if (createNewExercise(playerStats.getLevel(), br)) {
+                playerStats.win();
+                System.out.println("Correct!");
+            } else {
+                playerStats.lose();
+                System.out.println("Sorry, something was missing");
+            }
+            System.out.println("Go on? y/n");
+            goOn = br.readLine();
+            if (goOn.equals("y")) {
+                //TODO close drawingPanel
+                play(playerStats);
+            }
+        } catch (Exception e) {
+            if (createNewExercise(playerStats.getLevel(), br)) {
+                playerStats.win();
+                System.out.println("Correct!");
+            } else {
+                playerStats.lose();
+                System.out.println("Sorry, something was missing");
+            }
+            System.out.println("Go on? y/n");
+            goOn = br.readLine();
+            if (goOn.equals("y")) {
+                //TODO close drawingPanel
+                play(playerStats);
+            }
         }
-        System.out.println("Go on? y/n");
-        goOn = br.readLine();
-        if (goOn.equals("y")) {
-            play(playerStats);
-        }
+
 
     }
 
@@ -53,8 +71,12 @@ public class Challenge {
         Alphabet alphabet = new Alphabet(regEx.getAlphabet());
         Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         System.out.println("Exercise: create an automaton that recognizes : " + regEx.printRegEx());
-        SolutionChecker solutionChecker = new SolutionChecker();
-        return solutionChecker.checkSolution(regEx, regExCreator.getAlphabet(regEx), nea.convertNeaToDea(), br);
+        try {
+            SolutionChecker solutionChecker = new SolutionChecker();
+            return solutionChecker.checkSolution(regEx, regExCreator.getAlphabet(regEx), nea.convertNeaToDea(), br);
+        } catch (Exception e) {
+            throw new Exception("new Exercise");
+        }
 
 
     }

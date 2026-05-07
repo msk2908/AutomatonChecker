@@ -15,7 +15,11 @@ public class SolutionChecker {
     }
 
     // TODO test this
-    public static Dea convertInputToDea(InputAutomaton automaton) {
+    public static Dea convertInputToDea(InputAutomaton automaton) throws Exception{
+        if (automaton.newExercise) {
+            automaton.setNewExercise(false);
+            throw new Exception("New Exercise requested");
+        }
         List<State> states = new ArrayList<>();
         HashMap<StateDraw, Integer> idMap = new HashMap<StateDraw, Integer>();
         Alphabet alphabet = new Alphabet(new ArrayList<>());
@@ -204,6 +208,7 @@ public class SolutionChecker {
 
 
     public boolean checkSolution(RegEx regEx, Alphabet alphabet, Dea deaCompare, BufferedReader reader) throws Exception {
+
         RegExCreator regExCreator = new RegExCreator();
         Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         InputAutomaton automaton = NEAGui.inputMain();
@@ -215,13 +220,17 @@ public class SolutionChecker {
             //String input = reader.readLine();
             //System.in.wait();
         }
-        Dea dea = convertInputToDea(automaton);
-        boolean correct = compareDea(dea, deaCompare).equals(CorrectDEA.CORRECT_DEA);
-        System.out.println(correct);
-        if (!correct) {
-            deaCompare.drawDea();
+        try {
+            Dea dea = convertInputToDea(automaton);
+            boolean correct = compareDea(dea, deaCompare).equals(CorrectDEA.CORRECT_DEA);
+            System.out.println(correct);
+            if (!correct) {
+                deaCompare.drawDea();
+            }
+            return correct;
+        } catch (Exception e) {
+            throw new Exception("new Exercise requested");
         }
-        return correct;
     }
 
 }

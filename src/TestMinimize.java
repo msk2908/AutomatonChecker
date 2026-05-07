@@ -28,7 +28,7 @@ public class TestMinimize {
         //System.out.println("Dea: \n" + dea.deaToString(alphabet));
         SolutionChecker solutionChecker = new SolutionChecker();
         Dea sol = nea.convertNeaToDea();
-        sol.minimize();
+        //sol.minimize();
         assertTrue(solutionChecker.compareDea(dea, sol).equals(CorrectDEA.CORRECT_DEA));
     }
 

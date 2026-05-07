@@ -56,7 +56,7 @@ public class StatePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         for (Kreis k : states) {
-            k.zeichne(g);
+            k.draw(g);
         }
         for (int i = 0; i < colorList.size(); i++) {
             g.setColor(colorList.get(i));

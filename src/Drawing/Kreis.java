@@ -26,14 +26,12 @@ public class Kreis {
     }
 
 
-    public void zeichne(Graphics g) {
+    public void draw(Graphics g) {
         g.setColor(color);
         if (terminal) {
             g.drawOval(x-3, y-3, 106, 106);
         }
         g.drawOval(x, y, 100, 100);
         g.drawString(this.name, x+50, y+50);
-        // Wenn du einen gefüllten Drawing.Kreis willst:
-        // g.fillOval(x, y, breite, hoehe);
     }
 }
