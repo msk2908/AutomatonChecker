@@ -40,7 +40,7 @@ public class NEAGui extends JFrame {
         doneBtn.addActionListener(_ -> automaton.setComplete());
         resetBtn.addActionListener(e -> drawingPanelR.reset());
         //tryAgainBtn.addActionListener(e -> drawingPanelR.reset());
-        newExerciseBtn.addActionListener(e -> {drawingPanelR.reset(); automaton.setNewExercise(true); automaton.setComplete();});
+        newExerciseBtn.addActionListener(e -> {drawingPanelR.reset(); automaton.setNewExercise(true); automaton.setComplete(); drawingPanelR.setMode(DrawingPanelR.Mode.IS_DONE);});
 
         setVisible(true);
 

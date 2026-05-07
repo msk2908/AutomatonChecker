@@ -7,6 +7,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.System.exit;
+
 class DrawingPanelR extends JPanel {
     enum Mode {NONE, ADD_STATE, IS_DONE, ADD_TRANSITION}
 

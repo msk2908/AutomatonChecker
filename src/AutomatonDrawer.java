@@ -12,18 +12,18 @@ public class AutomatonDrawer {
     }
 
     public JFrame paintFrame() {
-        JFrame fenster = new JFrame("Automaton");
-        fenster.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        fenster.setSize(400, 400);
+        JFrame drawingPanel = new JFrame("Automaton");
+        drawingPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        drawingPanel.setSize(400, 400);
 
-        fenster.setVisible(true);
-        return fenster;
+        drawingPanel.setVisible(true);
+        return drawingPanel;
     }
 
-    public void paint(JFrame fenster) {
+    public void paint(JFrame drawingPanel) {
         // Panel mit Drawing.Kreis hinzufügen
         StatePanel panel = new StatePanel(states, coordinates);
-        fenster.add(panel);
+        drawingPanel.add(panel);
 
     }
 }
