@@ -4,7 +4,6 @@ import RegExClasses.*;
 
 
 public class RegExCreator {
-    // TODO check difficulty somehow
 
     /**
      * creates a random regular expression of the given length
@@ -80,8 +79,8 @@ public class RegExCreator {
                 actualState.setTransitions(alphabet.get("Epsilon"), left);
                 actualState.setTransitions(alphabet.get("Epsilon"), right);
 
-                System.out.println(regEx.getLeft().rToString());
-                System.out.println(regEx.getRight().rToString());
+                //System.out.println(regEx.getLeft().rToString());
+                //System.out.println(regEx.getRight().rToString());
                 convertToNea(left, regEx.getLeft(), states, alphabet);
                 convertToNea(right, regEx.getRight(), states, alphabet);
                 break;
@@ -106,8 +105,6 @@ public class RegExCreator {
                             followUpStates.add(state);
                         }
                     }
-
-
                     for (State state : followUpStates) {
                         convertToNea(state, right, states, alphabet);
                     }
@@ -115,7 +112,6 @@ public class RegExCreator {
                 break;
             }
             case RegExType.LITERAL: {
-                //TODO might also be starting or non-final, check if actualState already has transitions or there is a follow-up (eg (a+b)*c))
                 State last = new State(setId(states), regEx.rToString() + " final", new HashMap<>(), true, false);
                 actualState.setTransitions(alphabet.get(regEx.rToString()), last);
                 states.add(last);

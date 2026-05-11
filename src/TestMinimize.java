@@ -33,7 +33,7 @@ public class TestMinimize {
     }
 
     @Test
-    public void testMinimizeComplicated() {
+    public void testMinimizeComplicated() throws Exception {
         //does not actually test something because putting the automaton requires mental working
         RegExCreator regExCreator = new RegExCreator();
         List<String> list = new ArrayList<>();
@@ -48,10 +48,13 @@ public class TestMinimize {
         System.out.println("Nea: \n" + nea.neaToString(alphabet));
 
         Dea dea = nea.convertNeaToDea();
-        dea.drawDea();
-        dea.minimize();
-        dea.drawDea();
-        keepOpen();
+        Dea sol = dea;
+        //dea.drawDea();
+        sol.minimize();
+        //dea.drawDea();
+        //keepOpen();
+        SolutionChecker solutionChecker = new SolutionChecker();
+        assertTrue(solutionChecker.compareDea(dea, sol).equals(CorrectDEA.CORRECT_DEA));
         System.out.println("Dea: \n" + dea.deaToString(alphabet));
     }
 

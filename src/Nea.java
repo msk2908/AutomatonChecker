@@ -161,35 +161,6 @@ public class Nea {
         }
     }
 
-
-
-
-
-
-
-    /*private void putTogether(List<HashMap<Input, List<State>>> listOfPossibleTransitions) {
-        List<State> states = new ArrayList<>();
-
-        int id = 0;
-        for (HashMap<Input, List<State>> transition : listOfPossibleTransitions) {
-            //TODO add starting and terminal
-            State newState = new State(id, "creative Name", new HashMap<>(), false, false);
-            for (Input input: transition.keySet()) {
-                // remove equal states
-                checkForEqualStates(transition.get(input));
-                // get all transitions of the leftover states
-                HashMap<Input, List<State>> transitions = new HashMap<>();
-                for (State state: transition.get(input)) {
-                    transitions.putAll(state.transitions);
-                }
-                newState.addTransitions(transitions);
-                states.add(newState);
-            }
-        }
-        Dea dea = new Dea(states, false, alphabet);
-        dea.drawDea();
-    }*/
-
     /**
      * If the only connection between two states is en epsilon-transition, delete the one it points to and give the first one its transitions
      */
@@ -277,23 +248,6 @@ public class Nea {
 
 
     }
-
-    /*private List<State> deleteUnreachableStatesFromList(List<State> allStates) {
-        List<List<State>> following = getFollowingStates(allStates);
-        List<State> reachable = new ArrayList<>();
-        try {
-            reachable.add(getStartingState());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Your automaton did not contain a starting state, how did you manage to do this");
-        }
-
-        for (State state : allStates) {
-            if (following.contains(state)) {
-                reachable.add(state);
-            }
-        }
-        return reachable;
-    }*/
 
     /**
      * gets all the states that are reachable starting from the given list

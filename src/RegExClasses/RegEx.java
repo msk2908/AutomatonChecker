@@ -70,6 +70,7 @@ public class RegEx {
             }
         }
         return deleteDoubles(alphabetList);
+
     }
 
     private List<String> deleteDoubles(List<String> alphabetlist) {

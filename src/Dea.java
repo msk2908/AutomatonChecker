@@ -62,7 +62,6 @@ public class  Dea {
 
 
     public boolean minimize() {
-        // TODO being terminal is broken
         boolean iDidSomething  = false;
         List<HashMap<Input, List<State>>> listOfDifferentiatedStates = new ArrayList<>(); // to save new states for Dea
         State startingState;
@@ -94,23 +93,6 @@ public class  Dea {
             }
             somethingChanged = !compare.equals(states);
         }
-
-
-
-        /*List<State> startList = new ArrayList<>();
-        startList.add(startingState);
-
-        HashMap<Input, List<State>> startMap = new HashMap<>();
-
-        startMap.put(alphabet.get("Epsilon"), startList); // starting state gets Epsilon-transition
-
-        listOfDifferentiatedStates.add(startMap);
-
-        split(listOfDifferentiatedStates, startMap);
-
-        getRidOfEquals(listOfDifferentiatedStates);*/
-
-        //checkForWeirdLoop(this.states);
 
         this.minimized = true;
         return iDidSomething;
@@ -154,6 +136,7 @@ public class  Dea {
 
     }
 
+    // checks whether two states have the same transitions or not
     public boolean haveEqualTransitions(State a, State b) {
         if (haveEqualKeysets(a, b)) {
             for (Input input : a.transitions.keySet()) {
@@ -174,28 +157,6 @@ public class  Dea {
         return true;
     }
 
-    /*public boolean haveSimilarTransitions(State a, State b) {
-        List<String> inputsA = getKeySet(a);
-        List<String> inputsB = getKeySet(b);
-        if (haveEqualKeysets(a,b)) {
-            for (Input input : a.getTransitions().keySet()) {
-                for (State state: a.transitions.get(input)) {
-                    // TODO get matching input from b (this fails because there b does not know a's input)
-                    if (b.containsTransitionTo(state) != null) {
-                        // get all transitions from b to
-                        State match = matches.get(state);
-                        List<String> in = b.containsTransitionsTo(match);
-                        if (!in.contains(input.input)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        } else {
-            return false;
-        }
-        return true;
-    }*/
 
     private List<String> getKeySet(State state) {
         List<String> inputs = new ArrayList<>();

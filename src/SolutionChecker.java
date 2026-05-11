@@ -15,7 +15,7 @@ public class SolutionChecker {
     }
 
     // TODO test this
-    public static Dea convertInputToDea(InputAutomaton automaton) throws Exception{
+    public static Dea convertInputToDea(InputAutomaton automaton) throws Exception {
         if (automaton.newExercise) {
             automaton.setNewExercise(false);
             throw new Exception("New Exercise requested");
@@ -45,6 +45,7 @@ public class SolutionChecker {
 
         // output: Dea that was input by user
         return new Dea(states, false, alphabet);
+
     }
 
     public CorrectDEA compareDea(Dea dea1, Dea dea2) throws Exception {
@@ -54,7 +55,6 @@ public class SolutionChecker {
             dea1.minimize();
         }
         if (!dea2.minimized) {
-             // todo return not minimized here
             if (dea2.minimize() && compareDea(dea1, dea2).equals(CorrectDEA.CORRECT_DEA)) {
                 return CorrectDEA.NOT_MINIMIZED;
             }
@@ -110,7 +110,7 @@ public class SolutionChecker {
                 }
             }
 
-            for (State state: matchingStates.keySet()) {
+            for (State state : matchingStates.keySet()) {
                 if (state.starting) {
                     List<State> matches = matchingStates.get(state);
                     if (!matches.getFirst().starting) {
@@ -127,7 +127,7 @@ public class SolutionChecker {
 
             HashMap<Input, List<State>> newFollowUps1 = new HashMap<>();
             HashMap<Input, List<State>> newFollowUps2 = new HashMap<>();
-            for (List<State> states: possibleFollowUps1.values()) {
+            for (List<State> states : possibleFollowUps1.values()) {
                 HashMap<Input, List<State>> next = dea1.getFollowingStates(states);
                 for (Input input : next.keySet()) {
                     if (!newFollowUps1.containsKey(input) && !matchingStates.containsKey(next.get(input).getFirst())) {
@@ -137,7 +137,7 @@ public class SolutionChecker {
 
             }
 
-            for (List<State> states: possibleFollowUps2.values()) {
+            for (List<State> states : possibleFollowUps2.values()) {
                 HashMap<Input, List<State>> next = dea2.getFollowingStates(states);
                 for (Input input : next.keySet()) {
                     if (!newFollowUps2.containsKey(input)) {
@@ -195,8 +195,6 @@ public class SolutionChecker {
     }
 
 
-
-
     public boolean DeaMatchesRegEx(RegEx regEx, Dea dea) throws Exception {
         Alphabet alphabet = new Alphabet(regEx.getAlphabet());
         RegExCreator regExCreator = new RegExCreator();
@@ -206,31 +204,25 @@ public class SolutionChecker {
     }
 
 
-
     public boolean checkSolution(RegEx regEx, Alphabet alphabet, Dea deaCompare, BufferedReader reader) throws Exception {
-
         RegExCreator regExCreator = new RegExCreator();
         Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
         InputAutomaton automaton = NEAGui.inputMain();
         boolean complete = false;
-        while(!automaton.complete) {
+        while (!automaton.complete) {
             Thread.sleep(500);
             // TODO keep terminal busy
             //System.out.println("done?");
             //String input = reader.readLine();
             //System.in.wait();
         }
-        try {
-            Dea dea = convertInputToDea(automaton);
-            boolean correct = compareDea(dea, deaCompare).equals(CorrectDEA.CORRECT_DEA);
-            System.out.println(correct);
-            if (!correct) {
-                deaCompare.drawDea();
-            }
-            return correct;
-        } catch (Exception e) {
-            throw new Exception("new Exercise requested");
+        Dea dea = convertInputToDea(automaton);
+        boolean correct = compareDea(deaCompare, dea).equals(CorrectDEA.CORRECT_DEA);
+        System.out.println(correct);
+        if (!correct) {
+            deaCompare.drawDea();
         }
+        return correct;
     }
 
 }

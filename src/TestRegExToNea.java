@@ -7,8 +7,10 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestRegExToNea {
 
@@ -124,7 +126,7 @@ public class TestRegExToNea {
     //medium (two properties)
 
     @Test
-    public void testConcatAndOrLeft() {
+    public void testConcatAndOrLeft() throws Exception {
         RegExCreator regExCreator = new RegExCreator();
         // ab+c
         List<String> alphabetList = new ArrayList<>();
@@ -156,8 +158,17 @@ public class TestRegExToNea {
         states.add(b);
         states.add(bFinal);
         states.add(cFinal);
+
         Nea compare = new Nea(states, alphabet);
+        //compare.drawNea();
+        //keepOpen();
         Nea nea = regExCreator.convertToNea(null, regEx, new ArrayList<>(), alphabet);
+        //nea.drawNea();
+        //keepOpen();
+
+
+        SolutionChecker solutionChecker = new SolutionChecker();
+        assertTrue(solutionChecker.compareDea(nea.convertNeaToDea(), compare.convertNeaToDea()).equals(CorrectDEA.CORRECT_DEA));
         String comp = compare.neaToString(alphabet);
         System.out.println("expected: \n" + comp);
         String got = nea.neaToString(alphabet);
@@ -165,6 +176,13 @@ public class TestRegExToNea {
         assertEquals(comp,got);
 
 
+    }
+
+    private void keepOpen() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("ENTER zum Beenden...");
+        scanner.nextLine();
+        System.exit(0);
     }
 
     @Test
